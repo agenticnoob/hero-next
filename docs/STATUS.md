@@ -9,9 +9,9 @@ with `main` as the production source branch. The existing local branch remains
 
 ## Privacy and directory update
 
-Chapter one omits real identity, birth year, dated education/work
-history, cities and military references from both languages of chapter one,
-including its Portal and body-derived atlas. Four sections now describe reading,
+The Chinese and English copy in chapter one omits real identity, birth year,
+dated education/work history, cities and military references, including its
+Portal and body-derived atlas. Four sections now describe reading,
 code, experiments and AI. The public nickname and abstract figure remain.
 Chapter four adds the user-provided [LeetCode profile](https://leetcode.cn/u/skedush/)
 as its sixth row, with bilingual copy, `@skedush`, the existing hover preview and
@@ -20,8 +20,20 @@ all six entries above the footer.
 
 `npm run check` passes all gates (44 files / 304 tests), and the production build
 passes. Source and generated page/client-bundle scans found no removed identity
-or military copy. These changes have not been committed, pushed or deployed;
-the production release below describes the preceding published version.
+or military copy. Application commit `b083c8cfdcfec20ecc8a29ca5cb3039b1388d01d`
+was pushed to `main` and published by the successful
+[privacy release](https://github.com/agenticnoob/hero-next/actions/runs/34682783209)
+on 2026-09-12. The job took 2m19s, including a 26-second Vercel production build;
+both publication and public snapshot verification actually ran and passed.
+
+Independent unauthenticated HTTP readback confirmed four profile sections with
+no removed private copy, all six directory entries, the exact LeetCode URL and
+the English LeetCode copy. All nine page-referenced client scripts were checked
+for removed identity and military text. The production snapshot matches source
+`af76a47795743034d8dbcfe15ac0655b539bf6e2`, 108 entries through 2026-09-11 and SHA-256
+`ccacd99e9d0274bdf44b59bbfc3a34551a777da8259dc13d8ef1f213c97dcee0`.
+Documentation-only follow-up commits use the same deployment workflow; each run
+records its own exact website/source commits and verification result in Actions.
 
 Local production Ego/Chromium checks covered 1440×900 desktop in both languages
 and 390×844 / DPR 2 touch emulation: chapter-one scroll and return, language
@@ -86,9 +98,9 @@ The complete release sequence was verified on 2026-09-12:
 
 The private source repository is `agenticnoob/vibe-journal-pipeline` (`master`),
 with 110 journal records / 108 Timeline events / 224 skills through 2026-09-11.
-Its subsequent documentation-only commit is
-`af76a47795743034d8dbcfe15ac0655b539bf6e2`; the next website release or daily
-reconciliation records that newer revision with the same data. Every successful
+Its subsequent documentation-only commit,
+`af76a47795743034d8dbcfe15ac0655b539bf6e2`, is the source revision used by the
+privacy release above, with the same journal entries. Every successful
 deployment's Actions summary records its exact website/source commits and hash.
 
 ## Application and data
