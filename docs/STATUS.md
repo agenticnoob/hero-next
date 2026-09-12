@@ -7,16 +7,17 @@ Its private repository is [agenticnoob/hero-next](https://github.com/agenticnoob
 with `main` as the production source branch. The existing local branch remains
 `axmorf/standalone`.
 
-## Release preparation
+## Production release
 
-The initial application, documentation and Actions workflow were committed as
-`81d27df63a564cca9b817a7f5047b1debef12ca0` and pushed to `main`. The website's
-`VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `VERCEL_PRODUCTION_URL` and the source
-repository's `HERO_NEXT_REPOSITORY` variables are configured.
+The application and aligned documentation are committed and pushed to `main`.
+Production is available at [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
+The website's `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `VERCEL_PRODUCTION_URL` and
+the source repository's `HERO_NEXT_REPOSITORY` variables are configured.
 
 Vercel project `hero-next` (`prj_DqmZ9hblXxRyX8K51nPM5S9uQMCp`) now exists in
 `agent-first`, uses Node.js 22 and has the assigned production domain
-`hero-next-jade.vercel.app`. It has no Git integration or deployment yet.
+`hero-next-jade.vercel.app`. It has no Vercel Git integration; GitHub Actions
+builds and publishes the production output.
 The application's Node engine is also constrained to `22.x`, so Vercel does not
 select Node 24 from the previous open-ended range.
 
@@ -24,16 +25,15 @@ A dedicated `agent-first` team-scoped `VERCEL_TOKEN` is stored in the website's
 Actions secrets and expires on 2026-12-11. Its broader team scope was explicitly
 approved because Vercel CLI 59.16.0 `pull` also queries the owning team; the
 previous project-only token returned `403 team_unauthorized`. Production settings
-now pull successfully with the new token. Revocation of the replaced project-only
-token awaits separate approval. The receiver remains disabled pending first
-activation; no successful cloud deployment or automatic data update is claimed yet.
+now pull successfully with the new token. The replaced project-only token remains
+active at the owner's explicit request; Actions uses the new team token. Local
+copies of the old credential have been removed. The receiver is enabled.
 
 Both GitHub credentials are configured and verified: `JOURNAL_READ_TOKEN` reads
 only `vibe-journal-pipeline`; `HERO_NEXT_DISPATCH_TOKEN` grants Contents write
 only on `hero-next` for repository dispatch. Both expire on 2026-12-11. The
 temporary local GitHub token files have been removed after Secret storage was
-read back. The journal repository's pending source update is still unpublished,
-preserving the first-deployment-then-source-push verification sequence.
+read back. Rotate all three active automation credentials before 2026-12-11.
 
 GitHub Actions owns production building and deployment. The workflow receives
 `journal_updated` and website pushes to `main`, supports manual/daily
@@ -43,12 +43,27 @@ publishes the prebuilt output. The public page and snapshot must pass
 hash/revision/count/date readback. Direct Vercel Git deployments are disabled.
 See [journal publishing](./journal-publishing.md) for setup and activation.
 
-The private source repository is `agenticnoob/vibe-journal-pipeline` (`master`).
-Its published commit `607dc353080a7dc433bb7d159befead42ddcb11b` has 92 journal
-records / 90 Timeline events, latest 2026-08-18. The reviewed local update has
-110 journal records / 108 events / 224 skills, latest 2026-09-11. It will be pushed
-after the first website deployment to prove the notification and automatic
-redeployment path.
+The complete release sequence was verified on 2026-09-12:
+
+- [First website deployment](https://github.com/agenticnoob/hero-next/actions/runs/34679431988)
+  built website `3899c36` in Actions and published source
+  `607dc353080a7dc433bb7d159befead42ddcb11b`: 90 entries, latest 2026-08-18.
+- Source push `e3536f8cf1ffb19a05bdafead65d1f3920bd241b` published 18 additional
+  journals and the notifier. Its
+  [notification run](https://github.com/agenticnoob/vibe-journal-pipeline/actions/runs/34679666747)
+  passed all 96 tests, validated 110 journals, and delivered `journal_updated`.
+- The resulting [repository_dispatch deployment](https://github.com/agenticnoob/hero-next/actions/runs/34679672419)
+  passed the website quality gate, built and deployed in Actions, and verified
+  the public page and snapshot. Independent unauthenticated readback also
+  confirmed 108 entries, latest 2026-09-11, exact source `e3536f8`, and SHA-256
+  `17561a835e3bf4c19cf6b7bfe2f8fc956e15e924bcfa59715790ec3e8b02160b`.
+
+The private source repository is `agenticnoob/vibe-journal-pipeline` (`master`),
+with 110 journal records / 108 Timeline events / 224 skills through 2026-09-11.
+Its subsequent documentation-only commit is
+`af76a47795743034d8dbcfe15ac0655b539bf6e2`; the next website release or daily
+reconciliation records that newer revision with the same data. Every successful
+deployment's Actions summary records its exact website/source commits and hash.
 
 ## Application and data
 
@@ -68,8 +83,8 @@ Journal JSON is validated before rendering. Requests cancel on cleanup, exclude
 late results and support retry. Public export contains only date, compact tools
 and Timeline event. Tool descriptions after colons or spaced em/en dashes are
 stripped, including an identified description containing a local path. The local
-snapshot now contains 108 entries, latest 2026-09-11, with source revision null
-until generated from a committed revision. Conversations, caches, credentials,
+and production snapshots contain 108 entries, latest 2026-09-11. Cloud snapshots
+always record the exact committed source revision. Conversations, caches, credentials,
 local manifests and generated snapshots remain outside Git.
 
 ## Verification
@@ -100,8 +115,15 @@ switching, all four project selections, 16/20px roots and the Timeline. A settle
 wheel round trip moved the journal window `0 → 4 → 0`, retaining 16 paired dates.
 Mobile reduced motion retained the complete final date/event. Sampled states had
 one canvas, no overflow and no captured page/rejection/JavaScript console errors
-or warnings. These are local emulation checks; deployed-site, physical-device
-and Safari acceptance are separate.
+or warnings.
+
+Production Ego/Chromium checks passed at 1440×900 and 390×844 / DPR 2:
+the browser loaded all 108 entries through 2026-09-11, with one canvas and no
+horizontal overflow. A native wheel round trip moved the window `0 → 7 → 0`
+with all 16 date pairs matching. Mobile reduced motion displayed the complete
+latest date/event. No page/rejection/console errors were captured during these
+interactions. These are browser emulation checks; physical-device and Safari
+acceptance remain separate.
 
 ESLint 9.39.5 matches pinned Next.js plugin peers; its EOL remains a toolchain
 limitation. The journal client checks the hash format/path contract, while

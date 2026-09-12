@@ -5,6 +5,8 @@ It consumes published Viselora packages through their public entrypoints.
 Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
 `0.1.0-alpha.2` from npm; see [current verification](./docs/STATUS.md).
 
+Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
+
 The current experience is a four-chapter personal narrative. The opening Hub
 first presents site-level context beside the breathing tetrahedron, then hands
 those two side columns to chapter one before spatial flight begins. Each chapter
