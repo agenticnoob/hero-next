@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+output/
+*.tsbuildinfo
+*.log
+.env*
+!.env.example
+.DS_Store
+.vercel/
+.journal/
+public/journal/
+.journal-source/

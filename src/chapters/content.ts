@@ -1,0 +1,486 @@
+import { heroAxiomsContent } from "../axioms/content";
+import {
+  formatHeroChapterHeading,
+  heroChapterDefinitions,
+  type HeroChapterId,
+} from "./definitions";
+import type { HeroChapterLocalizedContent } from "./contentModel";
+import type { ProjectRoomChapterContent } from "../projects/model";
+import type { HeroLocale } from "../preferences/locale";
+
+export const heroPublicLinks = {
+  douyin:
+    "https://www.douyin.com/user/MS4wLjABAAAATcqt2Tq3UxNiJz8Qg5eEHhOkdpfNuEP1KuthHYn-oIycjaF24_KxkL9pY8bgbW3Z",
+  xiaohongshu:
+    "https://www.xiaohongshu.com/user/profile/651c334600000000240144aa",
+  bilibili: "https://space.bilibili.com/269573670",
+  githubProfile: "https://github.com/agenticnoob",
+  currentProject: "https://github.com/agenticnoob/dom-webgl-workspace",
+  axmorfStudio: "https://github.com/AXMORF/axmorf-studio",
+  syringeMeter: "https://github.com/agenticnoob/syringe-meter",
+  vibeJournalPipeline: "https://github.com/agenticnoob/vibe-journal-pipeline",
+  blog: "https://blog.zzzxc.com",
+} as const;
+
+export const heroSiteContent = {
+  zh: {
+    ariaLabel: "noobli 的四章节 Agent-first 个人站",
+    localeControlLabel: "选择语言",
+    intro: {
+      eyebrow: "NOOBLI / 独立构建者",
+      title: "为智能体重新思考软件",
+      summary: "在技术、认知与自由的交界处，构建 AI-native 系统。",
+      hint: "滚动进入四个章节 · 长按四面体切换主题",
+    },
+    intermediateHub: "回到完整四面体，继续前往下一章。",
+    profileModelLabel: "抽象个人形象",
+  },
+  en: {
+    ariaLabel: "noobli's four-chapter agent-first personal site",
+    localeControlLabel: "Choose language",
+    intro: {
+      eyebrow: "NOOBLI / INDEPENDENT BUILDER",
+      title: "Rethinking software for agents",
+      summary:
+        "Building AI-native systems where technology, cognition, and freedom meet.",
+      hint: "Scroll through four chapters · Hold the tetrahedron to switch theme",
+    },
+    intermediateHub:
+      "Back at the complete tetrahedron. Continue to the next chapter.",
+    profileModelLabel: "Abstract personal figure",
+  },
+} as const satisfies Readonly<
+  Record<
+    HeroLocale,
+    {
+      readonly ariaLabel: string;
+      readonly localeControlLabel: string;
+      readonly intro: {
+        readonly eyebrow: string;
+        readonly title: string;
+        readonly summary: string;
+        readonly hint: string;
+      };
+      readonly intermediateHub: string;
+      readonly profileModelLabel: string;
+    }
+  >
+>;
+
+export const heroChapterContent = {
+  self: {
+    zh: {
+      portal: {
+        left: {
+          label: formatHeroChapterHeading(heroChapterDefinitions.self, "来路"),
+          body: "一条没有被预先写好的线，穿过军营、校园、城市与代码。",
+        },
+        right: {
+          label: "沿途坐标",
+          items: ["号声与晨光", "书页与像素", "智能与自由"],
+        },
+      },
+      body: {
+        eyebrow: "SELF / NOOBLI",
+        title: "我不是沿一条直线抵达这里。",
+        intro:
+          "徐力，也叫 noobli。1994 年生；先在军营听过清晨的号声，后来在书页与浏览器的微光里重写自己的方向。如今以独立构建者的身份，继续探问智能、软件与自由如何彼此照亮。",
+        sections: [
+          {
+            label: "2012—2014 / 晨光",
+            title: "先学会站立，再学习远行。",
+            body: "十八岁那年，时间被号声切成清晰的刻度。两年的军旅没有替我回答远方，却让我懂得：自由从来不是松弛，而是能够为自己的选择站稳。",
+          },
+          {
+            label: "2014—2018 / 书页",
+            title: "把被规定的时间，重新交还给疑问。",
+            body: "离开军营之后，我回到校园。知识不再是一张通往确定答案的地图，更像一扇扇窗——让我看见，人生可以被重新命名，也可以重新开始。",
+          },
+          {
+            label: "2018—后来 / 像素",
+            title: "在浏览器的光里，造过一些可以运行的世界。",
+            body: "毕业后，我成为前端开发者，在杭州、温州与上海之间工作和生活。代码把抽象变成可触碰的界面，也让我第一次意识到：秩序并非只能接受，它也可以亲手设计。",
+          },
+          {
+            label: "转身 / 无固定席位",
+            title: "离开一张确定的工位，去寻找更完整的生活。",
+            body: "后来，我把职业从一个地点里取出，成为自由职业者。那不是逃离工作，而是重新安排工作、时间与生活的关系，让道路本身也成为答案的一部分。",
+          },
+          {
+            label: "此刻 / 未完成",
+            title: "让软件理解意图，也让自己继续改变。",
+            body: "现在，我把目光投向 AI、Agent 与认知边界：尝试让系统不只执行指令，也能承接意图；同时保留人的判断、责任，以及随时改变方向的权利。",
+          },
+        ],
+        closing: "不把身份写成终点，只把它当作下一次出发前，暂时落下的坐标。",
+      },
+    },
+    en: {
+      portal: {
+        left: {
+          label: formatHeroChapterHeading(
+            heroChapterDefinitions.self,
+            "THE WAY HERE",
+          ),
+          body: "An unwritten line through barracks, campus, cities, and code.",
+        },
+        right: {
+          label: "COORDINATES",
+          items: [
+            "Reveille and dawn",
+            "Pages and pixels",
+            "Intelligence and freedom",
+          ],
+        },
+      },
+      body: {
+        eyebrow: "SELF / NOOBLI",
+        title: "I did not arrive here in a straight line.",
+        intro:
+          "Xu Li, also known as noobli, born in 1994. I first heard the day begin with reveille, then rewrote my direction in the quiet glow of books and browsers. Now, as an independent builder, I keep asking how intelligence, software, and freedom might illuminate one another.",
+        sections: [
+          {
+            label: "2012—2014 / DAWN",
+            title: "First, learn to stand. Then, learn to leave.",
+            body: "At eighteen, reveille divided time into exact measures. Two years in the military did not answer where to go, but taught me that freedom is not ease; it is the strength to stand behind a choice.",
+          },
+          {
+            label: "2014—2018 / PAGES",
+            title: "Return prescribed time to the keeping of questions.",
+            body: "After the barracks, I returned to campus. Knowledge stopped resembling a map to certain answers and became a field of windows: life could be renamed, and begun again.",
+          },
+          {
+            label: "2018—AFTER / PIXELS",
+            title:
+              "In the browser's light, I built small worlds that could run.",
+            body: "After graduation, I worked as a front-end developer across Hangzhou, Wenzhou, and Shanghai. Code turned abstraction into touchable surfaces and revealed that order need not only be accepted; it can be designed.",
+          },
+          {
+            label: "TURNING / NO FIXED SEAT",
+            title: "I left a certain desk in search of a more whole life.",
+            body: "Later, I lifted work out of a single place and became a freelancer. It was not an escape from work, but a new arrangement between work, time, and life—letting the road become part of the answer.",
+          },
+          {
+            label: "NOW / UNFINISHED",
+            title:
+              "Let software understand intent—and let the self keep changing.",
+            body: "Today I look toward AI, agents, and the edges of cognition: building systems that can carry intent, while preserving human judgment, responsibility, and the right to change direction.",
+          },
+        ],
+        closing:
+          "I do not write identity as an ending—only as a coordinate set down briefly before the next departure.",
+      },
+    },
+  },
+  axioms: heroAxiomsContent,
+  builds: {
+    zh: {
+      portal: {
+        left: {
+          label: formatHeroChapterHeading(
+            heroChapterDefinitions.builds,
+            "构建",
+          ),
+          body: "从视频与网页，到测量与记录，把想法做成可以运行的东西。",
+        },
+        right: {
+          label: "项目方向",
+          items: ["视频创作", "网页视觉", "视觉测量", "开发日志"],
+        },
+      },
+      body: {
+        eyebrow: "BUILDS / SELECTED PROJECTS",
+        title: "把想法，做成可以运行的东西。",
+        intro:
+          "这四个项目，是我在不同问题上的动手尝试：让 Agent 制作视频，让网页拥有空间，从画面读取测量结果，再把日常开发沉淀成记录。",
+        sections: [
+          {
+            label: "视频创作",
+            title: "AXMORF Studio",
+            body: "一个基于 Remotion 的 Agent-first 本地视频生产工作区。让 coding Agent 从创作需求出发，组织场景、旁白与封面，经过校验和渲染，交付视频、两张封面与发布清单。项目和素材保留在用户自己的工作区中。",
+            link: {
+              href: heroPublicLinks.axmorfStudio,
+              label: "在 GitHub 查看 AXMORF Studio",
+            },
+          },
+          {
+            label: "网页视觉",
+            title: "Viselora DOM WebGL",
+            body: "一个开放、可复用的 DOM-first WebGL 运行时。由 DOM 保留布局与交互语义，运行时统一管理渲染、资源、滚动与指针响应，把网页元素连接到三维视觉。你正在浏览的这个站点，也是它的一个实际应用。",
+            link: {
+              href: heroPublicLinks.currentProject,
+              label: "在 GitHub 查看 Viselora",
+            },
+          },
+          {
+            label: "视觉测量",
+            title: "SyringeMeter",
+            body: "一个用于受控场景的本地针筒视觉测量原型。结合目标检测、颜色标记与活塞边缘，从摄像头画面计算容量，在桌面界面展示稳定读数和实时曲线，并支持 CSV 记录。当前面向纯黑背景下的单支带标记针筒。",
+            link: {
+              href: heroPublicLinks.syringeMeter,
+              label: "在 GitHub 查看 SyringeMeter",
+            },
+          },
+          {
+            label: "开发日志",
+            title: "vibe-journal-pipeline",
+            body: "一条用 Python 标准库搭建的开发日志流水线。汇集 Hermes、Codex 与可选 OpenCode 会话，借助语言模型按日整理工作内容，生成结构化日志、技能清单与时间线，让分散的开发过程留下可回顾的记录。",
+            link: {
+              href: heroPublicLinks.vibeJournalPipeline,
+              label: "在 GitHub 查看 vibe-journal-pipeline",
+            },
+          },
+        ],
+      },
+    },
+    en: {
+      portal: {
+        left: {
+          label: formatHeroChapterHeading(
+            heroChapterDefinitions.builds,
+            "BUILDS",
+          ),
+          body: "From video and the web to measurement and journals, turning ideas into working software.",
+        },
+        right: {
+          label: "PROJECT AREAS",
+          items: [
+            "Video creation",
+            "Web visuals",
+            "Visual measurement",
+            "Dev journals",
+          ],
+        },
+      },
+      body: {
+        eyebrow: "BUILDS / SELECTED PROJECTS",
+        title: "Turning ideas into working software.",
+        intro:
+          "Four projects, four practical questions: how agents can produce videos, how web pages can gain depth, how images can become measurements, and how daily development can leave a useful record.",
+        sections: [
+          {
+            label: "VIDEO CREATION",
+            title: "AXMORF Studio",
+            body: "An agent-first local video production workspace built on Remotion. A coding agent takes a creative brief through scenes, narration and covers to validation and rendering, delivering a video, two covers and a publishing manifest. Projects and media stay in the user's own workspace.",
+            link: {
+              href: heroPublicLinks.axmorfStudio,
+              label: "View AXMORF Studio on GitHub",
+            },
+          },
+          {
+            label: "WEB VISUALS",
+            title: "Viselora DOM WebGL",
+            body: "An open, reusable DOM-first WebGL runtime. The DOM keeps layout and interaction semantics, while the runtime manages rendering, resources, scroll and pointer input to connect page elements with 3D visuals. The site you are browsing is one of its applications.",
+            link: {
+              href: heroPublicLinks.currentProject,
+              label: "View Viselora on GitHub",
+            },
+          },
+          {
+            label: "VISUAL MEASUREMENT",
+            title: "SyringeMeter",
+            body: "A local vision-based syringe measurement prototype for controlled conditions. Object detection, color markers and the plunger edge turn camera images into volume readings, with stabilized values, live charts and CSV recording in a desktop interface. Its current scope is one marked syringe against a pure black background.",
+            link: {
+              href: heroPublicLinks.syringeMeter,
+              label: "View SyringeMeter on GitHub",
+            },
+          },
+          {
+            label: "DEV JOURNALS",
+            title: "vibe-journal-pipeline",
+            body: "A development journaling pipeline built with the Python standard library. It brings together Hermes, Codex and optional OpenCode sessions, uses a language model to summarize each day's work, and produces structured journals, a skills inventory and a timeline for later reflection.",
+            link: {
+              href: heroPublicLinks.vibeJournalPipeline,
+              label: "View vibe-journal-pipeline on GitHub",
+            },
+          },
+        ],
+      },
+    },
+  },
+  signals: {
+    zh: {
+      portal: {
+        left: {
+          label: formatHeroChapterHeading(
+            heroChapterDefinitions.signals,
+            "联结",
+          ),
+          body: "构建之外，在文字、影像和代码中继续交流。",
+        },
+        right: {
+          label: "公共信号",
+          items: ["抖音", "小红书", "哔哩哔哩", "博客", "GitHub"],
+        },
+      },
+      body: {
+        eyebrow: "SIGNALS / ELSEWHERE",
+        title: "把未完成的思考，放进真实交流。",
+        intro: "在影像里分享，在文字里沉淀，在代码里实践。",
+        sections: [
+          {
+            label: "DOUYIN / 抖音",
+            title: "抖音",
+            directory: { name: "AXMORF", detail: "@Cognition_hub" },
+            body: "AXMORF · 抖音号：Cognition_hub",
+            link: { href: heroPublicLinks.douyin, label: "前往抖音主页" },
+            image: {
+              src: "/channels/douyin.jpg",
+              width: 1219,
+              height: 1820,
+              alt: "AXMORF 的抖音账号二维码，使用抖音扫码",
+            },
+          },
+          {
+            label: "XIAOHONGSHU / 小红书",
+            title: "小红书",
+            directory: { name: "AXMORF", detail: "@Cognition_hub" },
+            body: "AXMORF · 小红书号：Cognition_hub",
+            link: {
+              href: heroPublicLinks.xiaohongshu,
+              label: "前往小红书主页",
+            },
+            image: {
+              src: "/channels/xiaohongshu.jpg",
+              width: 987,
+              height: 1347,
+              alt: "AXMORF 的小红书账号二维码，使用小红书扫码",
+            },
+          },
+          {
+            label: "BILIBILI / 哔哩哔哩",
+            title: "哔哩哔哩",
+            directory: { name: "AXMORF", detail: "UID 269573670" },
+            body: "AXMORF · UID：269573670",
+            link: { href: heroPublicLinks.bilibili, label: "前往哔哩哔哩主页" },
+            image: {
+              src: "/channels/bilibili.jpg",
+              width: 1027,
+              height: 1459,
+              alt: "AXMORF 的哔哩哔哩账号二维码，使用哔哩哔哩扫码",
+            },
+          },
+          {
+            label: "文字 / WRITING",
+            title: "博客",
+            directory: { name: "长期思考", detail: "blog.zzzxc.com" },
+            body: "记录长期思考、实践轨迹与尚未结束的问题。",
+            link: { href: heroPublicLinks.blog, label: "阅读博客" },
+          },
+          {
+            label: "代码 / OPEN SOURCE",
+            title: "GitHub",
+            directory: { name: "开源实践", detail: "@agenticnoob" },
+            body: "可运行的实验、工具与开放项目。每一次提交，都是想法落地的痕迹。",
+            link: { href: heroPublicLinks.githubProfile, label: "查看 GitHub" },
+          },
+        ],
+        closing: "愿与同道者共研同进，或有所得，亦未可知。",
+      },
+    },
+    en: {
+      portal: {
+        left: {
+          label: formatHeroChapterHeading(
+            heroChapterDefinitions.signals,
+            "SIGNALS",
+          ),
+          body: "Beyond building, keep the conversation going in words, video and code.",
+        },
+        right: {
+          label: "PUBLIC SIGNALS",
+          items: ["Douyin", "Xiaohongshu", "Bilibili", "Blog", "GitHub"],
+        },
+      },
+      body: {
+        eyebrow: "SIGNALS / ELSEWHERE",
+        title: "Put unfinished thought into real exchange.",
+        intro: "Share through video. Reflect in writing. Put ideas into code.",
+        sections: [
+          {
+            label: "DOUYIN",
+            title: "Douyin",
+            directory: { name: "AXMORF", detail: "@Cognition_hub" },
+            body: "AXMORF · Douyin ID: Cognition_hub",
+            link: {
+              href: heroPublicLinks.douyin,
+              label: "Visit Douyin profile",
+            },
+            image: {
+              src: "/channels/douyin.jpg",
+              width: 1219,
+              height: 1820,
+              alt: "AXMORF Douyin profile QR code. Scan with Douyin.",
+            },
+          },
+          {
+            label: "XIAOHONGSHU",
+            title: "Xiaohongshu",
+            directory: { name: "AXMORF", detail: "@Cognition_hub" },
+            body: "AXMORF · Xiaohongshu ID: Cognition_hub",
+            link: {
+              href: heroPublicLinks.xiaohongshu,
+              label: "Visit Xiaohongshu profile",
+            },
+            image: {
+              src: "/channels/xiaohongshu.jpg",
+              width: 987,
+              height: 1347,
+              alt: "AXMORF Xiaohongshu profile QR code. Scan with Xiaohongshu.",
+            },
+          },
+          {
+            label: "BILIBILI",
+            title: "Bilibili",
+            directory: { name: "AXMORF", detail: "UID 269573670" },
+            body: "AXMORF · UID: 269573670",
+            link: {
+              href: heroPublicLinks.bilibili,
+              label: "Visit Bilibili profile",
+            },
+            image: {
+              src: "/channels/bilibili.jpg",
+              width: 1027,
+              height: 1459,
+              alt: "AXMORF Bilibili profile QR code. Scan with Bilibili.",
+            },
+          },
+          {
+            label: "WRITING",
+            title: "Blog",
+            directory: { name: "Notes", detail: "blog.zzzxc.com" },
+            body: "Long-form notes on practice, changing beliefs and questions that remain open.",
+            link: { href: heroPublicLinks.blog, label: "Read the blog" },
+          },
+          {
+            label: "OPEN SOURCE",
+            title: "GitHub",
+            directory: { name: "Open source", detail: "@agenticnoob" },
+            body: "Runnable experiments, tools and open projects. Ideas made tangible, one commit at a time.",
+            link: {
+              href: heroPublicLinks.githubProfile,
+              label: "Explore GitHub",
+            },
+          },
+        ],
+        closing: "May kindred minds inquire and move forward together.",
+      },
+    },
+  },
+} as const satisfies {
+  readonly [Id in HeroChapterId]: Readonly<
+    Record<
+      HeroLocale,
+      Id extends "builds"
+        ? ProjectRoomChapterContent
+        : HeroChapterLocalizedContent
+    >
+  >;
+};
+
+export function getHeroChapterContent(
+  chapterId: HeroChapterId,
+  locale: HeroLocale,
+): HeroChapterLocalizedContent {
+  return heroChapterContent[chapterId][locale];
+}

@@ -1,0 +1,15 @@
+# Generated declarations and local build/data outputs.
+next-env.d.ts
+.next/
+out/
+build/
+dist/
+coverage/
+output/
+.journal/
+.journal-source/
+public/journal/
+
+# Vendored decoder assets and historical design records are preserved verbatim.
+public/draco/
+docs/archive/

@@ -1,0 +1,203 @@
+name: Deploy journal to production
+
+on:
+  repository_dispatch:
+    types: [journal_updated]
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: "Full data commit SHA (leave empty for the current default branch)"
+        required: false
+        type: string
+  schedule:
+    - cron: "23 2 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hero-next-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      JOURNAL_REPOSITORY: agenticnoob/vibe-journal-pipeline
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      VERCEL_PRODUCTION_URL: ${{ vars.VERCEL_PRODUCTION_URL }}
+    steps:
+      - name: Resolve the website revision
+        id: website
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { data: head } = await github.rest.repos.getCommit({
+              ...context.repo, ref: context.payload.repository.default_branch,
+            });
+            const stale = head.sha !== context.sha;
+            core.setOutput('stale', String(stale));
+            core.setOutput('sha', context.sha);
+            if (stale) core.notice('Skipped a superseded website revision.');
+
+      - name: Resolve the data commit
+        if: steps.website.outputs.stale != 'true'
+        id: source
+        uses: actions/github-script@v9
+        env:
+          REQUESTED_SHA: ${{ inputs.source_sha || github.event.client_payload.source_sha }}
+          EVENT_SOURCE: ${{ github.event.client_payload.source_repository }}
+        with:
+          github-token: ${{ secrets.JOURNAL_READ_TOKEN }}
+          script: |
+            const repository = process.env.JOURNAL_REPOSITORY;
+            const [owner, repo] = repository.split('/');
+            const requested = process.env.REQUESTED_SHA || '';
+            if (context.eventName === 'repository_dispatch' &&
+                process.env.EVENT_SOURCE !== repository) {
+              throw new Error('Unexpected journal source repository');
+            }
+            if (requested && !/^[a-f0-9]{40}$/.test(requested)) {
+              throw new Error('Expected a full data commit SHA');
+            }
+            if (context.eventName === 'repository_dispatch' && !requested) {
+              throw new Error('journal_updated requires source_sha');
+            }
+            const { data: metadata } = await github.rest.repos.get({ owner, repo });
+            const { data: head } = await github.rest.repos.getCommit({ owner, repo, ref: metadata.default_branch });
+            const stale = Boolean(requested && requested !== head.sha);
+            core.setOutput('stale', String(stale));
+            core.setOutput('sha', requested || head.sha);
+            if (stale) core.notice('Skipped a superseded data revision.');
+
+      - name: Check out the exact website revision
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.website.outputs.sha }}
+          persist-credentials: false
+
+      - name: Check out the exact data revision
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ env.JOURNAL_REPOSITORY }}
+          ref: ${{ steps.source.outputs.sha }}
+          token: ${{ secrets.JOURNAL_READ_TOKEN }}
+          path: .journal-source
+          persist-credentials: false
+          sparse-checkout: |
+            data/journal
+            data/TIMELINE.json
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Node.js
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+
+      - name: Install locked dependencies
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        run: npm ci
+
+      - name: Generate the public journal snapshot
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        env:
+          JOURNAL_SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        run: npm run sync:journal -- --source .journal-source/data --revision "$JOURNAL_SOURCE_SHA"
+
+      - name: Verify the website and public data
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        run: |
+          npm run check
+          git diff --check
+          node --input-type=module -e 'import { productionOrigin } from "./scripts/verify-journal-deployment.mjs"; productionOrigin(process.env.VERCEL_PRODUCTION_URL); for (const key of ["VERCEL_ORG_ID", "VERCEL_PROJECT_ID"]) { if (!process.env[key]) throw new Error(`Missing ${key}`); }'
+
+      - name: Install the pinned Vercel CLI
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        run: npm install --global vercel@59.16.0
+
+      - name: Pull production settings
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production
+
+      - name: Build production output in Actions
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod
+
+      - name: Recheck the data head before publication
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
+        id: source_current
+        uses: actions/github-script@v9
+        env:
+          EXPECTED_SHA: ${{ steps.source.outputs.sha }}
+        with:
+          github-token: ${{ secrets.JOURNAL_READ_TOKEN }}
+          script: |
+            const [owner, repo] = process.env.JOURNAL_REPOSITORY.split('/');
+            const { data: metadata } = await github.rest.repos.get({ owner, repo });
+            const { data: head } = await github.rest.repos.getCommit({ owner, repo, ref: metadata.default_branch });
+            const stale = head.sha !== process.env.EXPECTED_SHA;
+            core.setOutput('stale', String(stale));
+            if (stale) core.notice('Data advanced during the build; publication skipped.');
+
+      - name: Recheck the website head before publication
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true' && steps.source_current.outputs.stale != 'true'
+        id: website_current
+        uses: actions/github-script@v9
+        env:
+          EXPECTED_SHA: ${{ steps.website.outputs.sha }}
+        with:
+          script: |
+            const { data: metadata } = await github.rest.repos.get(context.repo);
+            const { data: head } = await github.rest.repos.getCommit({ ...context.repo, ref: metadata.default_branch });
+            const stale = head.sha !== process.env.EXPECTED_SHA;
+            core.setOutput('stale', String(stale));
+            if (stale) core.notice('Website advanced during the build; publication skipped.');
+
+      - name: Publish the verified production output
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true' && steps.source_current.outputs.stale != 'true' && steps.website_current.outputs.stale != 'true'
+        id: publish
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --yes > "$RUNNER_TEMP/vercel-deployment-url.txt"
+
+      - name: Verify the public production snapshot
+        if: steps.publish.outcome == 'success'
+        id: readback
+        run: node scripts/verify-journal-deployment.mjs "$VERCEL_PRODUCTION_URL" > "$RUNNER_TEMP/journal-deployment-verification.json"
+
+      - name: Record the verified deployment
+        if: steps.readback.outcome == 'success'
+        uses: actions/github-script@v9
+        env:
+          WEBSITE_SHA: ${{ steps.website.outputs.sha }}
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+        with:
+          script: |
+            const { readFile } = require('node:fs/promises');
+            const { productionOrigin } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/verify-journal-deployment.mjs`);
+            const result = JSON.parse(await readFile(`${process.env.RUNNER_TEMP}/journal-deployment-verification.json`, 'utf8'));
+            const deploymentUrl = productionOrigin((await readFile(`${process.env.RUNNER_TEMP}/vercel-deployment-url.txt`, 'utf8')).trim());
+            if (result.sourceRevision !== process.env.SOURCE_SHA) {
+              throw new Error('Verified data revision differs from the selected source commit');
+            }
+            await core.summary.addHeading('Verified production deployment').addTable([
+              [{ data: 'Field', header: true }, { data: 'Value', header: true }],
+              ['Production URL', result.productionUrl],
+              ['Deployment URL', deploymentUrl],
+              ['Website commit', process.env.WEBSITE_SHA],
+              ['Source commit', result.sourceRevision],
+              ['Entries', String(result.entryCount)],
+              ['Latest date', result.latestDate],
+              ['Snapshot SHA-256', result.sha256],
+            ]).write();
