@@ -91,7 +91,7 @@ viewport, and persists the committed scheme locally across refreshes.
 
 ## Run
 
-Use Node.js 22 or newer and npm 10. From this directory:
+Use Node.js 22.x (the exact local version is in `.node-version`) and npm 10. From this directory:
 
 ```bash
 npm ci

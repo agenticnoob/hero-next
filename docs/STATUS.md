@@ -20,12 +20,13 @@ Vercel project `hero-next` (`prj_DqmZ9hblXxRyX8K51nPM5S9uQMCp`) now exists in
 The application's Node engine is also constrained to `22.x`, so Vercel does not
 select Node 24 from the previous open-ended range.
 
-A project-scoped `VERCEL_TOKEN` has been created and stored in the website's
-Actions secrets. It passes direct project API access, but Vercel CLI 59.16.0
-`pull` also queries the owning team, which returns `403 team_unauthorized` for
-this scope. The Vercel credential scope decision is still pending. The receiver
-remains disabled; no successful cloud deployment or automatic data update is
-claimed yet.
+A dedicated `agent-first` team-scoped `VERCEL_TOKEN` is stored in the website's
+Actions secrets and expires on 2026-12-11. Its broader team scope was explicitly
+approved because Vercel CLI 59.16.0 `pull` also queries the owning team; the
+previous project-only token returned `403 team_unauthorized`. Production settings
+now pull successfully with the new token. Revocation of the replaced project-only
+token awaits separate approval. The receiver remains disabled pending first
+activation; no successful cloud deployment or automatic data update is claimed yet.
 
 Both GitHub credentials are configured and verified: `JOURNAL_READ_TOKEN` reads
 only `vibe-journal-pipeline`; `HERO_NEXT_DISPATCH_TOKEN` grants Contents write
