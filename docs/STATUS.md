@@ -11,11 +11,21 @@ with `main` as the production source branch. The existing local branch remains
 
 The initial application, documentation and Actions workflow were committed as
 `81d27df63a564cca9b817a7f5047b1debef12ca0` and pushed to `main`. The website's
-`VERCEL_ORG_ID` and the source repository's `HERO_NEXT_REPOSITORY` variables are
-configured. Vercel project setup and the three Actions secrets are still pending
-account authentication; no successful cloud deployment or automatic data update
-is claimed yet. The receiver workflow is temporarily disabled on GitHub until
-these prerequisites are configured.
+`VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `VERCEL_PRODUCTION_URL` and the source
+repository's `HERO_NEXT_REPOSITORY` variables are configured.
+
+Vercel project `hero-next` (`prj_DqmZ9hblXxRyX8K51nPM5S9uQMCp`) now exists in
+`agent-first`, uses Node.js 22 and has the assigned production domain
+`hero-next-jade.vercel.app`. It has no Git integration or deployment yet.
+The application's Node engine is also constrained to `22.x`, so Vercel does not
+select Node 24 from the previous open-ended range.
+
+A project-scoped `VERCEL_TOKEN` has been created and stored in the website's
+Actions secrets. It passes direct project API access, but Vercel CLI 59.16.0
+`pull` also queries the owning team, which returns `403 team_unauthorized` for
+this scope. The credential scope decision and the two cross-repository GitHub
+credentials are still pending. The receiver remains disabled; no successful
+cloud deployment or automatic data update is claimed yet.
 
 GitHub Actions owns production building and deployment. The workflow receives
 `journal_updated` and website pushes to `main`, supports manual/daily
