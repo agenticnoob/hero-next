@@ -65,6 +65,24 @@ for a superseded head are skipped. Production builds are serialized. Before
 deploying, the workflow checks both source and website heads again so a superseded
 build cannot overwrite the production site.
 
+## Publishing website changes
+
+For application or documentation changes, review the diff and run `npm run check`
+and `npm run build`, then commit and push the reviewed website revision to `main`.
+The local `axmorf/standalone` branch tracks `origin/main`; an explicit
+`git push origin HEAD:main` publishes that branch's current commit without renaming
+the local branch. Confirm the remote head has not advanced before pushing and
+resolve divergence without force-pushing.
+
+Follow the `Deploy journal to production` run for that exact website SHA. A green
+run may have skipped publication when either repository advanced: confirm that
+both the publish and public snapshot verification steps completed successfully.
+After a content change, also read back the affected production content and links;
+the journal hash check alone does not validate chapter copy. Record the exact
+application commit, run URL and readback evidence in [STATUS.md](./STATUS.md).
+Documentation follow-up pushes run the same pipeline and must also finish before
+the release is considered complete.
+
 ## One-time GitHub configuration
 
 The private website repository is `agenticnoob/hero-next` (default branch `main`);

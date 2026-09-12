@@ -15,7 +15,10 @@ screen-locked triangular reveal whose rotation and centering finish at the DOM
 handoff, one continuous semantic body, signal-only entry/exit runways, and a
 reversible exit that preselects the following portal content under full cover.
 The chapters cover self, AI/philosophy axioms, public builds, and
-public channels. Chapter two is a scroll-driven circular title index
+public channels. Chapter one presents reading, code, experiments and AI through
+the public nickname and abstract figure. Its Chinese and English body and Portal
+copy omit real identity, birth year, cities, dated education/work history and
+military service. Chapter two is a scroll-driven circular title index
 and a stack of differently sized, postage-edged article sheets, rendered through
 one managed surface in the existing scene. Scroll continuously drives their
 right-side arc arrivals; only overflowing text adds a reading segment before
@@ -25,8 +28,9 @@ Chapter three places the four projects on the walls of a mouse-driven room on
 wide screens with a fine pointer. Edge gestures turn to adjacent walls; project
 buttons and a stable source link preserve keyboard access. Mobile and touch
 layouts retain the normal project list. See [project room behavior](./docs/visual-design.md#第三章四面项目空间).
-Chapter four uses centered, enlarged desktop rows with platform names and account
-information. Fine-pointer desktop previews follow the whole row; clicking opens
+Chapter four lists Douyin, Xiaohongshu, Bilibili, Blog, GitHub and LeetCode in six
+centered desktop rows with platform names and account information. The LeetCode
+entry points to the user-provided `skedush` profile. Fine-pointer desktop previews follow the whole row; clicking opens
 the profile. Narrow and touch screens show all account details, QR images and
 text directly in a scrollable list. Atlas endpoints follow each layout.
 See [public channel behavior](./docs/visual-design.md#第四章公共入口与跟随预览).
@@ -47,7 +51,7 @@ real content. Ordinary DOM chapters use their opening copy and final content;
 chapter two uses the first and last reader frames. The desktop project room
 uses the same first-wall composition at both endpoints, while its mobile
 layout uses the ordinary DOM opening and final project card. Chapter four uses
-the same unselected five-entry directory at both endpoints. Atlas drawing
+the same unselected six-entry directory at both endpoints. Atlas drawing
 and the semantic body share the same responsive geometry, including the profile columns,
 balanced heading, model exclusion, and profile speech bubble. Both tiles are
 packed up front, so exit switches to the prepared endpoint without rebuilding or

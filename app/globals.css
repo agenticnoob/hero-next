@@ -980,12 +980,12 @@ a {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 12svh;
+  height: 10svh;
   padding: 0;
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: min(7.6vw, 11svh, 128px);
+  font-size: min(7.6vw, 9svh, 128px);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -1092,7 +1092,7 @@ a {
 }
 
 .hero-signals__stage[lang="en"] .hero-signals__row {
-  font-size: min(5.9vw, 11svh, 128px);
+  font-size: min(5.9vw, 9svh, 128px);
 }
 .hero-signals__detail {
   font-size: min(1.4vw, 20px);

@@ -7,6 +7,32 @@ Its private repository is [agenticnoob/hero-next](https://github.com/agenticnoob
 with `main` as the production source branch. The existing local branch remains
 `axmorf/standalone`.
 
+## Privacy and directory update
+
+Chapter one omits real identity, birth year, dated education/work
+history, cities and military references from both languages of chapter one,
+including its Portal and body-derived atlas. Four sections now describe reading,
+code, experiments and AI. The public nickname and abstract figure remain.
+Chapter four adds the user-provided [LeetCode profile](https://leetcode.cn/u/skedush/)
+as its sixth row, with bilingual copy, `@skedush`, the existing hover preview and
+touch layout. Desktop DOM and atlas use 10svh rows and a 9svh font cap to keep
+all six entries above the footer.
+
+`npm run check` passes all gates (44 files / 304 tests), and the production build
+passes. Source and generated page/client-bundle scans found no removed identity
+or military copy. These changes have not been committed, pushed or deployed;
+the production release below describes the preceding published version.
+
+Local production Ego/Chromium checks covered 1440×900 desktop in both languages
+and 390×844 / DPR 2 touch emulation: chapter-one scroll and return, language
+switching, six directory rows, LeetCode hover copy and the exact link destination.
+Desktop rows remain above the footer with no label/arrow overlap. The mobile
+English directory retained the complete LeetCode entry with reduced motion
+enabled and no hover preview. All sampled states had one canvas, no horizontal
+overflow, no removed profile text and no captured page/console errors or warnings.
+Screenshots were inspected locally and are not committed. This pass did not test
+physical devices, external-platform loading, theme holds or subjective acceptance.
+
 ## Production release
 
 The application and aligned documentation are committed and pushed to `main`.
@@ -91,7 +117,7 @@ local manifests and generated snapshots remain outside Git.
 
 Node.js 22.22.3 / npm 10.9.8:
 
-- `npm run check` passes: ESLint with zero warnings, Prettier, 44 files / 303 tests,
+- `npm run check` passes: ESLint with zero warnings, Prettier, 44 files / 304 tests,
   both typechecks and the 94-file standalone package guard.
 - Production build passes; Next.js 16.2.10 prerenders `/`.
 - Both GitHub Actions workflows pass Actionlint. Twenty deployment readback tests

@@ -125,7 +125,7 @@ describe("chapter four public directory", () => {
     },
   );
 
-  test("keeps five rows and their previews within narrow and desktop viewports", () => {
+  test("keeps all six rows and their previews within narrow and desktop viewports", () => {
     expect(
       resolveSignalPreviewPosition(
         { x: 100, y: 100 },
@@ -165,7 +165,10 @@ describe("chapter four public directory", () => {
       { width: 844, height: 390 },
     ]) {
       const layout = resolveSignalsLayout(viewport);
-      expect(layout.top + layout.rowHeight * 5).toBeLessThan(
+      const rowCount = getHeroChapterContent("signals", "zh").body.sections
+        .length;
+      expect(rowCount).toBe(6);
+      expect(layout.top + layout.rowHeight * rowCount).toBeLessThan(
         viewport.height * 0.88,
       );
       expect(layout.fontSize * 4).toBeLessThan(
@@ -196,6 +199,7 @@ describe("chapter four public directory", () => {
         "哔哩哔哩",
         "博客",
         "GitHub",
+        "力扣",
       ]);
       expect(Array.from(rows, (r) => r.getAttribute("href"))).toEqual([
         heroPublicLinks.douyin,
@@ -203,6 +207,7 @@ describe("chapter four public directory", () => {
         heroPublicLinks.bilibili,
         heroPublicLinks.blog,
         heroPublicLinks.githubProfile,
+        heroPublicLinks.leetcode,
       ]);
       for (const row of rows) {
         expect(row.hasAttribute("aria-disabled")).toBe(false);
@@ -240,6 +245,9 @@ describe("chapter four public directory", () => {
       expect(preview?.textContent).toContain("GitHub");
       expect(rows[4].dataset.selected).toBe("true");
       expect(rows[3].dataset.selected).toBe("false");
+      await act(() => pointer(rows[4], "pointerout", 420, 500, rows[5]));
+      expect(host.querySelector(".hero-signals__preview")).toBe(preview);
+      expect(preview?.textContent).toContain("skedush");
       let navigationAllowed = false;
       // Observe the default link action, then stop jsdom from navigating externally.
       const observeClick = (event: MouseEvent) => {
@@ -247,7 +255,7 @@ describe("chapter four public directory", () => {
         event.preventDefault();
       };
       document.addEventListener("click", observeClick, { once: true });
-      await act(() => rows[4].click());
+      await act(() => rows[5].click());
       expect(navigationAllowed).toBe(true);
       expect(host.querySelector(".hero-signals__preview")).toBeNull();
       expect(
@@ -334,6 +342,7 @@ describe("chapter four public directory", () => {
         "Bilibili",
         "Blog",
         "GitHub",
+        "LeetCode",
       ]);
       const click = new MouseEvent("click", {
         bubbles: true,
@@ -357,6 +366,11 @@ describe("chapter four public directory", () => {
       }
       expect(rows[3].getAttribute("href")).toBe(heroPublicLinks.blog);
       expect(rows[4].getAttribute("href")).toBe(heroPublicLinks.githubProfile);
+      expect(rows[5].getAttribute("href")).toBe(heroPublicLinks.leetcode);
+      await act(() => pointer(rows[5], "pointerover"));
+      expect(
+        host.querySelector(".hero-signals__preview")?.textContent,
+      ).toContain("skedush");
     } finally {
       await act(() => root.unmount());
     }
@@ -385,8 +399,10 @@ describe("chapter four public directory", () => {
         3,
       );
       expect(host.querySelectorAll(".hero-signals__inline-copy")).toHaveLength(
-        2,
+        3,
       );
+      expect(rows[5].textContent).toContain("@skedush");
+      expect(rows[5].href).toBe(heroPublicLinks.leetcode);
       expect(rows[0].textContent).toContain("AXMORF");
       expect(rows[0].textContent).toContain("@Cognition_hub");
       expect(rows[2].textContent).toContain("UID 269573670");

@@ -20,6 +20,7 @@ export const heroPublicLinks = {
   syringeMeter: "https://github.com/agenticnoob/syringe-meter",
   vibeJournalPipeline: "https://github.com/agenticnoob/vibe-journal-pipeline",
   blog: "https://blog.zzzxc.com",
+  leetcode: "https://leetcode.cn/u/skedush/",
 } as const;
 
 export const heroSiteContent = {
@@ -73,38 +74,33 @@ export const heroChapterContent = {
       portal: {
         left: {
           label: formatHeroChapterHeading(heroChapterDefinitions.self, "来路"),
-          body: "一条没有被预先写好的线，穿过军营、校园、城市与代码。",
+          body: "一条没有被预先写好的线，在阅读、代码与独立构建之间展开。",
         },
         right: {
           label: "沿途坐标",
-          items: ["号声与晨光", "书页与像素", "智能与自由"],
+          items: ["阅读与疑问", "书页与像素", "智能与自由"],
         },
       },
       body: {
         eyebrow: "SELF / NOOBLI",
         title: "我不是沿一条直线抵达这里。",
         intro:
-          "徐力，也叫 noobli。1994 年生；先在军营听过清晨的号声，后来在书页与浏览器的微光里重写自己的方向。如今以独立构建者的身份，继续探问智能、软件与自由如何彼此照亮。",
+          "以独立构建者的视角，在书页与浏览器的微光里寻找方向。让好奇心引路，让想法接受实践的检验，继续探问智能、软件与自由如何彼此照亮。",
         sections: [
           {
-            label: "2012—2014 / 晨光",
-            title: "先学会站立，再学习远行。",
-            body: "十八岁那年，时间被号声切成清晰的刻度。两年的军旅没有替我回答远方，却让我懂得：自由从来不是松弛，而是能够为自己的选择站稳。",
+            label: "阅读 / 疑问",
+            title: "让每一次阅读，打开一个新的问题。",
+            body: "知识不必是一张通往确定答案的地图，也可以是一扇扇窗。在不同的观点之间停留，为尚未理解的事物留出空间，让判断在思考与实践中慢慢成形。",
           },
           {
-            label: "2014—2018 / 书页",
-            title: "把被规定的时间，重新交还给疑问。",
-            body: "离开军营之后，我回到校园。知识不再是一张通往确定答案的地图，更像一扇扇窗——让我看见，人生可以被重新命名，也可以重新开始。",
+            label: "代码 / 像素",
+            title: "在浏览器的光里，构建可以运行的世界。",
+            body: "代码把抽象变成可触碰的界面。一个布局、一次交互、一段流动的光，让想法有了形状，也让每个设计决定都能接受真实使用的检验。",
           },
           {
-            label: "2018—后来 / 像素",
-            title: "在浏览器的光里，造过一些可以运行的世界。",
-            body: "毕业后，我成为前端开发者，在杭州、温州与上海之间工作和生活。代码把抽象变成可触碰的界面，也让我第一次意识到：秩序并非只能接受，它也可以亲手设计。",
-          },
-          {
-            label: "转身 / 无固定席位",
-            title: "离开一张确定的工位，去寻找更完整的生活。",
-            body: "后来，我把职业从一个地点里取出，成为自由职业者。那不是逃离工作，而是重新安排工作、时间与生活的关系，让道路本身也成为答案的一部分。",
+            label: "构建 / 实验",
+            title: "把尚未确定的想法，交给一次具体的尝试。",
+            body: "从一个问题出发，做出能够运行的最小作品，再观察、修正与继续。保留独立判断，也欢迎不同的反馈，让构建成为理解世界的一种方式。",
           },
           {
             label: "此刻 / 未完成",
@@ -122,12 +118,12 @@ export const heroChapterContent = {
             heroChapterDefinitions.self,
             "THE WAY HERE",
           ),
-          body: "An unwritten line through barracks, campus, cities, and code.",
+          body: "An unwritten line through reading, code, and independent building.",
         },
         right: {
           label: "COORDINATES",
           items: [
-            "Reveille and dawn",
+            "Reading and questions",
             "Pages and pixels",
             "Intelligence and freedom",
           ],
@@ -137,28 +133,22 @@ export const heroChapterContent = {
         eyebrow: "SELF / NOOBLI",
         title: "I did not arrive here in a straight line.",
         intro:
-          "Xu Li, also known as noobli, born in 1994. I first heard the day begin with reveille, then rewrote my direction in the quiet glow of books and browsers. Now, as an independent builder, I keep asking how intelligence, software, and freedom might illuminate one another.",
+          "Looking for direction in the quiet glow of books and browsers, through the lens of an independent builder. Curiosity leads, practice tests each idea, and the question remains: how might intelligence, software, and freedom illuminate one another?",
         sections: [
           {
-            label: "2012—2014 / DAWN",
-            title: "First, learn to stand. Then, learn to leave.",
-            body: "At eighteen, reveille divided time into exact measures. Two years in the military did not answer where to go, but taught me that freedom is not ease; it is the strength to stand behind a choice.",
+            label: "READING / QUESTIONS",
+            title: "Let every page open a new question.",
+            body: "Knowledge can be a field of windows rather than a map to certain answers. Spend time with different perspectives, leave room for what remains unclear, and let judgment take shape through thought and practice.",
           },
           {
-            label: "2014—2018 / PAGES",
-            title: "Return prescribed time to the keeping of questions.",
-            body: "After the barracks, I returned to campus. Knowledge stopped resembling a map to certain answers and became a field of windows: life could be renamed, and begun again.",
+            label: "CODE / PIXELS",
+            title: "Build small worlds that can run in the browser's light.",
+            body: "Code turns abstraction into touchable surfaces. A layout, an interaction, a moving patch of light gives an idea a shape and lets each design decision meet the test of actual use.",
           },
           {
-            label: "2018—AFTER / PIXELS",
-            title:
-              "In the browser's light, I built small worlds that could run.",
-            body: "After graduation, I worked as a front-end developer across Hangzhou, Wenzhou, and Shanghai. Code turned abstraction into touchable surfaces and revealed that order need not only be accepted; it can be designed.",
-          },
-          {
-            label: "TURNING / NO FIXED SEAT",
-            title: "I left a certain desk in search of a more whole life.",
-            body: "Later, I lifted work out of a single place and became a freelancer. It was not an escape from work, but a new arrangement between work, time, and life—letting the road become part of the answer.",
+            label: "BUILDING / EXPERIMENTS",
+            title: "Give an uncertain idea a concrete first attempt.",
+            body: "Start with a question, make the smallest working version, then observe, revise, and continue. Keep an independent judgment and welcome different feedback, treating building as a way to understand the world.",
           },
           {
             label: "NOW / UNFINISHED",
@@ -310,7 +300,7 @@ export const heroChapterContent = {
         },
         right: {
           label: "公共信号",
-          items: ["抖音", "小红书", "哔哩哔哩", "博客", "GitHub"],
+          items: ["抖音", "小红书", "哔哩哔哩", "博客", "GitHub", "力扣"],
         },
       },
       body: {
@@ -374,6 +364,13 @@ export const heroChapterContent = {
             body: "可运行的实验、工具与开放项目。每一次提交，都是想法落地的痕迹。",
             link: { href: heroPublicLinks.githubProfile, label: "查看 GitHub" },
           },
+          {
+            label: "算法 / LEETCODE",
+            title: "力扣",
+            directory: { name: "算法练习", detail: "@skedush" },
+            body: "skedush 的力扣主页，在一道道问题里练习拆解、推理与实现。",
+            link: { href: heroPublicLinks.leetcode, label: "查看力扣主页" },
+          },
         ],
         closing: "愿与同道者共研同进，或有所得，亦未可知。",
       },
@@ -389,7 +386,14 @@ export const heroChapterContent = {
         },
         right: {
           label: "PUBLIC SIGNALS",
-          items: ["Douyin", "Xiaohongshu", "Bilibili", "Blog", "GitHub"],
+          items: [
+            "Douyin",
+            "Xiaohongshu",
+            "Bilibili",
+            "Blog",
+            "GitHub",
+            "LeetCode",
+          ],
         },
       },
       body: {
@@ -460,6 +464,16 @@ export const heroChapterContent = {
             link: {
               href: heroPublicLinks.githubProfile,
               label: "Explore GitHub",
+            },
+          },
+          {
+            label: "ALGORITHMS / LEETCODE",
+            title: "LeetCode",
+            directory: { name: "Practice", detail: "@skedush" },
+            body: "skedush on LeetCode. Practice reasoning and turning ideas into code.",
+            link: {
+              href: heroPublicLinks.leetcode,
+              label: "Visit LeetCode profile",
             },
           },
         ],

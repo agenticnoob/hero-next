@@ -44,6 +44,7 @@ describe("hero chapter content", () => {
       "https://github.com/agenticnoob/dom-webgl-workspace",
     );
     expect(heroPublicLinks.blog).toBe("https://blog.zzzxc.com");
+    expect(heroPublicLinks.leetcode).toBe("https://leetcode.cn/u/skedush/");
     expect(heroPublicLinks.douyin).toBe(
       "https://www.douyin.com/user/MS4wLjABAAAATcqt2Tq3UxNiJz8Qg5eEHhOkdpfNuEP1KuthHYn-oIycjaF24_KxkL9pY8bgbW3Z",
     );
@@ -63,24 +64,29 @@ describe("hero chapter content", () => {
         ],
       );
       expect(sections.slice(0, 3).every((section) => section.image)).toBe(true);
+      expect(sections).toHaveLength(6);
+      expect(sections.at(-1)).toMatchObject({
+        directory: { detail: "@skedush" },
+        link: { href: heroPublicLinks.leetcode },
+      });
     }
     expect(Object.keys(heroPublicLinks)).not.toContain("email");
     expect(Object.keys(heroPublicLinks)).not.toContain("phone");
   });
 
-  test("frames the profile as a literary path grounded in stable biography", () => {
-    const profile = getHeroChapterContent("self", "zh");
+  test.each(["zh", "en"] as const)(
+    "keeps real identity, dated biography and military service out of the %s body and portals",
+    (locale) => {
+      const profile = getHeroChapterContent("self", locale);
+      const copy = JSON.stringify(profile);
 
-    expect(profile.body.eyebrow).toContain("SELF");
-    expect(profile.body.intro).toContain("1994 年生");
-    expect(profile.body.sections).toHaveLength(5);
-    expect(profile.body.sections.map((section) => section.label)).toEqual([
-      "2012—2014 / 晨光",
-      "2014—2018 / 书页",
-      "2018—后来 / 像素",
-      "转身 / 无固定席位",
-      "此刻 / 未完成",
-    ]);
-    expect(profile.body.closing).toContain("暂时落下的坐标");
-  });
+      expect(profile.body.eyebrow).toContain("SELF");
+      expect(profile.body.sections).toHaveLength(4);
+      expect(copy).not.toMatch(
+        /徐力|Xu Li|\b(?:19|20)\d{2}\b|出生|年生|岁|born|eighteen|军营|军旅|入伍|当兵|号声|barracks|military|reveille|杭州|温州|上海|Hangzhou|Wenzhou|Shanghai|校园|毕业|自由职业|campus|graduation|freelancer/i,
+      );
+      expect(copy).toContain("AI");
+      expect(profile.body.closing).toBeTruthy();
+    },
+  );
 });

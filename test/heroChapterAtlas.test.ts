@@ -181,18 +181,19 @@ describe("hero chapter atlas", () => {
   test("uses the fourth chapter directory at both handoff endpoints", () => {
     createHeroChapterAtlas({ width: 1440, height: 900 });
     for (const [title, y] of [
-      ["抖音 · AXMORF", 243],
-      ["小红书 · AXMORF", 351],
-      ["哔哩哔哩 · AXMORF", 459],
-      ["博客 · 长期思考", 567],
-      ["GitHub · 开源实践", 675],
+      ["抖音 · AXMORF", 234],
+      ["小红书 · AXMORF", 324],
+      ["哔哩哔哩 · AXMORF", 414],
+      ["博客 · 长期思考", 504],
+      ["GitHub · 开源实践", 594],
+      ["力扣 · 算法练习", 684],
     ] as const) {
       const rows = fillText.mock.calls.filter(
         ([text, x, top]) =>
           text === title &&
           x > 1440 * 0.07 &&
           x < 1440 / 2 &&
-          Math.abs(top - (y + 99 * 0.3)) < 0.001,
+          Math.abs(top - (y + 81 * 0.3)) < 0.001,
       );
       expect(rows).toHaveLength(2);
     }
@@ -303,7 +304,12 @@ describe("hero chapter atlas", () => {
         layout.rows[0].contentHeight,
       );
       expect(layout.height).toBeGreaterThan(viewport.height * 2);
-      expect(layout.rows[4].top + layout.rows[4].height).toBe(layout.footerTop);
+      expect(layout.rows).toHaveLength(6);
+      const lastRow = layout.rows.at(-1)!;
+      expect(lastRow.top + lastRow.height).toBe(layout.footerTop);
+      expect(fillText.mock.calls.some(([text]) => text === "@skedush")).toBe(
+        true,
+      );
       expect(
         fillText.mock.calls.some(([text]) => text === "点击内容，前往主页 ↗"),
       ).toBe(true);

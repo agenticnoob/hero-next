@@ -20,10 +20,10 @@ export function resolveSignalsLayout(
   return {
     inset: Math.max(24, width * 0.07),
     top: height * 0.21,
-    rowHeight: height * 0.12,
+    rowHeight: height * 0.1,
     fontSize: Math.min(
       width * (locale === "en" ? 0.059 : 0.076),
-      height * 0.11,
+      height * 0.09,
       128,
     ),
     captionSize: Math.min(16, Math.max(11, width * 0.018)),
