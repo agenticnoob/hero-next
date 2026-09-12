@@ -77,10 +77,16 @@ under the existing `agent-first` team, and configure:
 | vibe-journal-pipeline | Actions variable `HERO_NEXT_REPOSITORY`   | `agenticnoob/hero-next`, checked against the sender's allowed destination              |
 | vibe-journal-pipeline | Actions secret `HERO_NEXT_DISPATCH_TOKEN` | Fine-grained token restricted to the website repository, Contents: write, for dispatch |
 | Hero Next             | Actions secret `JOURNAL_READ_TOKEN`       | Fine-grained token restricted to the private data repository, Contents: read           |
-| Hero Next             | Actions secret `VERCEL_TOKEN`             | Vercel automation token restricted to the website project                              |
+| Hero Next             | Actions secret `VERCEL_TOKEN`             | Dedicated Vercel automation token with team access required by CLI 59.16.0             |
 | Hero Next             | Actions variable `VERCEL_ORG_ID`          | Linked Vercel team ID                                                                  |
 | Hero Next             | Actions variable `VERCEL_PROJECT_ID`      | Linked Vercel project ID                                                               |
 | Hero Next             | Actions variable `VERCEL_PRODUCTION_URL`  | Public HTTPS production origin used for post-deploy verification                       |
+
+Vercel CLI 59.16.0 resolves the owning team during `pull`. A project-scoped token
+passes direct project API requests but fails that team lookup with
+`403 team_unauthorized`. The standard CLI workflow therefore needs a dedicated
+team-scoped token, whose access includes every project in that team. The current
+scope decision and activation state are recorded in [STATUS.md](./STATUS.md).
 
 Set token expiration and owner according to the account's policy. A GitHub App
 may replace these tokens later; it is not needed for this two-repository setup.

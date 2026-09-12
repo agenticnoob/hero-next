@@ -23,9 +23,16 @@ select Node 24 from the previous open-ended range.
 A project-scoped `VERCEL_TOKEN` has been created and stored in the website's
 Actions secrets. It passes direct project API access, but Vercel CLI 59.16.0
 `pull` also queries the owning team, which returns `403 team_unauthorized` for
-this scope. The credential scope decision and the two cross-repository GitHub
-credentials are still pending. The receiver remains disabled; no successful
-cloud deployment or automatic data update is claimed yet.
+this scope. The Vercel credential scope decision is still pending. The receiver
+remains disabled; no successful cloud deployment or automatic data update is
+claimed yet.
+
+Both GitHub credentials are configured and verified: `JOURNAL_READ_TOKEN` reads
+only `vibe-journal-pipeline`; `HERO_NEXT_DISPATCH_TOKEN` grants Contents write
+only on `hero-next` for repository dispatch. Both expire on 2026-12-11. The
+temporary local GitHub token files have been removed after Secret storage was
+read back. The journal repository's pending source update is still unpublished,
+preserving the first-deployment-then-source-push verification sequence.
 
 GitHub Actions owns production building and deployment. The workflow receives
 `journal_updated` and website pushes to `main`, supports manual/daily
