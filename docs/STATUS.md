@@ -9,14 +9,18 @@ with `main` as the production source branch. The existing local branch remains
 
 ## Release preparation
 
-The repository has been created and the local remote is configured. Application,
-documentation and workflows are prepared for the initial release. Vercel
-publishing and cross-repository Actions credentials still require setup; no
-successful cloud deployment or automatic data update is claimed yet.
+The initial application, documentation and Actions workflow were committed as
+`81d27df63a564cca9b817a7f5047b1debef12ca0` and pushed to `main`. The website's
+`VERCEL_ORG_ID` and the source repository's `HERO_NEXT_REPOSITORY` variables are
+configured. Vercel project setup and the three Actions secrets are still pending
+account authentication; no successful cloud deployment or automatic data update
+is claimed yet. The receiver workflow is temporarily disabled on GitHub until
+these prerequisites are configured.
 
 GitHub Actions owns production building and deployment. The workflow receives
-`journal_updated`, supports manual/daily reconciliation, checks out an exact data
-revision, exports public fields, runs the quality gate, builds with Vercel CLI and
+`journal_updated` and website pushes to `main`, supports manual/daily
+reconciliation, checks out an exact data revision, exports public fields, runs
+the quality gate, builds with Vercel CLI and
 publishes the prebuilt output. The public page and snapshot must pass
 hash/revision/count/date readback. Direct Vercel Git deployments are disabled.
 See [journal publishing](./journal-publishing.md) for setup and activation.

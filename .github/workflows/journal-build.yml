@@ -1,6 +1,8 @@
 name: Deploy journal to production
 
 on:
+  push:
+    branches: [main]
   repository_dispatch:
     types: [journal_updated]
   workflow_dispatch:

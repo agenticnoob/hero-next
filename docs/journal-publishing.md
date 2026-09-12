@@ -58,9 +58,9 @@ version is pinned in the workflow. Tokens stay in Actions secrets and are never
 passed to the public readback script.
 
 Notifications go to GitHub's cloud repository, not this local checkout. Local
-updates remain explicit `sync:journal` runs. The receiver also has a daily
-02:23 UTC reconciliation and manual trigger; both resolve the current source
-default-branch head unless a manual full SHA is supplied. Delayed notifications
+updates remain explicit `sync:journal` runs. Website pushes to `main`, a daily
+02:23 UTC reconciliation and a manual trigger also run the receiver; these
+resolve the current source default-branch head unless a manual full SHA is supplied. Delayed notifications
 for a superseded head are skipped. Production builds are serialized. Before
 deploying, the workflow checks both source and website heads again so a superseded
 build cannot overwrite the production site.
@@ -87,7 +87,9 @@ may replace these tokens later; it is not needed for this two-repository setup.
 The default `GITHUB_TOKEN` cannot read a different private repository. No token
 is stored in source, browser props, generated JSON, or the deployment artifact.
 
-For the first release, run the website workflow manually and verify its source
+After configuring the project, variables and secrets, enable the receiver with
+`gh workflow enable journal-build.yml -R agenticnoob/hero-next`. For the first
+release, run the website workflow manually and verify its source
 SHA and deployed JSON before publishing the pending data update. Then push the
 reviewed journal update to `master` and verify both the notification run and the
 resulting website deployment. A successful notification alone is not a successful
