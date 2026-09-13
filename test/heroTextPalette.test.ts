@@ -38,9 +38,9 @@ describe("native text palette continuity", () => {
       params,
     );
     for (const [scheme, foreground] of [
-      [0, 95 / 255],
-      [1, 184 / 255],
-      [0, 95 / 255],
+      [0, 66 / 255],
+      [1, 200 / 255],
+      [0, 66 / 255],
     ]) {
       values.set(heroTransitionConfig.signalKeys.committedScheme, scheme);
       heroTextPaletteEffect.update!(ctx, state, params);

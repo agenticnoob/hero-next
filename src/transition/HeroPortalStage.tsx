@@ -10,6 +10,7 @@ import React, {
 } from "react";
 
 import { useHeroViewport } from "../shared/useHeroViewport";
+import { readHeroChapterScrollState } from "../chapters/scrollState";
 import { getHeroChapterContent, heroSiteContent } from "../chapters/content";
 import {
   heroChapterDefinitions,
@@ -56,6 +57,16 @@ export function HeroPortalStage({
 }) {
   const renderKey = useHeroPortalRenderKey(progress);
   const viewport = useHeroViewport();
+  const subscribe = useCallback(
+    (listener: () => void) =>
+      progress.subscribe?.(listener) ?? (() => undefined),
+    [progress],
+  );
+  const readHub = useCallback(
+    () => readHeroChapterScrollState(progress).hubInteractive,
+    [progress],
+  );
+  const hub = useSyncExternalStore(subscribe, readHub, () => true);
   const textKey = `${locale}:${viewport.width}:${viewport.height}:${viewport.rootFontSize}`;
   const showSite = renderKey === "site" || renderKey === "site+content";
   const activeContentId: HeroPortalNarrativeContentId | undefined =
@@ -64,6 +75,15 @@ export function HeroPortalStage({
       : renderKey === "site+content"
         ? heroChapterOrder[0]
         : renderKey;
+
+  if (viewport.reading) {
+    return hub ? (
+      <HeroReadingPortal
+        id={showSite ? "site" : activeContentId}
+        locale={locale}
+      />
+    ) : null;
+  }
 
   return (
     <div className="hero-portal-stage" aria-hidden="true">
@@ -81,6 +101,27 @@ export function HeroPortalStage({
           locale={locale}
         />
       ) : null}
+    </div>
+  );
+}
+
+function HeroReadingPortal({
+  id,
+  locale,
+}: {
+  readonly id: HeroPortalNarrativeContentId | "site" | undefined;
+  readonly locale: HeroLocale;
+}) {
+  if (!id || id === "site" || id === heroPortalTerminalContentId) return null;
+  const copy = resolvePortalCopy(id, locale);
+  return (
+    <div className="hero-reading-portal" aria-hidden="true">
+      <p>{copy.left.primary}</p>
+      <h1>{getHeroChapterContent(id, locale).body.eyebrow}</h1>
+      <p>{copy.left.secondary}</p>
+      <p className="hero-reading-portal__hint">
+        {heroSiteContent[locale].intro.hint}
+      </p>
     </div>
   );
 }

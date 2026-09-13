@@ -89,6 +89,29 @@ function projectedFrame(frame: ReturnType<typeof resolveFrame>) {
 }
 
 describe("hero profile model frame", () => {
+  test("follows the mobile portrait slot through scrolling and retains the face relief before entry", () => {
+    const input = resolveFrameInput({ viewport: { width: 390, height: 844 } });
+    const resting = resolveHeroProfileModelFrame({
+      ...input,
+      readingSlot: { centerY: 500, height: 300 },
+    });
+    const scrolled = resolveHeroProfileModelFrame({
+      ...input,
+      readingSlot: { centerY: 200, height: 300 },
+    });
+    expect(scrolled.position[1]).toBeGreaterThan(resting.position[1]);
+    expect(scrolled.scale).toEqual(resting.scale);
+    const hub = resolveFrameInput({
+      entryProgress: 0,
+      viewport: { width: 390, height: 844 },
+    });
+    expect(
+      resolveHeroProfileModelFrame({
+        ...hub,
+        readingSlot: { centerY: 1600, height: 300 },
+      }),
+    ).toEqual(resolveHeroProfileModelFrame(hub));
+  });
   test("holds the body model in place while content drives one clockwise turn", () => {
     const start = resolveFrame({ spinProgress: 0 });
     const middle = resolveFrame({ spinProgress: 0.5 });
@@ -229,7 +252,7 @@ describe("hero profile model frame", () => {
   });
 
   test("keeps the same light neutral material tint across both themes", () => {
-    expect(heroProfileMaterialColor).toBe("#B8B8B8");
+    expect(heroProfileMaterialColor).toBe("#C8C8C8");
   });
 
   test("keeps the relief rigidly attached through all journal flight rotations and scales", () => {

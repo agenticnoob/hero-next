@@ -43,6 +43,7 @@ export function HeroChapter({
 
       <article
         id={chapterId}
+        tabIndex={-1}
         className={["hero-chapter", className].filter(Boolean).join(" ")}
         aria-label={`${chapterCounter} · ${content.body.eyebrow}`}
       >

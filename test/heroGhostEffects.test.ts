@@ -66,10 +66,10 @@ describe("hero Ghost Cursor effects", () => {
 
     publishHeroTransitionSignals(writer, idle);
     expect(resolveHeroGhostProgramState(reader, viewport)).toEqual({
-      baseBackgroundColor: "#B8B8B8",
-      baseForegroundColor: "#5F5F5F",
-      targetBackgroundColor: "#B8B8B8",
-      targetForegroundColor: "#5F5F5F",
+      baseBackgroundColor: "#C8C8C8",
+      baseForegroundColor: "#424242",
+      targetBackgroundColor: "#C8C8C8",
+      targetForegroundColor: "#424242",
       radialOrigin: [0.5, 0.5],
       radialRadiusPx: 0,
       radialEdgePx: 1.5,
@@ -87,10 +87,10 @@ describe("hero Ghost Cursor effects", () => {
     publishHeroTransitionSignals(writer, expanding);
     const expandingProgram = resolveHeroGhostProgramState(reader, viewport);
     expect(expandingProgram).toMatchObject({
-      baseBackgroundColor: "#B8B8B8",
-      baseForegroundColor: "#5F5F5F",
-      targetBackgroundColor: "#5F5F5F",
-      targetForegroundColor: "#B8B8B8",
+      baseBackgroundColor: "#C8C8C8",
+      baseForegroundColor: "#424242",
+      targetBackgroundColor: "#424242",
+      targetForegroundColor: "#C8C8C8",
       radialOrigin: [0.25, 0.75],
       radialRadiusPx: expect.any(Number),
       radialEdgePx: 1.5,
@@ -109,17 +109,17 @@ describe("hero Ghost Cursor effects", () => {
       phase: "retracting",
     });
     expect(resolveHeroGhostProgramState(reader, viewport)).toMatchObject({
-      baseBackgroundColor: "#B8B8B8",
-      targetBackgroundColor: "#5F5F5F",
-      targetForegroundColor: "#B8B8B8",
+      baseBackgroundColor: "#C8C8C8",
+      targetBackgroundColor: "#424242",
+      targetForegroundColor: "#C8C8C8",
       sceneOpacity: 1,
     });
 
     publishHeroTransitionSignals(writer, idle);
     expect(resolveHeroGhostProgramState(reader, viewport)).toMatchObject({
-      baseBackgroundColor: "#B8B8B8",
-      targetBackgroundColor: "#B8B8B8",
-      targetForegroundColor: "#5F5F5F",
+      baseBackgroundColor: "#C8C8C8",
+      targetBackgroundColor: "#C8C8C8",
+      targetForegroundColor: "#424242",
       radialRadiusPx: 0,
       sceneOpacity: 1,
     });
@@ -132,20 +132,20 @@ describe("hero Ghost Cursor effects", () => {
       phase: "awaiting-release",
     });
     expect(resolveHeroGhostProgramState(reader, viewport)).toMatchObject({
-      baseBackgroundColor: "#5F5F5F",
-      baseForegroundColor: "#B8B8B8",
-      targetBackgroundColor: "#5F5F5F",
-      targetForegroundColor: "#B8B8B8",
+      baseBackgroundColor: "#424242",
+      baseForegroundColor: "#C8C8C8",
+      targetBackgroundColor: "#424242",
+      targetForegroundColor: "#C8C8C8",
       sceneOpacity: 1,
     });
 
     publishHeroTransitionSignals(writer, idle);
     values.set("hero.chapter-1.entry", 1);
     expect(resolveHeroGhostProgramState(reader, viewport)).toMatchObject({
-      baseBackgroundColor: "#5F5F5F",
-      baseForegroundColor: "#B8B8B8",
-      targetBackgroundColor: "#5F5F5F",
-      targetForegroundColor: "#B8B8B8",
+      baseBackgroundColor: "#424242",
+      baseForegroundColor: "#C8C8C8",
+      targetBackgroundColor: "#424242",
+      targetForegroundColor: "#C8C8C8",
       sceneOpacity: 1,
     });
     expect(resolveHeroPointerLightIntensityScale(reader)).toBeCloseTo(0.01);

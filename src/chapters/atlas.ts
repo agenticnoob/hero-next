@@ -1,4 +1,7 @@
 import { heroViewportStore } from "../shared/viewportStore";
+import { heroReadingLayoutEnabled } from "../shared/layoutTokens";
+import { drawReadingChapterEndpoint } from "./readingArtwork";
+import { readHeroReadingLayoutRevision } from "./readingLayout";
 import { getSignalImageRevision } from "../signals/images";
 import { signalsHoverEnabled } from "../signals/layout";
 import { drawSignalsEndpoint } from "../signals/artwork";
@@ -38,6 +41,8 @@ export type HeroChapterAtlas = {
   readonly projectRoom: boolean;
   readonly signalsHover: boolean;
   readonly signalImagesRevision: number;
+  readonly reading: boolean;
+  readonly layoutRevision: number;
 };
 
 export function createHeroChapterAtlas(
@@ -58,12 +63,13 @@ export function createHeroChapterAtlas(
   context.textBaseline = "alphabetic";
   const projectRoom = projectRoomEnabled();
   const signalsHover = signalsHoverEnabled();
+  const reading = heroReadingLayoutEnabled();
   for (const chapterId of heroChapterOrder) {
     const definition = getHeroChapterDefinition(chapterId);
     const layout = resolveHeroChapterLayout(viewport, chapterId, rootFontSize);
     const content = getHeroChapterContent(chapterId, locale);
     const axioms =
-      chapterId === "axioms"
+      chapterId === "axioms" && !reading
         ? createHeroAxiomsArtwork(context, layout.viewport, locale)
         : undefined;
     const roomTexture =
@@ -71,8 +77,15 @@ export function createHeroChapterAtlas(
         ? createProjectRoomTexture(content.body)
         : undefined;
     const counter = formatHeroChapterCounter(definition);
+    const body = reading
+      ? document.querySelector<HTMLElement>(
+          `#chapter-${definition.ordinal} .hero-chapter__body`,
+        )
+      : null;
     const drawEndpoint = (endpoint: "entry" | "exit") => {
-      if (chapterId === "signals") {
+      if (body && body.getBoundingClientRect().height > 0) {
+        drawReadingChapterEndpoint(context, body, layout.viewport, endpoint);
+      } else if (chapterId === "signals") {
         drawSignalsEndpoint(
           context,
           layout.viewport,
@@ -126,6 +139,8 @@ export function createHeroChapterAtlas(
     projectRoom,
     signalsHover,
     signalImagesRevision: getSignalImageRevision(),
+    reading,
+    layoutRevision: readHeroReadingLayoutRevision(),
   };
 }
 
@@ -144,6 +159,9 @@ export function heroChapterAtlasMatchesViewport(
     atlas.tileHeight === resolution.tileHeight &&
     atlas.locale === locale &&
     atlas.rootFontSize === rootFontSize &&
+    atlas.reading === heroReadingLayoutEnabled() &&
+    (!atlas.reading ||
+      atlas.layoutRevision === readHeroReadingLayoutRevision()) &&
     atlas.projectRoom === projectRoomEnabled() &&
     atlas.signalsHover === signalsHoverEnabled() &&
     (atlas.signalsHover ||

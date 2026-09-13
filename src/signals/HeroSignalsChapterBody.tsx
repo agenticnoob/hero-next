@@ -13,7 +13,11 @@ export function HeroSignalsChapterBody({
   definition,
   content,
   locale,
-}: HeroChapterBodyProps & { readonly locale: HeroLocale }) {
+  reading = false,
+}: HeroChapterBodyProps & {
+  readonly locale: HeroLocale;
+  readonly reading?: boolean;
+}) {
   const [selection, setSelection] = useState<number | null>(null);
   const preview = useRef<HTMLSpanElement>(null);
   const hoveredRow = useRef<HTMLAnchorElement | null>(null);
@@ -55,6 +59,56 @@ export function HeroSignalsChapterBody({
       window.removeEventListener("resize", dismiss);
     };
   }, [selection]);
+
+  if (reading)
+    return (
+      <WebGLScrollTimeline
+        as="section"
+        id={`${bodyId}-timeline`}
+        progressKey={definition.signals.body}
+        className="hero-chapter__body hero-signals-reading"
+        start="top top"
+        end="bottom bottom"
+        scrub
+        aria-labelledby={bodyId}
+      >
+        <header>
+          <p className="hero-reading-index">
+            {formatHeroChapterHeading(definition, ui.title)}
+          </p>
+          <h2 id={bodyId}>{content.body.title}</h2>
+          <p className="hero-reading-intro">{content.body.intro}</p>
+        </header>
+        <div className="hero-signals-reading__list">
+          {content.body.sections.map((item) => (
+            <section key={item.title}>
+              <a
+                className="hero-signals-reading__link"
+                href={item.link?.href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <h3>{item.title}</h3>
+                <span aria-hidden="true">↗</span>
+              </a>
+              <p className="hero-signals-reading__account">
+                {item.directory?.name} · {item.directory?.detail}
+              </p>
+              {!item.image && <p>{item.body}</p>}
+              {item.image && (
+                <details className="hero-signals-reading__qr">
+                  <summary>
+                    {locale === "zh" ? "查看二维码" : "Show QR code"}
+                  </summary>
+                  <HeroSignalInlineImage image={item.image} />
+                </details>
+              )}
+            </section>
+          ))}
+        </div>
+        <p>{content.body.closing}</p>
+      </WebGLScrollTimeline>
+    );
 
   return (
     <WebGLScrollTimeline

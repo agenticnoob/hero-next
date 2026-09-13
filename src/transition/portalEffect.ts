@@ -19,7 +19,7 @@ export type HeroPortalMotionParams = {
 };
 
 type HeroPortalEffectState = {
-  readonly reducedMotion: boolean;
+  readonly motionPreference: MediaQueryList;
   readonly parallax: HeroPortalParallaxState;
 };
 
@@ -67,13 +67,12 @@ export const heroPortalMotionEffect = defineWebGLEffect<
   schedule: "frame",
   setup() {
     return {
-      reducedMotion:
-        typeof window !== "undefined" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      motionPreference: window.matchMedia("(prefers-reduced-motion: reduce)"),
       parallax: createHeroPortalParallaxState(),
     };
   },
   update(ctx, state, params) {
+    const reducedMotion = state.motionPreference.matches;
     const text = ctx.object.text;
     if (!text) {
       return;
@@ -86,7 +85,7 @@ export const heroPortalMotionEffect = defineWebGLEffect<
         side: params.side,
       },
     );
-    const travelPx = state.reducedMotion
+    const travelPx = reducedMotion
       ? 0
       : Math.min(
           params.maxTravelPx,
@@ -104,14 +103,14 @@ export const heroPortalMotionEffect = defineWebGLEffect<
       pointerInside: ctx.pointer.isInside,
       pointerX: ctx.pointer.normalizedX,
       pointerY: ctx.pointer.normalizedY,
-      reducedMotion: state.reducedMotion,
+      reducedMotion,
       visible: motion.visible && opacity > 0.001,
     });
 
     ctx.object.visible = !hiddenByProgress && motion.visible && opacity > 0.001;
     ctx.object.rotation.set(
       -state.parallax.y * heroTransitionConfig.portal.pointerPitch,
-      (state.reducedMotion ? 0 : motion.rotationY) +
+      (reducedMotion ? 0 : motion.rotationY) +
         state.parallax.x * heroTransitionConfig.portal.pointerYaw,
       0,
     );

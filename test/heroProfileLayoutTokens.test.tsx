@@ -133,15 +133,6 @@ describe("profile DOM and canvas length declarations", () => {
         (rule) =>
           rule instanceof CSSStyleRule && rule.selectorText === ".hero-profile",
       ) as CSSStyleRule;
-      const compactMedia = rules.find(
-        (rule) =>
-          rule instanceof CSSMediaRule &&
-          rule.conditionText === "(max-width: 700px)",
-      ) as CSSMediaRule;
-      const compact = Array.from(compactMedia.cssRules).find(
-        (rule) =>
-          rule instanceof CSSStyleRule && rule.selectorText === ".hero-profile",
-      ) as CSSStyleRule;
       const outro = rules.find(
         (rule) =>
           rule instanceof CSSStyleRule &&
@@ -158,16 +149,10 @@ describe("profile DOM and canvas length declarations", () => {
       expect(profileCSSProperties["--hero-profile-compact-outro-height"]).toBe(
         "84svh",
       );
-      for (const [mode, rule] of [
-        ["desktop", desktop],
-        ["compact", compact],
-      ] as const) {
+      for (const [mode, rule] of [["desktop", desktop]] as const) {
         for (const name of Object.keys(profileLayoutLengths[mode])) {
           const variable = `var(--hero-profile-${mode}-${name})`;
-          const expected =
-            mode === "compact" && name === "page-inset"
-              ? `max(${variable},env(safe-area-inset-right),env(safe-area-inset-left))`
-              : variable;
+          const expected = variable;
           expect(
             rule.style
               .getPropertyValue(`--hero-profile-${name}`)

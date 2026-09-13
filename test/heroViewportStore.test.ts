@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { createHeroViewportStore } from "../src/shared/viewportStore";
+import { heroReadingQuery } from "../src/shared/layoutTokens";
 
 afterEach(() => {
   document.documentElement.style.removeProperty("font-size");
@@ -7,6 +8,39 @@ afterEach(() => {
 });
 
 describe("shared viewport subscriptions", () => {
+  test("updates reading mode when the input capability changes without a resize", () => {
+    let frame: FrameRequestCallback | undefined;
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((next) => {
+      frame = next;
+      return 1;
+    });
+    let changed: (() => void) | undefined;
+    const remove = vi.fn();
+    const media = {
+      matches: false,
+      addEventListener: (_name: string, listener: () => void) => {
+        changed = listener;
+      },
+      removeEventListener: remove,
+    };
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => {
+      expect(query).toBe(heroReadingQuery);
+      return media as unknown as MediaQueryList;
+    });
+    const store = createHeroViewportStore();
+    const stop = store.subscribe(vi.fn());
+    expect(store.getSnapshot().reading).toBe(false);
+    media.matches = true;
+    changed?.();
+    frame?.(0);
+    expect(store.getSnapshot().reading).toBe(true);
+    media.matches = false;
+    changed?.();
+    frame?.(0);
+    expect(store.getSnapshot().reading).toBe(false);
+    stop();
+    expect(remove).toHaveBeenCalledWith("change", changed);
+  });
   test("shares one listener, coalesces resize events and preserves unchanged snapshots", () => {
     let frame: FrameRequestCallback | undefined;
     const request = vi

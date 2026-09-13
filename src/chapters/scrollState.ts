@@ -41,8 +41,8 @@ export function resolveHeroChapterScrollState(
   exitProgress: number,
   chapterId: HeroChapterId = heroChapterOrder[0],
 ): HeroChapterScrollState {
-  const entry = normalized(entryProgress);
-  const exit = normalized(exitProgress);
+  const entry = normalizedScrollBoundary(entryProgress);
+  const exit = normalizedScrollBoundary(exitProgress);
   const { entry: entryStops, exit: exitStops } =
     heroTransitionConfig.chapterScroll;
   const isFirstChapter = chapterId === heroChapterOrder[0];
@@ -307,9 +307,17 @@ function eased(value: number): number {
   return safeValue * safeValue * (3 - 2 * safeValue);
 }
 
-function normalized(value: number): number {
+function normalizedScrollBoundary(value: number): number {
   if (!Number.isFinite(value)) {
     return 0;
   }
-  return Math.max(0, Math.min(1, value));
+  // Both native scrolling and ScrollTrigger round CSS coordinates. A one-pixel
+  // remainder in the short mobile runway must not keep the whole body hidden.
+  if (value >= 1 - 0.001) return 1;
+  if (value <= 0.0001) return 0;
+  return value;
+}
+
+function normalized(value: number): number {
+  return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
 }

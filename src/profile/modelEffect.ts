@@ -6,6 +6,7 @@ import {
 import type { HeroTetrahedronFrameBinding } from "../tetrahedron/frameBinding";
 import { heroTransitionConfig } from "../transition/transitionConfig";
 import { resolveHeroProfileModelFrame } from "./frame";
+import { heroReadingLayoutEnabled } from "../shared/layoutTokens";
 
 export type HeroProfileModelEffectParams = {
   readonly kind: "hero.profile.model";
@@ -65,7 +66,22 @@ export const heroProfileModelEffect = defineWebGLSceneObjectEffect<
       },
     );
     const disconnect = params.frameBinding.connect((sceneFrame) => {
-      const frame = resolveHeroProfileModelFrame(sceneFrame);
+      const reading = heroReadingLayoutEnabled();
+      const slot = reading
+        ? document.querySelector<HTMLElement>("[data-profile-reading-slot]")
+        : null;
+      const rect = slot?.getBoundingClientRect();
+      const frame = resolveHeroProfileModelFrame({
+        ...sceneFrame,
+        ...(rect
+          ? {
+              readingSlot: {
+                centerY: rect.top + rect.height / 2 - 16,
+                height: rect.height - 40,
+              },
+            }
+          : {}),
+      });
       ctx.object.visible = frame.visible;
       ctx.object.position.set(...frame.position);
       ctx.object.rotation.set(...frame.rotation);

@@ -21,15 +21,15 @@ describe("hero palette and transition boundary", () => {
 
     expect(colorsByFile).toEqual({
       "app/globals.css": [
-        "#5F5F5F",
-        "#B8B8B8",
-        "#5F5F5F",
-        "#5F5F5F",
-        "#B8B8B8",
+        "#424242",
+        "#C8C8C8",
+        "#424242",
+        "#424242",
+        "#C8C8C8",
       ],
       "src/experience/HeroExperience.tsx": ["#F2F2F2", "#B8B8B8"],
       "src/ghost/pointerLight.ts": ["#F0F0F0"],
-      "src/transition/transitionConfig.ts": ["#B8B8B8", "#5F5F5F"],
+      "src/transition/transitionConfig.ts": ["#C8C8C8", "#424242"],
     });
     const sources = files.map((file) => readFileSync(file, "utf8")).join("\n");
     expect(sources).not.toMatch(/#3f3f3f|#0d0d0d|vec3\(0\.72\)/i);

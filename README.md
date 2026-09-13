@@ -7,93 +7,41 @@ Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
 
 Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
 
-The current experience is a four-chapter personal narrative. The opening Hub
-first presents site-level context beside the breathing tetrahedron, then hands
-those two side columns to chapter one before spatial flight begins. Each chapter
-owns one tetrahedron face, unique transition-side information, a progressively
-screen-locked triangular reveal whose rotation and centering finish at the DOM
-handoff, one continuous semantic body, signal-only entry/exit runways, and a
-reversible exit that preselects the following portal content under full cover.
-The chapters cover self, AI/philosophy axioms, public builds, and
-public channels. Chapter one presents reading, code, experiments and AI through
-the public nickname and abstract figure. Its Chinese and English body and Portal
-copy omit real identity, birth year, cities, dated education/work history and
-military service. Chapter two is a scroll-driven circular title index
-and a stack of differently sized, postage-edged article sheets, rendered through
-one managed surface in the existing scene. Scroll continuously drives their
-right-side arc arrivals; only overflowing text adds a reading segment before
-the next sheet. Article data, sizing and motion configuration stay in `src/axioms/`;
-see [the reader design and extension guide](./docs/visual-design.md#第二章扇面目录与文章纸卡).
-Chapter three places the four projects on the walls of a mouse-driven room on
-wide screens with a fine pointer. Edge gestures turn to adjacent walls; project
-buttons and a stable source link preserve keyboard access. Mobile and touch
-layouts retain the normal project list. See [project room behavior](./docs/visual-design.md#第三章四面项目空间).
-Chapter four lists Douyin, Xiaohongshu, Bilibili, Blog, GitHub and LeetCode in six
-centered desktop rows with platform names and account information. The LeetCode
-entry points to the user-provided `skedush` profile. Fine-pointer desktop previews follow the whole row; clicking opens
-the profile. Narrow and touch screens show all account details, QR images and
-text directly in a scrollable list. Atlas endpoints follow each layout.
-See [public channel behavior](./docs/visual-design.md#第四章公共入口与跟随预览).
-The fourth exit leads into a continuous daily Timeline. Date and compact tool
-names on the left always pair with that same day's event on the right. Multiple
-days emerge as small text at the upper sides, grow and descend together, then
-leave through the bottom, with the tetrahedron held in the center. In this final
-Hub, scrolling adds damped spacecraft-like thrust, a small scale reduction, subtle
-vibration and banking, slow self rotation and a stronger Fresnel edge. Native
-Viselora DOM-text targets and managed subtree transforms own the rendering.
-Each date stays intact; reduced motion selects one stationary date at a time.
-The previous final copy and bottom links are removed. The desktop project room
-retains its selected wall and pointer interaction independently of scroll; both
-transition endpoints settle on the first wall.
+The site has four chapters: self, AI/philosophy axioms, public builds and public
+channels, followed by the daily journal. Chinese and English share typed content
+and a persisted locale. Chapter one uses the public nickname and abstract figure;
+real identity, cities, birth year, dated education/work history and military
+service are omitted from both languages and their transition artwork.
 
-Each tetrahedron face keeps paired atlas tiles derived from that chapter body's
-real content. Ordinary DOM chapters use their opening copy and final content;
-chapter two uses the first and last reader frames. The desktop project room
-uses the same first-wall composition at both endpoints, while its mobile
-layout uses the ordinary DOM opening and final project card. Chapter four uses
-the same unselected six-entry directory at both endpoints. Atlas drawing
-and the semantic body share the same responsive geometry, including the profile columns,
-balanced heading, model exclusion, and profile speech bubble. Both tiles are
-packed up front, so exit switches to the prepared endpoint without rebuilding or
-uploading a texture on scroll, while face-space UV lock advances continuously
-with the approach. The opening and intermediate Hubs keep their no-spin breathing and floating motion with
-stronger damped pointer parallax. Its single managed
-material combines existing directional lighting with an app-owned Fresnel edge
-light and reduced flat/emissive fill for clearer depth; the edge light fades as
-the target face reaches full screen lock. No ground plane, shadow map, outline
-mesh, duplicate tetrahedron, or additional render pass is used.
+Mobile, touch and short landscape windows use a reading layout: full-width
+profile copy with a separate model area, a linked article index with complete
+text, compact project and profile lists, and QR codes behind native disclosures.
+The journal starts with the latest 12 dates and loads 12 older dates per action,
+keeping each day's complete tools and event together. A keyboard-accessible
+chapter menu uses the same Lenis instance as page scrolling. Entry and exit
+runways are 110svh and 60svh in this layout; content has natural height.
 
-Chinese and English copy share one typed content model and one persisted locale
-store. Chapter one adds a scene-native personal GLB to the established scene
-without creating another renderer, canvas, scene, or render pass. The same
-model starts as a shallow relief attached to the first tetrahedron face,
-expands out of that face into the fixed body position, and returns to the face
-during exit. While attached, it consumes the tetrahedron effect's final transform,
-including Timeline rotation, thrust and scale. Its semantic profile copy remains split into explicit left and
-right columns gathered around the center. A rounded-rectangle manga speech
-bubble with a background-color fill and foreground-color text stays above the
-model's head without changing size or shape. Its front, side, and back messages
-type in one character at a time, hold briefly at the matching model angle, and
-delete one character at a time before the next stage, using the same reversible
-one-turn body progress. Reduced motion retains the complete front message. Each
-rendered line resolves its own displacement against the combined responsive
-GLB and speech-bubble exclusions, leaving the outer gutters available for the
-wrap instead of moving a whole section at once. All four chapter DOM cycles
-render body content only; empty entry/exit runways remain solely as 3D
-transition signals. The exit starts when the body bottom reaches the viewport
-bottom. That same body progress maps the centered model deterministically to
-one clockwise turn. The tetrahedron approach and retreat keep the model's
-face-local pose still. The checked-in model is a Draco/WebP derivative under
-5 MB, while the original source asset remains outside the repository. Its
-native GLB material uses geometry normals and a restrained texture-matched emissive fill, with one
-stable light-neutral base tint across both themes so a theme commit cannot
-multiply the texture by the darker page background. Pointer lighting eases down
-while a chapter is active so it remains a restrained spatial cue rather than a
-dominant highlight.
+Wide windows with a fine pointer retain the circular article index and moving
+postage-edged sheets, the four-wall project room, six public-directory hover
+previews and the perspective journal. The public directory includes Douyin,
+Xiaohongshu, Bilibili, Blog, GitHub and the supplied LeetCode profile. Large-screen
+profile copy retains its two columns, measured model/bubble exclusions and
+reversible model turn. See [visual behavior and extension instructions](./docs/visual-design.md).
 
-A real mesh hold remains the site-wide two-tone theme switch. It is enabled
-only at a complete Hub, commits once after the radial transition covers the
-viewport, and persists the committed scheme locally across refreshes.
+One runtime, canvas, scroll source and committed theme own both layouts. WebGL
+keeps the tetrahedron, true face projection, triangular transition, GLB and
+lighting. Reading-layout transition tiles snapshot the semantic body's real text
+line geometry at its entry and exit; resize, locale, fonts, images and disclosure
+changes invalidate those tiles outside the frame loop. Desktop atlas drawing
+continues to use its shared layout models. Native scroll-coordinate rounding is
+handled at the entry/exit boundaries so reaching a chapter cannot leave its DOM
+hidden. Reduced motion keeps readable content and reversible chapter semantics.
+
+The semantic palette is light `#C8C8C8` and dark `#424242`, with at least 4.5:1
+normal-text contrast in either direction. Chapter colors invert the committed
+Hub theme. A real mesh hold at a complete Hub remains the only theme-switch
+interaction, and the chosen scheme persists across refreshes. The optimized
+profile GLB stays below 5 MB; its original asset remains outside the repository.
 
 ## Run
 
@@ -187,27 +135,27 @@ npm run build
 
 ## Source map
 
-| Responsibility                                                                     | Path                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Page/runtime composition and subscriptions                                         | `src/experience/`                                                                                                                                                                                     |
-| Chapter identity, signals, face, and atlas mapping                                 | `src/chapters/definitions.ts`                                                                                                                                                                         |
-| Chapter content, semantic composition, and locale control                          | `src/chapters/content.ts`, `src/chapters/contentModel.ts`, `src/chapters/uiContent.ts`, `src/chapters/HeroChapterNarrative.tsx`, `src/chapters/HeroChapter.tsx`, `src/chapters/HeroLocaleControl.tsx` |
-| Chapter-one profile body, model declaration, and scroll effect                     | `src/profile/`                                                                                                                                                                                        |
-| Chapter-two circular index, article sheets, typesetting, and managed reader effect | `src/axioms/`                                                                                                                                                                                         |
-| Chapter-three project room, pointer navigation, and semantic controls              | `src/projects/`                                                                                                                                                                                       |
-| Chapter-four public directory, previews, and endpoint artwork                      | `src/signals/`                                                                                                                                                                                        |
-| Final journal data, native text targets, and scroll mapping                        | `src/journal/`                                                                                                                                                                                        |
-| Journal export, Actions deployment and public verification                         | `scripts/sync-journal.mjs`, `scripts/verify-journal-deployment.mjs`, `.github/workflows/journal-build.yml`, `vercel.json`                                                                             |
-| Reversible scroll, geometry, layout, and atlas                                     | `src/chapters/scrollState.ts`, `src/chapters/geometry.ts`, `src/chapters/layout.ts`, `src/chapters/atlas.ts`, `src/chapters/artwork.ts`                                                               |
-| Theme and locale persistence                                                       | `src/preferences/`                                                                                                                                                                                    |
-| Hold/radial/portal state, palette/config, and progress encoding                    | `src/transition/`                                                                                                                                                                                     |
-| Tetrahedron effect and managed shader                                              | `src/tetrahedron/`                                                                                                                                                                                    |
-| Background, cursor, and pointer-light effects                                      | `src/ghost/`                                                                                                                                                                                          |
-| Shared Canvas text measurement and drawing                                         | `src/shared/canvasText.ts`, `src/shared/canvasTextLayout.ts`                                                                                                                                          |
-| Profile DOM/Canvas size tokens                                                     | `src/profile/layoutTokens.ts`                                                                                                                                                                         |
-| Shared viewport boundary                                                           | `src/shared/viewport.ts`, `src/shared/viewportStore.ts`, `src/shared/useHeroViewport.ts`                                                                                                              |
-| App constraints                                                                    | `AGENTS.md`                                                                                                                                                                                           |
-| Current visual direction                                                           | `docs/visual-design.md`                                                                                                                                                                               |
+| Responsibility                                                                     | Path                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Page/runtime composition and subscriptions                                         | `src/experience/`                                                                                                                                                                                                                               |
+| Chapter identity, signals, face, and atlas mapping                                 | `src/chapters/definitions.ts`                                                                                                                                                                                                                   |
+| Chapter content, semantic composition, and locale control                          | `src/chapters/content.ts`, `src/chapters/contentModel.ts`, `src/chapters/uiContent.ts`, `src/chapters/HeroChapterNarrative.tsx`, `src/chapters/HeroChapter.tsx`, `src/chapters/HeroLocaleControl.tsx`, `src/chapters/HeroChapterNavigation.tsx` |
+| Chapter-one profile body, model declaration, and scroll effect                     | `src/profile/`                                                                                                                                                                                                                                  |
+| Chapter-two article index, reading layout, sheets and managed effect               | `src/axioms/`                                                                                                                                                                                                                                   |
+| Chapter-three project room, pointer navigation, and semantic controls              | `src/projects/`                                                                                                                                                                                                                                 |
+| Chapter-four public directory, previews, and endpoint artwork                      | `src/signals/`                                                                                                                                                                                                                                  |
+| Final journal data, paginated reading list, native text targets and scroll mapping | `src/journal/`                                                                                                                                                                                                                                  |
+| Journal export, Actions deployment and public verification                         | `scripts/sync-journal.mjs`, `scripts/verify-journal-deployment.mjs`, `.github/workflows/journal-build.yml`, `vercel.json`                                                                                                                       |
+| Reversible scroll, geometry, layout, and atlas                                     | `src/chapters/scrollState.ts`, `src/chapters/geometry.ts`, `src/chapters/layout.ts`, `src/chapters/atlas.ts`, `src/chapters/artwork.ts`, `src/chapters/readingArtwork.ts`, `src/chapters/readingLayout.ts`                                      |
+| Theme and locale persistence                                                       | `src/preferences/`                                                                                                                                                                                                                              |
+| Hold/radial/portal state, palette/config, and progress encoding                    | `src/transition/`                                                                                                                                                                                                                               |
+| Tetrahedron effect and managed shader                                              | `src/tetrahedron/`                                                                                                                                                                                                                              |
+| Background, cursor, and pointer-light effects                                      | `src/ghost/`                                                                                                                                                                                                                                    |
+| Shared Canvas text measurement and drawing                                         | `src/shared/canvasText.ts`, `src/shared/canvasTextLayout.ts`                                                                                                                                                                                    |
+| Profile DOM/Canvas size tokens                                                     | `src/profile/layoutTokens.ts`                                                                                                                                                                                                                   |
+| Shared viewport boundary                                                           | `src/shared/viewport.ts`, `src/shared/viewportStore.ts`, `src/shared/useHeroViewport.ts`                                                                                                                                                        |
+| App constraints                                                                    | `AGENTS.md`                                                                                                                                                                                                                                     |
+| Current visual direction                                                           | `docs/visual-design.md`                                                                                                                                                                                                                         |
 
 ## Current evidence boundary
 

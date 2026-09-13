@@ -97,9 +97,9 @@ function createTarget() {
     visible: true,
     opacity: 1,
     material: {
-      color: { value: "#5F5F5F", set: vi.fn() },
+      color: { value: "#424242", set: vi.fn() },
       emissive: {
-        value: "#5F5F5F",
+        value: "#424242",
         intensity: heroTransitionConfig.motion.emissiveIntensity,
         set: vi.fn(),
       },
@@ -232,13 +232,13 @@ describe("hero tetrahedron effect", () => {
     for (let i = 0; i < 100; i++)
       heroProfileModelEffect.update(context, state, params);
     expect(material.color.set).toHaveBeenCalledTimes(1);
-    expect(material.emissive.set).toHaveBeenCalledWith("#B8B8B8", 0.12);
+    expect(material.emissive.set).toHaveBeenCalledWith("#C8C8C8", 0.12);
     expect(material.metalness).toBe(0);
     expect(material.roughness).toBe(0.72);
     heroProfileModelEffect.dispose!(context, state, params);
-    expect(material.color.set).toHaveBeenLastCalledWith("#5F5F5F");
+    expect(material.color.set).toHaveBeenLastCalledWith("#424242");
     expect(material.emissive.set).toHaveBeenLastCalledWith(
-      "#5F5F5F",
+      "#424242",
       heroTransitionConfig.motion.emissiveIntensity,
     );
     expect(material.metalness).toBe(0.62);
@@ -622,24 +622,24 @@ describe("hero tetrahedron effect", () => {
     });
 
     applyHeroFrame(target, motion, 0, idleInitial, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#5F5F5F");
+    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
     applyHeroFrame(target, motion, 0, idleInverted, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#B8B8B8");
+    expect(target.material.color.set).toHaveBeenLastCalledWith("#C8C8C8");
     target.material.color.set.mockClear();
     target.material.emissive.set.mockClear();
     target.material.shader.setUniforms.mockClear();
 
     applyHeroFrame(target, motion, 0, expanding, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#5F5F5F");
+    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
     expect(target.material.emissive.set).toHaveBeenLastCalledWith(
-      "#5F5F5F",
+      "#424242",
       0.035,
     );
     expect(target.material.shader.setUniforms).toHaveBeenLastCalledWith(
       "hero.tetrahedron.radial",
       expect.objectContaining({
-        heroCommittedColor: "#5F5F5F",
-        heroTargetColor: "#B8B8B8",
+        heroCommittedColor: "#424242",
+        heroTargetColor: "#C8C8C8",
         heroRadialOrigin: [0.5, 0.5],
         heroRadialEdgePx: 1.5,
       }),
@@ -648,13 +648,13 @@ describe("hero tetrahedron effect", () => {
       target.material.shader.setUniforms.mock.calls.at(-1)?.[1]
         ?.heroRadialRadiusPx;
     applyHeroFrame(target, motion, 0, retracting, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#5F5F5F");
+    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
     const retractingRadius =
       target.material.shader.setUniforms.mock.calls.at(-1)?.[1]
         ?.heroRadialRadiusPx;
     expect(retractingRadius).toBeLessThan(expandingRadius);
     applyHeroFrame(target, motion, 0, idleInitial, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#5F5F5F");
+    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
   });
 
   test("fades ambient motion with coverage and restores it immediately at commit", () => {
@@ -943,8 +943,8 @@ describe("hero tetrahedron effect", () => {
     expect(reduced.material.shader.setUniforms).toHaveBeenLastCalledWith(
       "hero.tetrahedron.radial",
       expect.objectContaining({
-        heroCommittedColor: "#5F5F5F",
-        heroTargetColor: "#B8B8B8",
+        heroCommittedColor: "#424242",
+        heroTargetColor: "#C8C8C8",
         heroRadialRadiusPx: expect.any(Number),
         heroRadialEdgePx: 1.5,
       }),
@@ -1003,7 +1003,11 @@ describe("hero tetrahedron effect", () => {
       heroTransitionConfig.motion.baseScale *
         heroTransitionConfig.motion.mobileScaleFactor,
     );
-    expect(mobileTarget.position.set).toHaveBeenCalledWith(0, 0.555, 0);
+    expect(mobileTarget.position.set).toHaveBeenCalledWith(
+      0,
+      heroTransitionConfig.motion.mobileYOffset,
+      0,
+    );
   });
 
   test("adds proximity tilt while moving and returns after 120ms idle", () => {

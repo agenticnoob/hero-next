@@ -17,9 +17,67 @@ type HeroProfileChapterBodyProps = {
   readonly definition: HeroChapterDefinition;
   readonly content: HeroChapterLocalizedContent;
   readonly locale: HeroLocale;
+  readonly reading?: boolean;
 };
 
-export function HeroProfileChapterBody({
+export function HeroProfileChapterBody(props: HeroProfileChapterBodyProps) {
+  return props.reading ? (
+    <HeroReadingProfile {...props} />
+  ) : (
+    <HeroDesktopProfile {...props} />
+  );
+}
+
+function HeroReadingProfile({
+  definition,
+  content,
+  locale,
+}: HeroProfileChapterBodyProps) {
+  const bodyId = `chapter-${definition.ordinal}-body`;
+  return (
+    <WebGLScrollTimeline
+      as="section"
+      id={`${bodyId}-timeline`}
+      progressKey={definition.signals.body}
+      className="hero-chapter__body hero-profile-reading"
+      start="top top"
+      end="bottom bottom"
+      scrub
+      aria-labelledby={bodyId}
+    >
+      <header>
+        <p className="hero-reading-index">
+          {formatHeroChapterCounter(definition)}
+        </p>
+        <h2 id={bodyId}>{content.body.title}</h2>
+        <p className="hero-reading-intro">{content.body.intro}</p>
+      </header>
+      <div
+        className="hero-profile-reading__portrait"
+        data-profile-reading-slot=""
+        aria-hidden="true"
+      >
+        <p>
+          {locale === "zh"
+            ? "在这里，慢慢认识。"
+            : "A little more, as you explore."}
+        </p>
+      </div>
+      <div className="hero-profile-reading__stories">
+        {content.body.sections.map((section) => (
+          <section key={section.title}>
+            <p className="hero-reading-label">{section.label}</p>
+            <h3>{section.title}</h3>
+            <p>{section.body}</p>
+          </section>
+        ))}
+      </div>
+      {content.body.closing && <blockquote>{content.body.closing}</blockquote>}
+    </WebGLScrollTimeline>
+  );
+}
+
+function HeroDesktopProfile({
   definition,
   content,
   locale,

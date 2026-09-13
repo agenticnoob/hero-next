@@ -1,6 +1,9 @@
+import { heroReadingLayoutEnabled } from "./layoutTokens";
+
 export type HeroViewport = {
   readonly width: number;
   readonly height: number;
+  readonly reading?: boolean;
 };
 
 export const heroDefaultViewport = {
@@ -12,6 +15,7 @@ export function normalizeHeroViewport(viewport: HeroViewport): HeroViewport {
   return {
     width: positive(viewport.width, heroDefaultViewport.width),
     height: positive(viewport.height, heroDefaultViewport.height),
+    ...(viewport.reading === undefined ? {} : { reading: viewport.reading }),
   };
 }
 
@@ -23,6 +27,7 @@ export function readHeroViewport(): HeroViewport {
   return normalizeHeroViewport({
     width: window.innerWidth,
     height: window.innerHeight,
+    reading: heroReadingLayoutEnabled(),
   });
 }
 

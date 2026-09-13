@@ -19,7 +19,13 @@ import {
   WebGLScrollRuntime,
   useScrollEffectProgressStore,
 } from "@viselora/scroll-adapters/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useHeroViewport } from "../shared/useHeroViewport";
 import { HeroChapterNarrative } from "../chapters/HeroChapterNarrative";
@@ -34,7 +40,13 @@ import {
   useHeroThemeState,
 } from "./useHeroExperienceState";
 import { heroGhostBackgroundEffect } from "../ghost/backgroundEffect";
-import { heroSmoothScroll, refreshHeroScrollLayout } from "./smoothScroll";
+import {
+  heroSmoothScroll,
+  refreshHeroScrollLayout,
+  restoreHeroReadingPosition,
+} from "./smoothScroll";
+import { readHeroChapterScrollState } from "../chapters/scrollState";
+import { getHeroChapterDefinition } from "../chapters/definitions";
 import { HeroPortalStage } from "../transition/HeroPortalStage";
 import { heroPortalMotionEffect } from "../transition/portalEffect";
 import { heroTransitionConfig } from "../transition/transitionConfig";
@@ -166,6 +178,30 @@ function HeroScene({
   );
   const theme = useHeroThemeState();
   const locale = useHeroLocaleState();
+  const previousReading = useRef<boolean | undefined>(undefined);
+  useLayoutEffect(() => {
+    const previous = previousReading.current;
+    previousReading.current = viewport.reading;
+    if (previous === undefined || (!previous && !viewport.reading)) return;
+    // Keep the reader in the same chapter when translation, orientation or
+    // enlarged text changes its position and length. The runtime remains the
+    // sole progress source and its existing Lenis performs the correction.
+    const chapter = readHeroChapterScrollState(store.source);
+    if (!chapter.domContentActive) return;
+    const definition = getHeroChapterDefinition(chapter.chapterId);
+    const body = document.querySelector<HTMLElement>(
+      `#chapter-${definition.ordinal} .hero-chapter__body`,
+    );
+    if (!body) return;
+    const bounds = body.getBoundingClientRect();
+    const progress = store.source.get(definition.signals.body);
+    restoreHeroReadingPosition(
+      window.scrollY +
+        bounds.top +
+        progress * Math.max(0, bounds.height - viewport.height) +
+        1,
+    );
+  }, [locale.locale, viewport, store.source]);
   const domContentActive = useHeroDomContentActive(store.source);
   const tetrahedronEffects = useMemo(
     () =>
@@ -187,6 +223,7 @@ function HeroScene({
       aria-label={heroSiteContent[locale.locale].ariaLabel}
       data-hero-theme={theme.scheme}
       data-hero-locale={locale.locale}
+      data-reading-layout={viewport.reading}
       data-dom-active={domContentActive ? "true" : "false"}
     >
       <WebGLScene
@@ -213,9 +250,11 @@ function HeroScene({
         />
         <HeroPortalStage locale={locale.locale} progress={store.source} />
         <HeroProfileModel frameBinding={frameBinding} />
-        <HeroAxiomsStage locale={locale.store} />
+        {!viewport.reading && <HeroAxiomsStage locale={locale.store} />}
         <HeroProjectRoomStage locale={locale.store} room={projectRoom} />
-        <HeroJournalStage journal={journal} progress={store.source} />
+        {!viewport.reading && (
+          <HeroJournalStage journal={journal} progress={store.source} />
+        )}
         <WebGLMesh
           id="hero.tetrahedron.mesh"
           geometry={tetrahedronGeometry}

@@ -22,7 +22,7 @@ describe("hero transition config", () => {
           "awaiting-release": 1,
         },
       },
-      colors: { light: "#B8B8B8", dark: "#5F5F5F" },
+      colors: { light: "#C8C8C8", dark: "#424242" },
       schemes: {
         initial: { background: "light", foreground: "dark" },
         inverted: { background: "dark", foreground: "light" },
@@ -82,7 +82,7 @@ describe("hero transition config", () => {
       }),
     });
     expect(new Set(Object.values(heroTransitionConfig.colors))).toEqual(
-      new Set(["#B8B8B8", "#5F5F5F"]),
+      new Set(["#C8C8C8", "#424242"]),
     );
   });
 });

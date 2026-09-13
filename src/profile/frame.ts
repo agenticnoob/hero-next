@@ -28,6 +28,7 @@ export function resolveHeroProfileModelFrame(input: {
   readonly viewport: HeroViewport;
   readonly reducedMotion: boolean;
   readonly tetrahedron: HeroTetrahedronTransformFrame;
+  readonly readingSlot?: { readonly centerY: number; readonly height: number };
 }): HeroProfileModelFrame {
   const spinProgress = resolveProfileSpinProgress(
     input.chapter,
@@ -37,9 +38,31 @@ export function resolveHeroProfileModelFrame(input: {
     input.reducedMotion || spinProgress === 0 ? 0 : -spinProgress * fullTurn;
   const faceFrame = resolveFaceReliefFrame(input.tetrahedron, spin);
   const mobile = input.viewport.width <= mobileBreakpoint;
-  const bodyScale = mobile ? 0.63 : 1;
+  const camera = resolveHeroChapterCameraFrame();
+  const depth = heroTransitionConfig.chapterGeometry.cameraDistance - 0.18;
+  const worldPerPixel =
+    (2 *
+      depth *
+      Math.tan(
+        (heroTransitionConfig.chapterGeometry.cameraFov * Math.PI) / 360,
+      )) /
+    input.viewport.height;
+  const slotOffset = input.readingSlot
+    ? (input.viewport.height / 2 - input.readingSlot.centerY) * worldPerPixel
+    : 0;
+  const bodyScale = input.readingSlot
+    ? (input.readingSlot.height * worldPerPixel) / 1.25
+    : mobile
+      ? 0.63
+      : 1;
   const bodyFrame = {
-    position: [0, mobile ? 0.32 : 0.3, 0.18],
+    position: input.readingSlot
+      ? [
+          0,
+          camera.forward[1] * depth + camera.up[1] * slotOffset,
+          0.18 + camera.up[2] * slotOffset,
+        ]
+      : [0, mobile ? 0.32 : 0.3, 0.18],
     rotation: [0, spin, 0],
     scale: [bodyScale, bodyScale, bodyScale],
   } satisfies Omit<HeroProfileModelFrame, "visible">;

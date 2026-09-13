@@ -137,10 +137,10 @@ describe("hero tetrahedron radial shader", () => {
     {
       name: "initial",
       state: createHeroHoldTransitionState("initial"),
-      committed: "#5F5F5F",
-      target: "#5F5F5F",
-      committedBackground: "#B8B8B8",
-      targetBackground: "#B8B8B8",
+      committed: "#424242",
+      target: "#424242",
+      committedBackground: "#C8C8C8",
+      targetBackground: "#C8C8C8",
     },
     {
       name: "half-expanded",
@@ -151,10 +151,10 @@ describe("hero tetrahedron radial shader", () => {
         phase: "expanding",
         shakeActive: true,
       }),
-      committed: "#5F5F5F",
-      target: "#B8B8B8",
-      committedBackground: "#B8B8B8",
-      targetBackground: "#5F5F5F",
+      committed: "#424242",
+      target: "#C8C8C8",
+      committedBackground: "#C8C8C8",
+      targetBackground: "#424242",
     },
     {
       name: "retracting",
@@ -164,10 +164,10 @@ describe("hero tetrahedron radial shader", () => {
         coverage: 0.25,
         phase: "retracting",
       }),
-      committed: "#5F5F5F",
-      target: "#B8B8B8",
-      committedBackground: "#B8B8B8",
-      targetBackground: "#5F5F5F",
+      committed: "#424242",
+      target: "#C8C8C8",
+      committedBackground: "#C8C8C8",
+      targetBackground: "#424242",
     },
     {
       name: "committed-inverted",
@@ -177,10 +177,10 @@ describe("hero tetrahedron radial shader", () => {
         coverage: 1,
         phase: "awaiting-release",
       }),
-      committed: "#B8B8B8",
-      target: "#B8B8B8",
-      committedBackground: "#5F5F5F",
-      targetBackground: "#5F5F5F",
+      committed: "#C8C8C8",
+      target: "#C8C8C8",
+      committedBackground: "#424242",
+      targetBackground: "#424242",
     },
     {
       name: "second-direction",
@@ -192,10 +192,10 @@ describe("hero tetrahedron radial shader", () => {
         phase: "expanding",
         shakeActive: true,
       }),
-      committed: "#B8B8B8",
-      target: "#5F5F5F",
-      committedBackground: "#5F5F5F",
-      targetBackground: "#B8B8B8",
+      committed: "#C8C8C8",
+      target: "#424242",
+      committedBackground: "#424242",
+      targetBackground: "#C8C8C8",
     },
   ])(
     "resolves exact $name palette, origin, radius, edge, and emissive inputs",
@@ -258,8 +258,8 @@ describe("hero tetrahedron radial shader", () => {
       resolveHeroChapterLockProjection(viewport).heightFraction,
     ]);
     expect(uniforms).toMatchObject({
-      heroCommittedColor: "#B8B8B8",
-      heroCommittedBackground: "#5F5F5F",
+      heroCommittedColor: "#C8C8C8",
+      heroCommittedBackground: "#424242",
     });
   });
 

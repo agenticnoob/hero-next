@@ -113,8 +113,8 @@ describe("hero hold transition", () => {
         targetScheme: "initial",
       });
       expect(resolveHeroTransitionVisual(cancelled)).toEqual({
-        committed: { background: "#B8B8B8", foreground: "#5F5F5F" },
-        target: { background: "#B8B8B8", foreground: "#5F5F5F" },
+        committed: { background: "#C8C8C8", foreground: "#424242" },
+        target: { background: "#C8C8C8", foreground: "#424242" },
       });
     },
   );

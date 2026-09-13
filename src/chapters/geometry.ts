@@ -2,6 +2,7 @@ import type { HeroViewport } from "../shared/viewport";
 import { heroTransitionConfig } from "../transition/transitionConfig";
 import { getHeroChapterDefinition, type HeroChapterId } from "./definitions";
 import type { HeroChapterScrollState } from "./scrollState";
+import { heroLayoutTokens } from "../shared/layoutTokens";
 
 type Vector3 = readonly [number, number, number];
 type Quaternion = readonly [number, number, number, number];
@@ -51,14 +52,19 @@ export function resolveHeroChapterGeometryFrame(
     revealHeightFraction,
     revealCentroidNdcY,
   );
-  const hubPositionY =
-    viewport.width <= heroTransitionConfig.motion.mobileBreakpoint
-      ? heroTransitionConfig.motion.mobileYOffset
-      : heroTransitionConfig.motion.desktopYOffset;
+  const hubPositionY = readingLayout(viewport)
+    ? heroTransitionConfig.motion.mobileYOffset
+    : heroTransitionConfig.motion.desktopYOffset;
   const targetFace = resolveHeroChapterFace(chapter.chapterId);
   const flightDirection = targetFace.normal[0] >= 0 ? 1 : -1;
   const approachPosition = resolveApproachPosition(
-    [0, hubPositionY, 0],
+    [
+      viewport.height <= heroLayoutTokens.shortViewportBreakpoint ? 1 : 0,
+      viewport.height <= heroLayoutTokens.shortViewportBreakpoint
+        ? 0
+        : hubPositionY,
+      0,
+    ],
     lockFrame.position,
     chapter.approach,
     flightDirection,
@@ -223,10 +229,18 @@ function resolveApproachRotation(
 }
 
 function resolveHeroHubScale(viewport: HeroViewport): number {
-  return viewport.width <= heroTransitionConfig.motion.mobileBreakpoint
+  return readingLayout(viewport)
     ? heroTransitionConfig.motion.baseScale *
         heroTransitionConfig.motion.mobileScaleFactor
     : heroTransitionConfig.motion.baseScale;
+}
+
+function readingLayout(viewport: HeroViewport) {
+  return (
+    viewport.width < heroLayoutTokens.finePointerBreakpoint ||
+    viewport.height <= heroLayoutTokens.shortViewportBreakpoint ||
+    viewport.reading === true
+  );
 }
 
 function lerpVector(start: Vector3, end: Vector3, progress: number): Vector3 {

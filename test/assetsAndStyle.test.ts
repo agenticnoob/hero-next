@@ -53,14 +53,14 @@ describe("hero assets and visual surface", () => {
     expect(css).toMatch(/\.hero-runtime\s*\{[^}]*min-height:\s*100svh/);
     expect(css).toMatch(/\.hero-runtime\s*\{[^}]*overflow:\s*visible/);
     expect(css).toMatch(/\.hero-space[\s\S]*min-height:\s*100svh/);
-    expect(css).toMatch(/body\s*\{[^}]*background:\s*#5f5f5f/);
+    expect(css).toMatch(/body\s*\{[^}]*background:\s*#424242/);
     expect(css).toMatch(/\.hero-space\s*\{[\s\S]*background:\s*transparent/);
     expect(css).toMatch(/\.hero-runtime canvas[\s\S]*position:\s*fixed/);
     expect(css).toMatch(/\.hero-ghost-surface[\s\S]*position:\s*fixed/);
     expect(css).toMatch(/\.hero-ghost-surface[\s\S]*pointer-events:\s*none/);
 
-    expect(css).toMatch(/--hero-background:\s*#b8b8b8/);
-    expect(css).toMatch(/--hero-foreground:\s*#5f5f5f/);
+    expect(css).toMatch(/--hero-background:\s*#c8c8c8/);
+    expect(css).toMatch(/--hero-foreground:\s*#424242/);
     expect(css).toMatch(
       /--hero-chapter-background:\s*var\(--hero-foreground\)/,
     );
@@ -94,7 +94,7 @@ describe("hero assets and visual surface", () => {
     );
     expect(css).toMatch(/\.hero-locale button\s*\{[^}]*font-weight:\s*700/);
     expect(css).toMatch(
-      /@media \(max-width:\s*700px\)[\s\S]*\.hero-portal-copy\s*\{[^}]*font-size:\s*0\.9375rem/,
+      /@media \(max-width:\s*900px\)[\s\S]*\.hero-entry-runway\s*\{[^}]*min-height:\s*110svh/,
     );
     expect(css).toMatch(
       /\.hero-chapter--profile\s*\{[^}]*background:\s*transparent/,

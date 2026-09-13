@@ -7,6 +7,7 @@ import { WebGLScrollTimeline } from "@viselora/scroll-adapters/react";
 import {
   useCallback,
   useMemo,
+  useState,
   useSyncExternalStore,
   type CSSProperties,
 } from "react";
@@ -193,48 +194,89 @@ function JournalPair({
 export function HeroJournalRunway({
   journal,
   locale,
+  reading = false,
 }: {
   readonly journal: HeroJournalState;
   readonly locale: HeroLocale;
+  readonly reading?: boolean;
 }) {
-  const { entries, panels, error, retry, available } = journal;
+  const [limit, setLimit] = useState(12);
+  const { entries, panels } = journal;
   const ui = heroInterfaceContent[locale].journal;
+  const visibleEntries = reading ? entries.slice(0, limit) : entries;
   const style = {
     minHeight: `${100 + (journalTravel(1, panels) - journalTravel(0, panels)) * config.scrollPerUnit}svh`,
   };
   return (
-    <WebGLScrollTimeline
-      as="section"
-      id="hero-journal"
-      progressKey={config.progressKey}
-      className="hero-hub-runway hero-hub-runway--final"
-      style={style}
-      start="top top"
-      end="bottom bottom"
-      scrub
-      aria-labelledby="hero-journal-title"
-    >
-      <div className="hero-sr-only" lang={locale}>
-        <h2 id="hero-journal-title">{ui.title}</h2>
-        {entries.map((entry) => (
-          <article key={entry.date} data-journal-entry={entry.date}>
-            <h3>{entry.date}</h3>
-            <h4>{ui.tools}</h4>
-            <p>{entry.tools.join(" · ")}</p>
-            <p lang="zh-CN">{entry.event}</p>
-          </article>
-        ))}
-      </div>
-      {!entries.length ? (
-        <div className="hero-journal-status" role="status">
-          <p>{error ? ui.error : available ? ui.loading : ui.empty}</p>
-          {error ? (
-            <button type="button" onClick={retry}>
-              {ui.retry}
+    <div id="hero-journal" tabIndex={-1}>
+      <WebGLScrollTimeline
+        as="section"
+        id="hero-journal"
+        progressKey={config.progressKey}
+        className={`hero-hub-runway hero-hub-runway--final${reading ? " hero-journal-reading" : ""}`}
+        style={reading ? undefined : style}
+        tabIndex={-1}
+        start="top top"
+        end="bottom bottom"
+        scrub
+        aria-labelledby="hero-journal-title"
+      >
+        <div
+          className={reading ? "hero-journal-reading__content" : "hero-sr-only"}
+          lang={locale}
+        >
+          <h2 id="hero-journal-title">{ui.title}</h2>
+          {visibleEntries.map((entry) => (
+            <article key={entry.date} data-journal-entry={entry.date}>
+              <h3>
+                <time dateTime={entry.date}>{entry.date}</time>
+              </h3>
+              <h4>{ui.tools}</h4>
+              <p>{entry.tools.join(" · ")}</p>
+              <p lang="zh-CN">{entry.event}</p>
+            </article>
+          ))}
+          {reading && entries.length > limit && (
+            <button
+              type="button"
+              className="hero-journal-reading__more"
+              onClick={() => setLimit((value) => value + 12)}
+            >
+              {locale === "zh" ? "加载更早的记录" : "Load earlier entries"}
             </button>
-          ) : null}
+          )}
+          {reading && (
+            <p role="status" className="hero-journal-reading__count">
+              {locale === "zh"
+                ? `已显示 ${visibleEntries.length} / ${entries.length} 天`
+                : `${visibleEntries.length} of ${entries.length} days`}
+            </p>
+          )}
         </div>
-      ) : null}
-    </WebGLScrollTimeline>
+        <HeroJournalStatus journal={journal} locale={locale} />
+      </WebGLScrollTimeline>
+    </div>
+  );
+}
+
+function HeroJournalStatus({
+  journal,
+  locale,
+}: {
+  readonly journal: HeroJournalState;
+  readonly locale: HeroLocale;
+}) {
+  const { entries, error, retry, available } = journal;
+  const ui = heroInterfaceContent[locale].journal;
+  if (entries.length) return null;
+  return (
+    <div className="hero-journal-status" role="status">
+      <p>{error ? ui.error : available ? ui.loading : ui.empty}</p>
+      {error && (
+        <button type="button" onClick={retry}>
+          {ui.retry}
+        </button>
+      )}
+    </div>
   );
 }

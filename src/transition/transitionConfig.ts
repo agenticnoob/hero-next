@@ -116,7 +116,7 @@ export const heroTransitionConfig = {
       "awaiting-release": 1,
     },
   },
-  colors: { light: "#B8B8B8", dark: "#5F5F5F" },
+  colors: { light: "#C8C8C8", dark: "#424242" },
   schemes: {
     initial: { background: "light", foreground: "dark" },
     inverted: { background: "dark", foreground: "light" },
@@ -163,10 +163,10 @@ export const heroTransitionConfig = {
   },
   motion: {
     baseScale: 1.12,
-    mobileScaleFactor: 0.72,
+    mobileScaleFactor: 0.48,
     mobileBreakpoint: heroLayoutTokens.compactBreakpoint,
     desktopYOffset: 0.365,
-    mobileYOffset: 0.555,
+    mobileYOffset: 0.05,
     baseRotation: [-0.6, 0.82, 0.08],
     reducedRotation: [-0.6, 0.85, 0.08],
     initialOpacity: 0.92,

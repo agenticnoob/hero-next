@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import { useHeroViewport } from "../shared/useHeroViewport";
+import { HeroChapterNavigation } from "./HeroChapterNavigation";
 
 import { getHeroChapterContent, heroSiteContent } from "./content";
 import {
@@ -32,20 +34,40 @@ export function HeroChapterNarrative({
   readonly journal: HeroJournalState;
 }) {
   const site = heroSiteContent[locale];
+  const { reading } = useHeroViewport();
 
-  useEffect(onLayoutChange, [locale, onLayoutChange]);
+  useEffect(() => {
+    onLayoutChange();
+    const observer = new ResizeObserver(onLayoutChange);
+    document
+      .querySelectorAll(
+        ".hero-chapter__body, .hero-hub-runway--opening, #hero-journal",
+      )
+      .forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, [locale, reading, onLayoutChange]);
 
   return (
     <>
       <HeroLocaleControl locale={locale} onLocaleChange={onLocaleChange} />
+      {reading && <HeroChapterNavigation locale={locale} />}
 
       <section
         className="hero-hub-runway hero-hub-runway--opening"
         aria-label={site.intro.eyebrow}
       >
-        <p className="hero-sr-only">
-          {site.intro.title} {site.intro.summary} {site.intro.hint}
-        </p>
+        {reading ? (
+          <header className="hero-opening-copy">
+            <p>{site.intro.eyebrow}</p>
+            <h1>{site.intro.title}</h1>
+            <p>{site.intro.summary}</p>
+            <p className="hero-opening-copy__hint">{site.intro.hint}</p>
+          </header>
+        ) : (
+          <p className="hero-sr-only">
+            {site.intro.title} {site.intro.summary} {site.intro.hint}
+          </p>
+        )}
       </section>
 
       {heroChapterOrder.map((chapterId) => {
@@ -70,11 +92,14 @@ export function HeroChapterNarrative({
                   definition={definition}
                   content={content}
                   locale={locale}
+                  reading={reading}
                 />
               ) : chapterId === "axioms" ? (
                 <HeroAxiomsChapterBody
                   definition={definition}
                   content={getAxiomsContent(locale)}
+                  reading={reading}
+                  locale={locale}
                 />
               ) : chapterId === "builds" ? (
                 <HeroProjectsChapterBody
@@ -90,6 +115,7 @@ export function HeroChapterNarrative({
                   definition={definition}
                   content={content}
                   locale={locale}
+                  reading={reading}
                 />
               )}
             </HeroChapter>
@@ -103,7 +129,7 @@ export function HeroChapterNarrative({
         );
       })}
 
-      <HeroJournalRunway journal={journal} locale={locale} />
+      <HeroJournalRunway journal={journal} locale={locale} reading={reading} />
     </>
   );
 }

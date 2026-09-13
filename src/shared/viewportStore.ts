@@ -1,4 +1,4 @@
-import { heroLayoutTokens } from "./layoutTokens";
+import { heroLayoutTokens, heroReadingQuery } from "./layoutTokens";
 import {
   heroDefaultViewport,
   readHeroViewport,
@@ -7,11 +7,13 @@ import {
 
 export type HeroViewportSnapshot = HeroViewport & {
   readonly rootFontSize: number;
+  readonly reading: boolean;
 };
 
 const serverSnapshot: HeroViewportSnapshot = {
   ...heroDefaultViewport,
   rootFontSize: heroLayoutTokens.defaultRootFontSize,
+  reading: false,
 };
 
 export function createHeroViewportStore() {
@@ -28,13 +30,15 @@ export function createHeroViewportStore() {
       measured > 0 && Number.isFinite(measured)
         ? measured
         : heroLayoutTokens.defaultRootFontSize;
+    const reading = window.matchMedia(heroReadingQuery).matches;
     if (
       viewport.width === snapshot.width &&
       viewport.height === snapshot.height &&
-      rootFontSize === snapshot.rootFontSize
+      rootFontSize === snapshot.rootFontSize &&
+      reading === snapshot.reading
     )
       return;
-    snapshot = { ...viewport, rootFontSize };
+    snapshot = { ...viewport, rootFontSize, reading };
     for (const listener of listeners) listener();
   };
 
@@ -63,9 +67,12 @@ export function createHeroViewportStore() {
           attributeFilter: ["style", "class"],
         });
         window.addEventListener("resize", schedule, { passive: true });
+        const media = window.matchMedia(heroReadingQuery);
+        media.addEventListener?.("change", schedule);
         document.fonts?.addEventListener("loadingdone", schedule);
         stop = () => {
           window.removeEventListener("resize", schedule);
+          media.removeEventListener?.("change", schedule);
           document.fonts?.removeEventListener("loadingdone", schedule);
           resizeObserver?.disconnect();
           mutationObserver.disconnect();
