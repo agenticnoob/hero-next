@@ -81,10 +81,26 @@ The workflow resolves exact website/data commits, runs the quality gate, builds 
 Vercel CLI, publishes prebuilt output and verifies the public page/snapshot bytes.
 An apparently green stale run is insufficient: publication and readback steps must run.
 
-The last release before the mobile change was application `b083c8c`, followed by
-aligned documentation `ffd9593`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/34683009838)
-actually published and verified the public snapshot. The mobile release receipt is
-added after its workflow and independent production readback complete.
+Application `a010b837dffa6dba8238188cc8d2aabe9b395359` was committed and pushed to
+`main`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/34746790657)
+completed in 2m36s; both production publication and public snapshot verification
+ran successfully. The preceding privacy/LeetCode release was `b083c8c`, with
+documentation `ffd9593` and [its successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/34683009838).
+
+Independent production HTTP readback verified all four public profile sections,
+six directory destinations and the exact LeetCode URL. Removed identity/military
+copy was absent from the profile and nine loaded client scripts. The deployed
+108-date snapshot, source revision and hash match the data receipt below.
+Production Ego/Chromium at 390×844 verified reading mode, four complete articles
+and their index, three initially closed QR disclosures with open/close interaction,
+chapter jumps in both directions, and journal pagination from 12 to 24 unique dates.
+Synthetic native touch scrolling advanced the page; English switching kept reading
+content active. The sampled states had one canvas, no horizontal overflow and no
+captured page or console errors. The settled production screenshot was inspected.
+Physical-device limitations remain below.
+
+Documentation-only follow-up pushes use the same production workflow. Their exact
+website SHA and independent snapshot verification are recorded in each Actions run.
 
 Vercel project `hero-next` (`prj_DqmZ9hblXxRyX8K51nPM5S9uQMCp`) belongs to `agent-first`,
 uses Node.js 22 and the assigned production domain above. Required repository
