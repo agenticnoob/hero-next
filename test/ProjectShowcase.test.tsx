@@ -2,6 +2,9 @@ import { act, StrictMode, useEffect, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
+  getHeroChapterContent,
+  projectCaseStudies,
+  type HeroProjectSlug,
   syringeMeterCaseStudy,
   syringeMeterShowcaseUi,
 } from "../src/chapters/content";
@@ -13,7 +16,7 @@ import { useHeroLocaleState } from "../src/experience/useHeroExperienceState";
 import { heroLocaleStorageKey } from "../src/preferences/locale";
 import { ProjectExhibition } from "../src/projects/ProjectExhibition";
 import { ProjectVideo } from "../src/projects/ProjectVideo";
-import { SyringeMeterShowcase } from "../src/projects/SyringeMeterShowcase";
+import { ProjectShowcase } from "../src/projects/ProjectShowcase";
 import { syringeMeterMedia } from "../src/projects/media";
 
 const { goBack, resumeScroll, restorePosition, suspendScroll } = vi.hoisted(
@@ -170,12 +173,91 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-describe("SyringeMeter case study", () => {
+describe("project case studies", () => {
+  const writtenProjects: HeroProjectSlug[] = [
+    "axmorf-studio",
+    "viselora",
+    "vibe-journal-pipeline",
+  ];
+  test.each(
+    writtenProjects.flatMap((project) =>
+      ["zh", "en"].map((locale) => ({
+        project,
+        locale: locale as "zh" | "en",
+      })),
+    ),
+  )(
+    "renders every paragraph and anchor for $project in $locale without unrelated media",
+    async ({ project, locale }) => {
+      localStorage.setItem(heroLocaleStorageKey, locale);
+      await renderSite(<ProjectShowcase project={project} />);
+      const copy = projectCaseStudies[project][locale];
+      const article = host.querySelector("article")!;
+      expect(article.querySelector("h1")?.textContent).toBe(copy.title);
+      expect(article.querySelectorAll(".project-case__section")).toHaveLength(
+        7,
+      );
+      expect(
+        article.querySelector(".project-video, video, img, canvas"),
+      ).toBeNull();
+      const anchors = [
+        ...article.querySelectorAll<HTMLAnchorElement>("aside nav a"),
+      ];
+      expect(anchors).toHaveLength(7);
+      expect(new Set(anchors.map((a) => a.hash)).size).toBe(7);
+      for (const [index, section] of copy.sections.entries()) {
+        const target = article.querySelector(anchors[index].hash)!;
+        expect(target.querySelector("h2")?.textContent).toBe(section.title);
+        expect(
+          [...target.querySelectorAll(":scope > p")].map((p) => p.textContent),
+        ).toEqual(section.paragraphs);
+      }
+      await act(() => anchors[6].click());
+      expect(document.activeElement).toBe(
+        article.querySelector(anchors[6].hash),
+      );
+      expect(
+        [
+          ...article.querySelectorAll<HTMLAnchorElement>(
+            ".project-case__footer a",
+          ),
+        ].map((a) => a.href),
+      ).toEqual(copy.links.map((link) => link.href));
+      const back = article.querySelector<HTMLAnchorElement>(
+        ".project-case__bar > a",
+      )!;
+      back.addEventListener("click", (event) => event.preventDefault());
+      await act(() => back.click());
+      const index = getHeroChapterContent(
+        "builds",
+        locale,
+      ).body.sections.findIndex(
+        (section) => section.showcase?.href === `/projects/${project}`,
+      );
+      expect(siteState!.projectRoom.getSnapshot()).toMatchObject({
+        selected: index,
+        returnRequested: true,
+      });
+      const otherLocale = locale === "zh" ? "en" : "zh";
+      await act(() =>
+        host
+          .querySelector<HTMLButtonElement>(
+            `[data-hero-locale-option="${otherLocale}"]`,
+          )!
+          .click(),
+      );
+      expect(article.lang).toBe(otherLocale === "zh" ? "zh-CN" : "en");
+      expect(article.textContent).toContain(
+        projectCaseStudies[project][otherLocale].sections[6].paragraphs[0],
+      );
+    },
+  );
+
   test.each(["zh", "en"] as const)(
     "renders the complete %s case with seven real reading destinations",
     async (locale) => {
       localStorage.setItem(heroLocaleStorageKey, locale);
-      await renderSite(<SyringeMeterShowcase />);
+      await renderSite(<ProjectShowcase project="syringe-meter" />);
       const copy = syringeMeterCaseStudy[locale];
       const article = host.querySelector("article")!;
       const links = [
@@ -238,7 +320,7 @@ describe("SyringeMeter case study", () => {
   );
 
   test("selects SyringeMeter before returning from its standalone page to the room", async () => {
-    await renderSite(<SyringeMeterShowcase />);
+    await renderSite(<ProjectShowcase project="syringe-meter" />);
     const back = host.querySelector<HTMLAnchorElement>(
       ".project-case__bar > a",
     )!;
@@ -251,7 +333,7 @@ describe("SyringeMeter case study", () => {
   });
 
   test("shares locale changes between the case and another consumer without remounting content", async () => {
-    await renderSite(<SyringeMeterShowcase />);
+    await renderSite(<ProjectShowcase project="syringe-meter" />);
     const originalSection = host.querySelector("#project-measurement");
     expect(
       host.querySelector("[data-locale-consumer] output")?.textContent,
@@ -372,6 +454,9 @@ describe("project exhibition lifecycle", () => {
   test.each([
     {
       direction: "desktop to mobile",
+      project: "syringe-meter" as const,
+      index: 2,
+      sectionTop: 6000,
       startedDesktop: true,
       savedTop: 33399,
       navigationTop: 8800,
@@ -379,14 +464,35 @@ describe("project exhibition lifecycle", () => {
     },
     {
       direction: "mobile to desktop",
+      project: "syringe-meter" as const,
+      index: 2,
+      sectionTop: 6000,
       startedDesktop: false,
       savedTop: 5920,
       navigationTop: 32589,
       expectedTop: 33399,
     },
+    {
+      direction: "desktop to the last short mobile card",
+      project: "vibe-journal-pipeline" as const,
+      index: 3,
+      sectionTop: 7490,
+      startedDesktop: true,
+      savedTop: 33399,
+      navigationTop: 8800,
+      expectedTop: 6955,
+    },
   ])(
-    "returns to the visible SyringeMeter entry after changing from $direction",
-    async ({ startedDesktop, savedTop, navigationTop, expectedTop }) => {
+    "returns to the corresponding entry inside the reading range after $direction",
+    async ({
+      project,
+      index,
+      sectionTop,
+      startedDesktop,
+      savedTop,
+      navigationTop,
+      expectedTop,
+    }) => {
       const width = Object.getOwnPropertyDescriptor(window, "innerWidth")!;
       const height = Object.getOwnPropertyDescriptor(window, "innerHeight")!;
       const space = document.createElement("div");
@@ -394,29 +500,34 @@ describe("project exhibition lifecycle", () => {
       space.innerHTML = `
         <div class="hero-projects">
           <span id="project-room"></span>
+          <section><a class="hero-projects__case-link" data-project-index="0" href="/projects/axmorf-studio">Another project</a></section>
+          <a class="hero-projects__exhibit" data-project-index="0" href="/projects/axmorf-studio">Another wall</a>
           <section>
             <h3>SyringeMeter</h3>
-            <a class="hero-projects__case-link" href="/projects/syringe-meter">Read project</a>
+            <a class="hero-projects__case-link" data-project-index="${index}" href="/projects/${project}">Read project</a>
           </section>
-          <a class="hero-projects__exhibit" href="/projects/syringe-meter">Enter exhibition</a>
+          <a class="hero-projects__exhibit" data-project-index="${index}" href="/projects/${project}">Enter exhibition</a>
         </div>
         <button>Navigation focus</button>
       `;
       document.body.append(space);
       const room = space.querySelector<HTMLElement>(".hero-projects")!;
       const mobileEntry = space.querySelector<HTMLAnchorElement>(
-        ".hero-projects__case-link",
+        `.hero-projects__case-link[data-project-index="${index}"]`,
       )!;
       const desktopEntry = space.querySelector<HTMLAnchorElement>(
-        ".hero-projects__exhibit",
+        `.hero-projects__exhibit[data-project-index="${index}"]`,
       )!;
       let roomHeight = 0;
+      vi.spyOn(room, "getBoundingClientRect").mockImplementation(
+        () => new DOMRect(0, 5200 - window.scrollY, 390, roomHeight),
+      );
       Object.defineProperty(room, "offsetHeight", { get: () => roomHeight });
       vi.spyOn(
-        space.querySelector("section")!,
+        mobileEntry.closest("section")!,
         "getBoundingClientRect",
       ).mockImplementation(
-        () => new DOMRect(0, 6000 - window.scrollY, 390, 480),
+        () => new DOMRect(0, sectionTop - window.scrollY, 390, 480),
       );
       vi.spyOn(
         space.querySelector("#project-room")!,
@@ -439,7 +550,7 @@ describe("project exhibition lifecycle", () => {
         currentScrollTop = savedTop;
         const originalEntry = startedDesktop ? desktopEntry : mobileEntry;
         originalEntry.focus();
-        await renderSite(<ProjectExhibition />);
+        await renderSite(<ProjectExhibition project={project} />);
         changeLayout(!startedDesktop);
         const visibleEntry = startedDesktop ? mobileEntry : desktopEntry;
         await act(() => root.render(null));
@@ -471,7 +582,7 @@ describe("project exhibition lifecycle", () => {
     document.body.append(trigger, fragmentTarget);
     trigger.focus();
     try {
-      await renderSite(<ProjectExhibition />);
+      await renderSite(<ProjectExhibition project="syringe-meter" />);
       await act(() =>
         buttonWithText(syringeMeterCaseStudy.zh.backLabel).click(),
       );
@@ -499,7 +610,7 @@ describe("project exhibition lifecycle", () => {
     trigger.focus();
     const focusTrigger = vi.spyOn(trigger, "focus");
     try {
-      await renderSite(<ProjectExhibition />);
+      await renderSite(<ProjectExhibition project="syringe-meter" />);
       await act(() => root.render(null));
       trigger.remove();
       focusTrigger.mockClear();
@@ -526,7 +637,7 @@ describe("project exhibition lifecycle", () => {
         root.render(
           <StrictMode>
             <HeroSiteStateProvider>
-              <ProjectExhibition />
+              <ProjectExhibition project="syringe-meter" />
             </HeroSiteStateProvider>
           </StrictMode>,
         ),
@@ -553,7 +664,7 @@ describe("project exhibition lifecycle", () => {
     document.documentElement.style.overflow = "scroll";
     document.documentElement.style.scrollbarGutter = "auto";
     try {
-      await renderSite(<ProjectExhibition />);
+      await renderSite(<ProjectExhibition project="syringe-meter" />);
       const dialog = host.querySelector("dialog")!;
       expect(dialog.open).toBe(true);
       expect(dialog.showModal).toHaveBeenCalledOnce();
@@ -588,7 +699,7 @@ describe("project exhibition lifecycle", () => {
 
   test("returns through router history after its close transition", async () => {
     vi.useFakeTimers();
-    await renderSite(<ProjectExhibition />);
+    await renderSite(<ProjectExhibition project="syringe-meter" />);
     await act(() => buttonWithText(syringeMeterCaseStudy.zh.backLabel).click());
     expect(goBack).not.toHaveBeenCalled();
     await act(() => vi.advanceTimersByTimeAsync(240));
@@ -599,7 +710,7 @@ describe("project exhibition lifecycle", () => {
 
   test("handles the browser's Escape cancel event without a motion delay when reduced motion is enabled", async () => {
     reducedMotion = true;
-    await renderSite(<ProjectExhibition />);
+    await renderSite(<ProjectExhibition project="syringe-meter" />);
     const cancel = new Event("cancel", { cancelable: true });
     await act(() => host.querySelector("dialog")!.dispatchEvent(cancel));
     expect(cancel.defaultPrevented).toBe(true);
@@ -613,7 +724,7 @@ describe("project exhibition lifecycle", () => {
     "goes back only once for repeated %s requests with reduced motion",
     async (action) => {
       reducedMotion = true;
-      await renderSite(<ProjectExhibition />);
+      await renderSite(<ProjectExhibition project="syringe-meter" />);
       const dialog = host.querySelector("dialog")!;
       const back = buttonWithText(syringeMeterCaseStudy.zh.backLabel);
       await act(() => {
@@ -633,7 +744,7 @@ describe("project exhibition lifecycle", () => {
 
   test("cancels a pending history change when the exhibition unmounts during closing", async () => {
     vi.useFakeTimers();
-    await renderSite(<ProjectExhibition />);
+    await renderSite(<ProjectExhibition project="syringe-meter" />);
     await act(() => buttonWithText(syringeMeterCaseStudy.zh.backLabel).click());
     await act(() => root.render(null));
     await act(() => vi.advanceTimersByTimeAsync(1000));

@@ -4,7 +4,7 @@ import { WebGLScrollTimeline } from "@viselora/scroll-adapters/react";
 import React, { useEffect, useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { syringeMeterMedia } from "./media";
+import { syringeMeterMedia, projectHasPoster } from "./media";
 import { syringeMeterShowcaseUi } from "../chapters/content";
 import type { HeroChapterBodyProps } from "../chapters/HeroChapter";
 import {
@@ -15,7 +15,7 @@ import { heroInterfaceContent } from "../chapters/uiContent";
 import type { HeroLocale, HeroLocaleStore } from "../preferences/locale";
 import { assertProjectRoomSections } from "./model";
 import { projectRoomAnchorId, type ProjectRoomStore } from "./room";
-import { projectRoomExhibitLayout } from "./exhibit";
+import { projectExhibitLayout } from "./exhibit";
 
 export function HeroProjectRoomStage({
   locale,
@@ -111,16 +111,19 @@ export function HeroProjectsChapterBody({
                   prefetch={false}
                   scroll={false}
                   className="hero-projects__case-link"
+                  data-project-index={index}
                   tabIndex={snapshot.ready ? -1 : undefined}
                   onClick={() => room.select(index)}
                 >
-                  <Image
-                    src={syringeMeterMedia.poster}
-                    alt={syringeMeterShowcaseUi[locale].posterAlt}
-                    width={1280}
-                    height={800}
-                    unoptimized
-                  />
+                  {projectHasPoster(project.showcase.href) && (
+                    <Image
+                      src={syringeMeterMedia.poster}
+                      alt={syringeMeterShowcaseUi[locale].posterAlt}
+                      width={1280}
+                      height={800}
+                      unoptimized
+                    />
+                  )}
                   <span>{project.showcase.label} →</span>
                 </Link>
               )}
@@ -160,12 +163,18 @@ export function HeroProjectsChapterBody({
                 key={project.title}
                 ref={(element) => room.registerExhibit(index, element)}
                 className="hero-projects__exhibit"
+                data-project-index={index}
+                data-project-poster={projectHasPoster(project.showcase.href)}
                 href={project.showcase.href}
                 prefetch={false}
                 scroll={false}
                 style={{
-                  width: projectRoomExhibitLayout.width,
-                  height: projectRoomExhibitLayout.height,
+                  width: projectExhibitLayout(
+                    projectHasPoster(project.showcase.href),
+                  ).width,
+                  height: projectExhibitLayout(
+                    projectHasPoster(project.showcase.href),
+                  ).height,
                 }}
                 aria-label={`${project.title} · ${project.showcase.label}`}
                 aria-disabled={!controlsEnabled}

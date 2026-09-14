@@ -4,7 +4,14 @@ import {
   drawProjectRoomEndpoint,
 } from "../src/projects/artwork";
 import { getHeroChapterContent } from "../src/chapters/content";
-import { projectRoomExhibitLayout as exhibit } from "../src/projects/exhibit";
+import {
+  projectRoomExhibitLayout as exhibit,
+  projectExhibitLayout,
+  updateProjectRoomExhibits,
+} from "../src/projects/exhibit";
+import { projectHasPoster } from "../src/projects/media";
+import { createProjectRoomStore } from "../src/projects/room";
+import { projectRoomExhibitProjection } from "../src/projects/projection";
 import { projectRoomConfig as config } from "../src/projects/room";
 
 const originalGetContext = HTMLCanvasElement.prototype.getContext;
@@ -17,6 +24,31 @@ afterEach(() =>
 );
 
 describe("project room text and endpoint projection", () => {
+  test("uses the text-only hit area for all three written cases and keeps the poster on SyringeMeter", () => {
+    const room = createProjectRoomStore();
+    const projects = getHeroChapterContent("builds", "zh").body.sections;
+    for (const [index, project] of projects.entries()) {
+      const hasPoster = projectHasPoster(project.showcase?.href);
+      expect(hasPoster).toBe(index === 2);
+      const entry = document.createElement("a");
+      entry.dataset.projectPoster = String(hasPoster);
+      room.registerExhibit(index, entry);
+      const view = [(index * Math.PI) / 2, 0, 0, 0] as const;
+      const viewport = { width: 1440, height: 900 };
+      updateProjectRoomExhibits(room, viewport, view, 0);
+      const layout = projectExhibitLayout(hasPoster);
+      expect(entry.style.transform).toBe(
+        projectRoomExhibitProjection(viewport, index, view, 0, layout)
+          .transform,
+      );
+      expect(entry.style.visibility).toBe("visible");
+      if (!hasPoster) {
+        expect(layout.height).toBeLessThan(exhibit.height);
+        expect(layout.labelTop).toBeGreaterThanOrEqual(layout.y);
+        expect(layout.bottom).toBeLessThanOrEqual(layout.y + layout.height);
+      }
+    }
+  });
   test("preserves the poster's aspect ratio on the physical wall", () => {
     const width = (exhibit.width / config.textureWidth) * 2 * config.radius;
     const height =

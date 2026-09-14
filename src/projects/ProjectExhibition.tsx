@@ -7,10 +7,17 @@ import {
   restoreHeroReadingPosition,
   suspendHeroScroll,
 } from "../experience/smoothScroll";
-import { SyringeMeterShowcase } from "./SyringeMeterShowcase";
-import { projectRoomAnchorId } from "./room";
+import {
+  getHeroChapterContent,
+  type HeroProjectSlug,
+} from "../chapters/content";
+import { ProjectShowcase } from "./ProjectShowcase";
+import {
+  projectRoomEntrySelector,
+  readProjectRoomReturnPosition,
+} from "./room";
 
-function captureRoomReturn(trigger: HTMLElement | null) {
+function captureRoomReturn(trigger: HTMLElement | null, index: number) {
   const scrollTop = window.scrollY;
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -28,20 +35,14 @@ function captureRoomReturn(trigger: HTMLElement | null) {
         ?.getAttribute("data-reading-layout") === "true";
     const target = changed
       ? document.querySelector<HTMLElement>(
-          reading ? ".hero-projects__case-link" : ".hero-projects__exhibit",
+          projectRoomEntrySelector(index, reading),
         )
       : trigger;
     if (!target?.isConnected) return;
-    const anchor = reading
-      ? target.closest("section")
-      : document.getElementById(projectRoomAnchorId);
-    const top =
-      changed && anchor
-        ? window.scrollY +
-          anchor.getBoundingClientRect().top -
-          (reading ? 80 : 0)
-        : scrollTop;
-    restoreHeroReadingPosition(top);
+    const top = changed
+      ? readProjectRoomReturnPosition(target, reading, window.innerHeight)
+      : scrollTop;
+    if (top !== undefined) restoreHeroReadingPosition(top);
     target.focus({ preventScroll: true });
     if (changed)
       window.requestAnimationFrame(() => {
@@ -51,7 +52,11 @@ function captureRoomReturn(trigger: HTMLElement | null) {
   };
 }
 
-export function ProjectExhibition() {
+export function ProjectExhibition({
+  project,
+}: {
+  readonly project: HeroProjectSlug;
+}) {
   const router = useRouter();
   const { projectRoom } = useHeroSiteState();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -68,7 +73,11 @@ export function ProjectExhibition() {
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
-    const restoreRoom = captureRoomReturn(trigger);
+    const index = getHeroChapterContent("builds", "zh").body.sections.findIndex(
+      (section) => section.showcase?.href === `/projects/${project}`,
+    );
+    projectRoom.select(index);
+    const restoreRoom = captureRoomReturn(trigger, index);
     const html = document.documentElement;
     const previousOverflow = html.style.overflow;
     const previousGutter = html.style.scrollbarGutter;
@@ -94,7 +103,7 @@ export function ProjectExhibition() {
         restoreRoom(element);
       });
     };
-  }, [projectRoom]);
+  }, [projectRoom, project]);
 
   const close = () => {
     if (closingRef.current) return;
@@ -122,7 +131,7 @@ export function ProjectExhibition() {
         close();
       }}
     >
-      <SyringeMeterShowcase onClose={close} />
+      <ProjectShowcase project={project} onClose={close} />
     </dialog>
   );
 }

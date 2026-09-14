@@ -78,10 +78,13 @@ Follow the `Deploy journal to production` run for that exact website SHA. A gree
 run may have skipped publication when either repository advanced: confirm that
 both the publish and public snapshot verification steps completed successfully.
 After a content change, also read back the affected production content and links;
-the journal hash check alone does not validate chapter copy. For the SyringeMeter
-showcase, verify direct `/projects/syringe-meter` visits and chapter-three dialog
-navigation, the side-wall image and pointer parallax, article content, and actual
-video playback/seeking. Check mobile reading mode as well as the desktop room.
+the journal hash check alone does not validate chapter copy. For project cases,
+verify all registered destinations: `/projects/axmorf-studio`, `/projects/viselora`,
+`/projects/syringe-meter` and `/projects/vibe-journal-pipeline`. Check direct visits,
+Chinese/English article content, chapter-three dialog navigation, and return to
+the corresponding project with restored focus. Check mobile reading mode and
+desktop/mobile resizing as well as the desktop room. For SyringeMeter, also check
+the side-wall image, pointer parallax and actual video playback/seeking.
 Its committed media under `public/projects/syringe-meter/` deploy with the website;
 they do not come from the generated journal snapshot. Record the exact application
 commit, run URL and readback evidence in [STATUS.md](./STATUS.md).

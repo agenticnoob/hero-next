@@ -12,7 +12,7 @@ import { heroTransitionConfig } from "../transition/transitionConfig";
 import { createProjectRoomTexture } from "./artwork";
 import { createProjectRoomProgram, projectRoomColors } from "./program";
 import { hideProjectRoomExhibits, updateProjectRoomExhibits } from "./exhibit";
-import { syringeMeterMedia } from "./media";
+import { syringeMeterMedia, projectHasPoster } from "./media";
 import { projectRoomWallAngle } from "./model";
 import {
   projectRoomConfig,
@@ -98,7 +98,9 @@ export const heroProjectRoomEffect = defineWebGLEffect<RoomParams, RoomState>({
         mode: "replace-source",
         program: createProjectRoomProgram(
           createProjectRoomTexture(content),
-          content.sections.findIndex((section) => section.showcase),
+          content.sections.findIndex((section) =>
+            projectHasPoster(section.showcase?.href),
+          ),
           poster,
         ),
       });

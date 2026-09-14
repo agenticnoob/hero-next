@@ -69,6 +69,7 @@ beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.clearAllMocks();
   room = createProjectRoomStore();
+  room.select(2);
   frames = new Map();
   let nextFrameId = 1;
   vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
@@ -86,10 +87,16 @@ beforeEach(() => {
   });
   host = document.createElement("div");
   fixture = document.createElement("div");
+  fixture.className = "hero-projects";
   fixture.innerHTML = `
     <span id="project-room"></span>
-    <section><a class="hero-projects__case-link" href="/projects/syringe-meter">SyringeMeter</a></section>
+    <section><a class="hero-projects__case-link" data-project-index="0" href="/projects/axmorf-studio">AXMORF Studio</a></section>
+    <section><a class="hero-projects__case-link" data-project-index="2" href="/projects/syringe-meter">SyringeMeter</a></section>
+    <a class="hero-projects__exhibit" data-project-index="2" href="/projects/syringe-meter">SyringeMeter wall</a>
   `;
+  vi.spyOn(fixture, "getBoundingClientRect").mockImplementation(
+    () => new DOMRect(0, 4000 - window.scrollY, 390, 4000),
+  );
   document.body.append(host, fixture);
   root = createRoot(host);
   vi.spyOn(
@@ -97,7 +104,7 @@ beforeEach(() => {
     "getBoundingClientRect",
   ).mockImplementation(() => new DOMRect(0, 33399 - window.scrollY, 1440, 1));
   vi.spyOn(
-    fixture.querySelector("section")!,
+    fixture.querySelectorAll("section")[1],
     "getBoundingClientRect",
   ).mockImplementation(() => new DOMRect(0, 6000 - window.scrollY, 390, 480));
 });
@@ -144,12 +151,37 @@ describe("returning from a standalone case to the project room", () => {
       expect(room.getSnapshot().returnRequested).toBe(true);
       await nextFrame();
       expect(restorePosition).toHaveBeenCalledExactlyOnceWith(top);
+      expect(room.getSnapshot().returnRequested).toBe(true);
+      await nextFrame();
       expect(room.getSnapshot().returnRequested).toBe(false);
+      expect(document.activeElement).toBe(
+        fixture.querySelector(
+          `${viewport.reading ? ".hero-projects__case-link" : ".hero-projects__exhibit"}[data-project-index="2"]`,
+        ),
+      );
       await nextFrame();
       expect(frames.size).toBe(0);
       expect(restorePosition).toHaveBeenCalledOnce();
     },
   );
+
+  test("keeps the last short card inside the chapter reading range", async () => {
+    vi.mocked(fixture.getBoundingClientRect).mockImplementation(
+      () => new DOMRect(0, 4000 - window.scrollY, 390, 2500),
+    );
+    await renderProbe(mobile);
+    await act(() => room.requestReturn());
+    await nextFrame();
+    await nextFrame();
+    // Exit starts when the room bottom reaches the viewport bottom.
+    expect(restorePosition).toHaveBeenCalledExactlyOnceWith(5655);
+    await nextFrame();
+    expect(document.activeElement).toBe(
+      fixture.querySelector(
+        '.hero-projects__case-link[data-project-index="2"]',
+      ),
+    );
+  });
 
   test.each([false, true])(
     "replaces stale desktop work when the mobile viewport arrives (layout refreshed: %s)",
@@ -168,6 +200,7 @@ describe("returning from a standalone case to the project room", () => {
       expect(restorePosition).not.toHaveBeenCalled();
       await nextFrame();
       expect(restorePosition).toHaveBeenCalledExactlyOnceWith(5920);
+      await nextFrame();
       expect(room.getSnapshot().returnRequested).toBe(false);
     },
   );

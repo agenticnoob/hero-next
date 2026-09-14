@@ -24,6 +24,21 @@ export const projectRoomExhibitLayout = {
   bottom,
 } as const;
 
+const projectRoomTextExhibitLayout = {
+  x: 212,
+  y: 490,
+  width: 600,
+  height: 70,
+  posterHeight: 0,
+  labelTop: 506,
+  labelSize: 24,
+  bottom: 552,
+} as const;
+
+export function projectExhibitLayout(hasPoster: boolean) {
+  return hasPoster ? projectRoomExhibitLayout : projectRoomTextExhibitLayout;
+}
+
 export function hideProjectRoomExhibits(room: ProjectRoomStore) {
   for (const element of room.getExhibits().values())
     element.style.visibility = "hidden";
@@ -41,7 +56,7 @@ export function updateProjectRoomExhibits(
       index,
       view,
       approach,
-      projectRoomExhibitLayout,
+      projectExhibitLayout(element.dataset.projectPoster === "true"),
     );
     element.style.transform = projection.transform;
     element.style.visibility = projection.visible ? "visible" : "hidden";

@@ -3,6 +3,29 @@ export type HeroChapterLink = {
   readonly label: string;
 };
 
+export type HeroProjectCaseStudy = {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly subtitle: string;
+  readonly introduction: string;
+  readonly backLabel: string;
+  readonly tocLabel: string;
+  readonly readLabel: string;
+  readonly sections: readonly {
+    readonly id: string;
+    readonly title: string;
+    readonly paragraphs: readonly string[];
+    readonly points?: readonly string[];
+  }[];
+  readonly pipelineTitle: string;
+  readonly pipeline: readonly {
+    readonly title: string;
+    readonly detail: string;
+  }[];
+  readonly linksTitle: string;
+  readonly links: readonly HeroChapterLink[];
+};
+
 export type HeroChapterBodySection = {
   readonly label: string;
   readonly title: string;

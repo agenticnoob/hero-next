@@ -6,3 +6,7 @@ export const syringeMeterMedia = {
   csv: "/projects/syringe-meter/csv.jpg",
   chapters: [18, 66, 166],
 } as const;
+
+export function projectHasPoster(href: string | undefined) {
+  return href === "/projects/syringe-meter";
+}

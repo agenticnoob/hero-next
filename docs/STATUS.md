@@ -1,11 +1,62 @@
 # Current Status
 
-Last verified: 2026-09-14 (SyringeMeter production release and public readback).
+Last verified locally: 2026-09-15 (four-project case-study integration).
+Last production readback: 2026-09-14 (SyringeMeter release).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
+
+## Four-project case studies (2026-09-15)
+
+AXMORF Studio, Viselora and Vibe Journal Pipeline now have complete Chinese and
+English case studies alongside SyringeMeter. Each has seven sections, a six-step
+workflow, a reading index and project links. The typed `projectCaseStudies`
+registry drives `/projects/[slug]` and the intercepted native dialog; unknown
+slugs return 404. All four chapter-three entries open their corresponding case.
+The new cases use text entries, while the existing poster, preview and screenshots
+remain attached specifically to SyringeMeter. No dependencies or runtime packages
+changed. The checks in this section describe local implementation verification;
+production publication and readback are recorded separately under Production release.
+
+Return handling now selects and focuses the corresponding project in either
+layout. Reading coordinates stay inside the chapter's content range: aligning
+the short final card to the viewport top previously entered the exit runway and
+hid the chapter. Regression tests reproduced that failure before the fix. A
+standalone return also waits for the chapter's visibility commit before focusing.
+
+`npm run check` passes: zero-warning lint, formatting, 49 files / 373 tests,
+both typechecks and the 111-file standalone boundary. `npm run build` passes:
+all four intercepted cases are prerendered; standalone cases retain the existing
+`force-dynamic` interception-cache workaround. `git diff --check` passes.
+React Doctor 0.9.14 scanned 19 changed files locally with network scoring and
+supply-chain checks disabled. Its only two warnings are href-derived selectors
+in `test/ProjectShowcase.test.tsx`; these resolve fixture anchors from the typed,
+static case registry, so malformed external selectors cannot reach them. No
+application diagnostics or rule suppressions were introduced; no online score
+is claimed.
+
+The local production app was checked in the Codex in-app Chromium browser at
+1440×900 and 390×844, plus 320×740 with reduced motion and 200% root text.
+All four desktop entries opened the correct seven sections, switched languages,
+and restored the selected wall, scroll and focus on close. The three new mobile
+cases passed direct page → home → keyboard-opened dialog → close, with the correct
+entry focused and the chapter visible. Journal dialog resizing passed both
+desktop → mobile and mobile → desktop. Browser forward reopened the exhibition;
+Escape worked with reduced motion. The original SyringeMeter preview played
+muted, reached readyState 4, and was removed on close. Article anchors focused
+their real sections; the sampled pages had no horizontal overflow. Home kept
+one canvas, and standalone cases had none. With JavaScript disabled, each new
+case still had all seven sections, seven anchors and its project link.
+
+Wall, mobile-card and case screenshots were inspected. A fresh 1440×900 session
+had no captured runtime exceptions or console entries. The session with repeated
+viewport/emulation changes reported Chromium rendering warnings:
+`GL_INVALID_VALUE: glCopySubTextureCHROMIUM: Offset overflows texture dimensions`.
+The checked return paths and visible content still worked; the warning's underlying
+cause has not been isolated. Physical mobile devices and other browsers remain
+unverified. Preview tooling, screenshots and diagnostics stay outside Git.
 
 ## SyringeMeter showcase (2026-09-14)
 

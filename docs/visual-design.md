@@ -75,7 +75,12 @@ Hub 模型使用较小比例及下移位置，为介绍留出完整阅读区域�
 阅读布局保留四个普通项目与对应链接，改为自然高度的单列内容。标题和卡片间距收紧，
 卡片正文至少 16px，外链保留 44px 触控区域。触屏不需要边缘鼠标手势，也不创建项目空间纹理。
 
-### SyringeMeter 项目展台
+### 四个项目详情与展台
+
+AXMORF Studio、Viselora、SyringeMeter 和 Vibe Journal Pipeline 均提供中英文完整详情。
+每个项目包含七节正文、六步流程、目录及项目链接，内容覆盖问题、设计取舍、个人角色和
+当前边界。三个新增案例以长文阅读为主；只有 SyringeMeter 使用现有演示和真实截图。
+四面墙均有对应入口，普通案例采用紧凑的文字入口区域；SyringeMeter 保持原有图文比例。
 
 SyringeMeter 墙面保留精简介绍与源码链接，增加真实截图和“进入项目 · 观看演示”链接。
 图片使用 room material 的 image-texture，入口文字进入同一墙面文字图集；两者都固定在
@@ -88,18 +93,20 @@ SyringeMeter 墙面坐标，不按 selected/settled 隐藏，转向两侧时随�
 shader 的 approach uniform 沿当前墙面推进，原生 dialog 接管可滚动的语义正文。未新增
 canvas、场景或运行时；高频推进量仍在 room effect 中插值。减少动态效果时直接打开。
 
-展示地址为 `/projects/syringe-meter`。Next 拦截路由保留主页和 room store，直接访问或
+展示地址为 `/projects/axmorf-studio`、`/projects/viselora`、`/projects/syringe-meter`
+和 `/projects/vibe-journal-pipeline`。Next 拦截路由保留主页和 room store，直接访问或
 刷新则呈现独立案例页。关闭按钮、Escape 和浏览器后退返回原墙面与滚动位置；浏览器前进
 可再次打开。dialog 使用原生模态焦点约束，暂停既有 Lenis，并在卸载时清理视频、计时器、
 滚动锁与焦点。详情与主页从根部 `HeroSiteStateProvider` 订阅同一主题和语言。
 独立详情的返回链接指向真实 `#project-room`：桌面位于正文可交互中段，阅读布局位于正文
 起点，避免落在 room 权重为零的入场边界。
-首次从独立详情返回时，先等待实际 viewport 和既有滚动布局完成，再定位 SyringeMeter；
+首次从独立详情返回时，先等待实际 viewport 和既有滚动布局完成，再定位对应项目；
 展台打开期间改变窗口尺寸，关闭时按新布局恢复到同一项目，并恢复可见入口的焦点。
+阅读布局的返回位置限制在本章正文范围内，避免最后一张短卡片顶对齐时触发离场动画。
 Next 16.2.10 存在直接访问静态目标后错误复用拦截缓存的问题（vercel/next.js#94533），
 因此仅独立案例页使用 `force-dynamic`；主页和拦截展台仍静态生成，未升级框架或改写路由。
 
-首屏是项目标题、简述和 16:10 视频。点击播放前只请求 poster；预览为 17 秒，完整版为
+SyringeMeter 首屏是项目标题、简述和 16:10 视频。点击播放前只请求 poster；预览为 17 秒，完整版为
 3:13，均保留原生 controls、playsinline，默认静音。片段入口为 00:18 实时测量、01:06
 开始记录和 02:46 查看 CSV。选择新片段时清理旧播放请求，播放失败提供重试与视频直链。
 七节中英文长文覆盖问题、测量、可靠性、记录、交付、个人角色和证据边界，配六步流程与
@@ -113,9 +120,10 @@ Next 16.2.10 存在直接访问静态目标后错误复用拦截缓存的问题�
 素材不宣称 Windows 真机通过：演示为 macOS 源码运行，包构建验证与目标机复验范围在正文
 单独说明。
 
-详细 copy 使用 `src/chapters/content.ts` 的 `syringeMeterCaseStudy` 与
-`syringeMeterShowcaseUi`，媒体位置与片段起点由 `src/projects/media.ts` 管理。
-普通项目通过可选 `showcase` 链接接入详情，原有 source link 保持独立。
+详细 copy 和 slug 类型由 `src/chapters/content.ts` 的 `projectCaseStudies` 统一注册。
+SyringeMeter 保留 `syringeMeterCaseStudy` 与 `syringeMeterShowcaseUi`；媒体位置与片段
+起点由 `src/projects/media.ts` 管理。章节通过 `showcase` 链接关联详情，原有 source link
+保持独立。新增详情需同时注册中英文案例和两种语言的章节入口；未知 slug 返回 404。
 
 ## 第四章：公共入口与跟随预览
 

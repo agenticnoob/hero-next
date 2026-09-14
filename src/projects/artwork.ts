@@ -2,7 +2,8 @@ import type { HeroChapterBodyContent } from "../chapters/contentModel";
 import { appendText, drawTextTile, type TextLine } from "../shared/canvasText";
 import type { HeroViewport } from "../shared/viewport";
 import { projectRoomConfig as config, projectRoomPoint } from "./room";
-import { projectRoomExhibitLayout as exhibit } from "./exhibit";
+import { projectExhibitLayout } from "./exhibit";
+import { projectHasPoster } from "./media";
 import {
   assertProjectRoomSections,
   projectRoomAtlas,
@@ -23,6 +24,9 @@ export function createProjectRoomTexture(
   if (!ctx) throw new Error("Project room requires a 2D text context.");
   ctx.scale(config.texturePixelRatio, config.texturePixelRatio);
   content.sections.forEach((section, index) => {
+    const exhibit = projectExhibitLayout(
+      projectHasPoster(section.showcase?.href),
+    );
     const { column, row } = projectRoomAtlasSlot(index);
     ctx.save();
     ctx.translate(column * config.textureWidth, row * config.textureHeight);

@@ -7,12 +7,13 @@ Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
 
 Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
 
-SyringeMeter has a complete bilingual case study at `/projects/syringe-meter`:
-on-demand demonstrations, a measurement walkthrough, engineering decisions,
-real screenshots, recording semantics and verification boundaries. Opening it
-from chapter three preserves the room behind a native reading dialog; opening
-or refreshing its URL renders a standalone page. The shared root site state
-keeps one theme, locale and room selection across these routes.
+All four projects have complete bilingual case studies: `/projects/axmorf-studio`,
+`/projects/viselora`, `/projects/syringe-meter` and `/projects/vibe-journal-pipeline`.
+Each includes seven sections, a workflow, engineering decisions and current
+boundaries. SyringeMeter also retains its on-demand demonstrations and real
+measurement/CSV screenshots. Opening a case from chapter three preserves the
+room behind a native reading dialog; opening or refreshing its URL renders a
+standalone page. The shared root state keeps one theme, locale and room selection.
 
 The site has four chapters: self, AI/philosophy axioms, public builds and public
 channels, followed by the daily journal. Chinese and English share typed content
@@ -132,8 +133,10 @@ npm run build
 
 Project case-study components and media configuration live in `src/projects/`;
 their bilingual copy remains in `src/chapters/content.ts`. `app/@project/` owns
-the intercepted exhibition route, and `app/projects/syringe-meter/` owns the
-standalone page and metadata. `src/experience/HeroSiteState.tsx` provides the
+the intercepted exhibition routes, and `app/projects/[slug]/` owns the
+standalone pages and metadata. `projectCaseStudies` defines the supported slugs;
+`src/projects/ProjectShowcase.tsx` renders their shared reading layout.
+`src/experience/HeroSiteState.tsx` provides the
 shared state above both routes. See the media and extension notes in
 [visual design](./docs/visual-design.md).
 

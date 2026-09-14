@@ -5,10 +5,11 @@ import Link from "next/link";
 import type { MouseEvent } from "react";
 import {
   getHeroChapterContent,
-  heroPublicLinks,
-  syringeMeterCaseStudy,
+  projectCaseStudies,
   syringeMeterShowcaseUi,
+  type HeroProjectSlug,
 } from "../chapters/content";
+import type { HeroProjectCaseStudy } from "../chapters/contentModel";
 import { HeroLocaleControl } from "../chapters/HeroLocaleControl";
 import { useHeroSiteState } from "../experience/HeroSiteState";
 import {
@@ -42,15 +43,18 @@ function readSection(event: MouseEvent<HTMLAnchorElement>, id: string) {
   target.focus({ preventScroll: true });
 }
 
-export function SyringeMeterShowcase({
+export function ProjectShowcase({
+  project,
   onClose,
 }: {
+  readonly project: HeroProjectSlug;
   readonly onClose?: () => void;
 }) {
   const { locale, store } = useHeroLocaleState();
   const { scheme } = useHeroThemeState();
   const { projectRoom } = useHeroSiteState();
-  const copy = syringeMeterCaseStudy[locale];
+  const copy: HeroProjectCaseStudy = projectCaseStudies[project][locale];
+  const hasMedia = project === "syringe-meter";
   const ui = syringeMeterShowcaseUi[locale];
   const firstSectionId = `project-${copy.sections[0].id}`;
   const returnToRoom = () => {
@@ -58,7 +62,7 @@ export function SyringeMeterShowcase({
       "builds",
       locale,
     ).body.sections.findIndex(
-      (section) => section.link?.href === heroPublicLinks.syringeMeter,
+      (section) => section.showcase?.href === `/projects/${project}`,
     );
     projectRoom.select(index);
     projectRoom.requestReturn();
@@ -67,6 +71,8 @@ export function SyringeMeterShowcase({
   return (
     <article
       className="project-case"
+      data-project={project}
+      data-media={hasMedia}
       data-hero-theme={scheme}
       lang={locale === "zh" ? "zh-CN" : "en"}
       aria-labelledby="project-case-title"
@@ -99,10 +105,10 @@ export function SyringeMeterShowcase({
             href={`#${firstSectionId}`}
             onClick={(event) => readSection(event, firstSectionId)}
           >
-            {ui.readCase} ↓
+            {copy.readLabel} ↓
           </a>
         </header>
-        <ProjectVideo locale={locale} />
+        {hasMedia && <ProjectVideo locale={locale} />}
         <p className="project-case__introduction">{copy.introduction}</p>
         <div className="project-case__reading">
           <aside>
@@ -133,7 +139,7 @@ export function SyringeMeterShowcase({
                 {section.paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
-                {"points" in section && (
+                {section.points && (
                   <ul>
                     {section.points.map((point) => (
                       <li key={point}>{point}</li>
@@ -156,7 +162,7 @@ export function SyringeMeterShowcase({
                     </ol>
                   </section>
                 )}
-                {section.id === "measurement" && (
+                {hasMedia && section.id === "measurement" && (
                   <figure>
                     <Image
                       src={syringeMeterMedia.measurement}
@@ -168,7 +174,7 @@ export function SyringeMeterShowcase({
                     <figcaption>{ui.measurementCaption}</figcaption>
                   </figure>
                 )}
-                {section.id === "recording" && (
+                {hasMedia && section.id === "recording" && (
                   <figure>
                     <Image
                       src={syringeMeterMedia.csv}
@@ -187,27 +193,16 @@ export function SyringeMeterShowcase({
         <footer className="project-case__footer">
           <h2>{copy.linksTitle}</h2>
           <div>
-            <a
-              href={heroPublicLinks.syringeMeter}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {copy.githubLabel} ↗
-            </a>
-            <a
-              href={`${heroPublicLinks.syringeMeter}/releases/tag/v0.2.0`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {copy.releaseLabel} ↗
-            </a>
-            <a
-              href={`${heroPublicLinks.syringeMeter}/blob/main/docs/status/current.yaml`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {copy.statusLabel} ↗
-            </a>
+            {copy.links.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {link.label} ↗
+              </a>
+            ))}
           </div>
         </footer>
       </div>

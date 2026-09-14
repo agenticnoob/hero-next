@@ -79,13 +79,39 @@ describe("project room semantic interface", () => {
         "https://github.com/agenticnoob/vibe-journal-pipeline",
       ]);
       expect(links.every((link) => link.tabIndex === 0)).toBe(true);
+      const cases = [
+        ...host.querySelectorAll<HTMLAnchorElement>(
+          ".hero-projects__case-link",
+        ),
+      ];
+      const exhibits = [
+        ...host.querySelectorAll<HTMLAnchorElement>(".hero-projects__exhibit"),
+      ];
+      const slugs = [
+        "axmorf-studio",
+        "viselora",
+        "syringe-meter",
+        "vibe-journal-pipeline",
+      ];
+      expect(cases.map((link) => link.getAttribute("href"))).toEqual(
+        slugs.map((slug) => `/projects/${slug}`),
+      );
+      expect(exhibits.map((link) => link.getAttribute("href"))).toEqual(
+        cases.map((link) => link.getAttribute("href")),
+      );
+      for (const [index, link] of cases.entries()) {
+        expect(link.dataset.projectIndex).toBe(String(index));
+        expect(link.querySelectorAll("img")).toHaveLength(index === 2 ? 1 : 0);
+        expect(room.getExhibits().get(index)).toBe(exhibits[index]);
+        expect(exhibits[index].dataset.projectPoster).toBe(String(index === 2));
+      }
       const showcase = host.querySelector<HTMLAnchorElement>(
-        ".hero-projects__case-link",
+        '.hero-projects__case-link[href="/projects/syringe-meter"]',
       );
       expect(showcase?.getAttribute("href")).toBe("/projects/syringe-meter");
       expect(showcase?.tabIndex).toBe(0);
       const wallEntry = host.querySelector<HTMLAnchorElement>(
-        ".hero-projects__exhibit",
+        '.hero-projects__exhibit[href="/projects/syringe-meter"]',
       );
       expect(wallEntry).not.toBeNull();
       expect(room.getExhibits().get(2)).toBe(wallEntry);
@@ -121,13 +147,17 @@ describe("project room semantic interface", () => {
       expect(source?.href).toBe("https://github.com/agenticnoob/syringe-meter");
       expect(source?.tabIndex).toBe(-1);
       const exhibit = host.querySelector<HTMLAnchorElement>(
-        ".hero-projects__exhibit",
+        '.hero-projects__exhibit[href="/projects/syringe-meter"]',
       );
       expect(exhibit?.getAttribute("href")).toBe("/projects/syringe-meter");
       expect(exhibit).toBe(wallEntry);
       expect(exhibit?.tabIndex).toBe(0);
       await act(() => room.select(1));
-      expect(host.querySelector(".hero-projects__exhibit")).toBe(wallEntry);
+      expect(
+        host.querySelector(
+          '.hero-projects__exhibit[href="/projects/syringe-meter"]',
+        ),
+      ).toBe(wallEntry);
       expect(exhibit?.getAttribute("aria-disabled")).toBe("false");
       exhibit?.addEventListener("click", (event) => event.preventDefault());
       await act(() =>
