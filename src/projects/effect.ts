@@ -11,6 +11,8 @@ import { readHeroTransitionSignals } from "../transition/signals";
 import { heroTransitionConfig } from "../transition/transitionConfig";
 import { createProjectRoomTexture } from "./artwork";
 import { createProjectRoomProgram, projectRoomColors } from "./program";
+import { hideProjectRoomExhibits, updateProjectRoomExhibits } from "./exhibit";
+import { syringeMeterMedia } from "./media";
 import { projectRoomWallAngle } from "./model";
 import {
   projectRoomConfig,
@@ -32,9 +34,12 @@ type RoomState = {
   yaw: number;
   parallaxX: number;
   parallaxY: number;
+  approach: number;
   armed: boolean;
   wasVisible: boolean;
   disposed: boolean;
+  poster: HTMLImageElement | undefined;
+  posterBound: boolean;
   readonly desktop: MediaQueryList;
   readonly reduced: MediaQueryList;
 };
@@ -50,9 +55,12 @@ export const heroProjectRoomEffect = defineWebGLEffect<RoomParams, RoomState>({
       yaw: 0,
       parallaxX: 0,
       parallaxY: 0,
+      approach: 0,
       armed: false,
       wasVisible: false,
       disposed: false,
+      poster: undefined,
+      posterBound: false,
       desktop: window.matchMedia(projectRoomConfig.desktopQuery),
       reduced: window.matchMedia("(prefers-reduced-motion: reduce)"),
     };
@@ -75,19 +83,37 @@ export const heroProjectRoomEffect = defineWebGLEffect<RoomParams, RoomState>({
       state.layer.dispose();
       state.layer = undefined;
     }
+    if (!state.poster && state.desktop.matches) {
+      state.poster = new Image();
+      state.poster.src = syringeMeterMedia.poster;
+    }
+    const poster =
+      state.poster?.complete && state.poster.naturalWidth > 0
+        ? state.poster
+        : undefined;
     if (!state.layer && state.desktop.matches) {
+      const content = getHeroChapterContent("builds", locale).body;
       state.layer = ctx.object.surface?.createMaterialLayer({
         key: "hero.projects.room",
         mode: "replace-source",
         program: createProjectRoomProgram(
-          createProjectRoomTexture(
-            getHeroChapterContent("builds", locale).body,
-          ),
+          createProjectRoomTexture(content),
+          content.sections.findIndex((section) => section.showcase),
+          poster,
         ),
       });
       state.locale = locale;
+      state.posterBound = !!poster;
+    }
+    if (state.layer && poster && !state.posterBound) {
+      state.layer.setUniforms({
+        poster: { kind: "image-texture", source: poster },
+        posterReady: 1,
+      });
+      state.posterBound = true;
     }
     if (!visible) {
+      hideProjectRoomExhibits(params.room);
       state.wasVisible = false;
       params.room.setHovered(false);
       params.room.setFocused(false);
@@ -116,9 +142,12 @@ export const heroProjectRoomEffect = defineWebGLEffect<RoomParams, RoomState>({
       interactive &&
       ctx.pointer.isInside &&
       !state.reduced.matches &&
-      !params.room.pointerLocked();
+      !params.room.getSnapshot().exhibition;
     if (Math.abs(x) < projectRoomConfig.rearmThreshold) state.armed = true;
-    const turn = pointerEnabled ? resolveRoomTurn(x, y, state.armed) : 0;
+    const turn =
+      pointerEnabled && !params.room.pointerLocked()
+        ? resolveRoomTurn(x, y, state.armed)
+        : 0;
     if (turn) {
       params.room.select(params.room.getSnapshot().selected + turn);
       state.armed = false;
@@ -131,6 +160,10 @@ export const heroProjectRoomEffect = defineWebGLEffect<RoomParams, RoomState>({
       state.reduced.matches,
     );
     const smoothing = 1 - Math.exp(-Math.max(0, Math.min(ctx.delta, 64)) / 120);
+    const approach = params.room.getSnapshot().exhibition ? 1.15 : 0;
+    state.approach = state.reduced.matches
+      ? 0
+      : state.approach + (approach - state.approach) * smoothing;
     const px = pointerEnabled ? x : 0;
     const py = pointerEnabled ? y : 0;
     state.parallaxX += (px - state.parallaxX) * smoothing;
@@ -145,21 +178,24 @@ export const heroProjectRoomEffect = defineWebGLEffect<RoomParams, RoomState>({
       0,
       0,
     );
+    const view = [
+      (state.reduced.matches && !interactive
+        ? 0
+        : wrapRoomAngle(state.yaw) * weight) +
+        state.parallaxX * 0.045 * weight,
+      -state.parallaxY * 0.025 * weight,
+      state.parallaxX * 0.12 * weight,
+      -state.parallaxY * 0.08 * weight,
+    ] as const;
     state.layer?.setUniforms({
       viewport: [viewport.width, viewport.height],
-      view: [
-        (state.reduced.matches && !interactive
-          ? 0
-          : wrapRoomAngle(state.yaw) * weight) +
-          state.parallaxX * 0.045 * weight,
-        -state.parallaxY * 0.025 * weight,
-        state.parallaxX * 0.12 * weight,
-        -state.parallaxY * 0.08 * weight,
-      ],
+      approach: state.approach,
+      view,
       ...projectRoomColors(
         readHeroTransitionSignals(ctx.progress).committedScheme === "inverted",
       ),
     });
+    updateProjectRoomExhibits(params.room, viewport, view, state.approach);
     ctx.object.surface?.setOpacity?.(1);
     params.room.publishFrame({
       ready: !!state.layer,
@@ -172,6 +208,8 @@ export const heroProjectRoomEffect = defineWebGLEffect<RoomParams, RoomState>({
     state.disposed = true;
     state.layer?.dispose();
     state.layer = undefined;
+    state.poster = undefined;
+    hideProjectRoomExhibits(params.room);
     params.room.publishFrame({ ready: false, active: false, settled: true });
   },
 });

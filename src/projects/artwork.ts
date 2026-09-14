@@ -2,6 +2,7 @@ import type { HeroChapterBodyContent } from "../chapters/contentModel";
 import { appendText, drawTextTile, type TextLine } from "../shared/canvasText";
 import type { HeroViewport } from "../shared/viewport";
 import { projectRoomConfig as config, projectRoomPoint } from "./room";
+import { projectRoomExhibitLayout as exhibit } from "./exhibit";
 import {
   assertProjectRoomSections,
   projectRoomAtlas,
@@ -45,8 +46,24 @@ export function createProjectRoomTexture(
     );
     let y = appendText(ctx, lines, section.title, 90, 150, 844, 68, 400, 1.05);
     y = appendText(ctx, lines, section.body, 94, y + 46, 820, 25, 400, 1.65);
-    if (y > 660)
+    if (y > (section.showcase ? exhibit.y - 16 : 660))
       throw new Error(`Project room copy exceeds its wall: ${section.title}`);
+    if (section.showcase) {
+      appendText(
+        ctx,
+        lines,
+        `${section.showcase.label} →`,
+        exhibit.x,
+        exhibit.labelTop,
+        exhibit.width,
+        exhibit.labelSize,
+        400,
+      );
+      ctx.beginPath();
+      ctx.moveTo(exhibit.x, exhibit.bottom);
+      ctx.lineTo(exhibit.x + exhibit.width, exhibit.bottom);
+      ctx.stroke();
+    }
     drawTextTile(ctx, {
       width: config.textureWidth,
       height: config.textureHeight,

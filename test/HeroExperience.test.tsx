@@ -251,7 +251,16 @@ vi.mock("@viselora/dom-webgl/react", () => ({
   }>) => createElement(as, { className, "data-pass-viewport": id }, children),
 }));
 
-import { HeroExperience } from "../src/experience/HeroExperience";
+import { HeroExperience as HeroExperienceContent } from "../src/experience/HeroExperience";
+import { HeroSiteStateProvider } from "../src/experience/HeroSiteState";
+
+function HeroExperience(props: Parameters<typeof HeroExperienceContent>[0]) {
+  return createElement(
+    HeroSiteStateProvider,
+    null,
+    createElement(HeroExperienceContent, props),
+  );
+}
 
 beforeEach(() => {
   capturedEffects.length = 0;

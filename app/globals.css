@@ -35,12 +35,15 @@ a {
   display: block;
 }
 
-.hero-space {
+.hero-space,
+.project-case {
   --hero-background: #c8c8c8;
   --hero-foreground: #424242;
   --hero-chapter-background: var(--hero-foreground);
   --hero-chapter-foreground: var(--hero-background);
+}
 
+.hero-space {
   position: relative;
   width: 100%;
   min-height: 100svh;
@@ -51,7 +54,8 @@ a {
   pointer-events: none;
 }
 
-.hero-space[data-hero-theme="inverted"] {
+.hero-space[data-hero-theme="inverted"],
+.project-case[data-hero-theme="inverted"] {
   --hero-background: #424242;
   --hero-foreground: #c8c8c8;
 }

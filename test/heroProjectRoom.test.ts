@@ -9,6 +9,22 @@ import {
 } from "../src/projects/room";
 
 describe("project room navigation", () => {
+  test("preserves the selected wall and locks room interaction throughout an exhibition", () => {
+    const room = createProjectRoomStore();
+    room.select(2);
+    room.setExhibition(true);
+    room.setHovered(false);
+    room.setFocused(false);
+    expect(room.pointerLocked()).toBe(true);
+    room.select(3);
+    room.publishFrame({ ready: true, active: true, settled: true });
+    expect(room.getSnapshot()).toMatchObject({ selected: 2, exhibition: true });
+    room.setExhibition(false);
+    expect(room.getSnapshot().selected).toBe(2);
+    expect(room.pointerLocked()).toBe(false);
+    room.select(3);
+    expect(room.getSnapshot().selected).toBe(3);
+  });
   test("requires a rearmed edge gesture and protects the utility area", () => {
     expect(resolveRoomTurn(0.95, 0, true)).toBe(1);
     expect(resolveRoomTurn(-0.95, 0, true)).toBe(-1);

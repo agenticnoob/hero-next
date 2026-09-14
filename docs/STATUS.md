@@ -1,11 +1,65 @@
 # Current Status
 
-Last verified: 2026-09-13.
+Last verified: 2026-09-14 (local SyringeMeter showcase; production receipt below is unchanged).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
+
+## SyringeMeter showcase (local, 2026-09-14)
+
+Chapter three now opens a complete bilingual project exhibition: a 17-second
+preview, 3:13 demonstration with three chapter jumps, seven long-form sections,
+a six-step measurement flow, real measurement/CSV screenshots and project links.
+The room retains its selected wall, scroll and focus through a native dialog;
+the independent `/projects/syringe-meter` page supports direct visits and sharing.
+Theme and locale use the same root stores as the home page. No runtime package,
+dependency version, second canvas or second scroll controller was introduced.
+
+`npm run check` passes: zero-warning lint, formatting, 48 files / 356 tests,
+both typechecks and the 110-file standalone boundary. The production build passes;
+the home page and intercepted exhibition are static. Only the independent case
+page renders per request to avoid Next 16.2.10's confirmed interception-cache bug
+([upstream issue](https://github.com/vercel/next.js/issues/94533)). `git diff --check`
+passes. The earlier showcase implementation scored 100/100 in React Doctor;
+its rerun for the wall-entry fix was blocked by automatic approval review because
+of possible third-party disclosure of private repository diagnostics. Local
+lint, tests, typechecks and browser checks provide this fix's verification.
+
+The image and entry label now belong to the SyringeMeter wall: the existing room
+shader renders its image texture and atlas text throughout turns and parallax.
+They no longer appear only after selecting and settling that wall. The semantic
+link follows the same camera projection, including partially visible side walls,
+while viewport clipping removes off-screen hit regions. Hover locks edge turning
+without stopping parallax. Wall geometry preserves the poster's 16:10 aspect ratio.
+Regression tests cover four-wall projection via independent ray intersection,
+wide-view near-plane clipping, stable link registration and poster proportions.
+The wall-entry fix was checked in local production Chromium at 1440×900 and
+2560×900: left/right turn screenshots retain the wall image, pointer movement
+changes the entry projection, and all 46 sampled on-screen side-wall points hit
+the semantic link (including eight points across the near plane). Reduced motion
+kept the transform unchanged; opening/closing worked. A fresh 390×844 mobile
+entry opened all seven case sections without overflow. One canvas and no captured
+page/console errors remained. Physical-device and other-browser limits below still
+apply; screenshots are outside Git under `/tmp/syringe-showcase-review/`.
+
+Local production Ego/Chromium checks covered 1440×900 desktop, 390×844 mobile,
+and 320×740 with reduced motion and 200% root text. Verified paths include direct
+case → home → exhibition, preview playback, seeking the full video to 02:46,
+article anchors, close/Escape, browser forward, and desktop/mobile layout changes
+while the exhibition is open. Desktop close restored the recorded scroll position
+and entry focus; resizing returned to the corresponding project card or wall.
+The home kept one canvas; the independent case had none. Before play there was
+no video element or MP4 request. Sampled interactions produced no captured page
+or console errors. Screenshots of the room, case and prose were inspected.
+With JavaScript disabled, all seven sections and both video file links remained
+available. The full video supports HTTP 206 byte ranges; both media files decoded.
+
+Production publication is pending; the preceding release receipts below remain
+unchanged until this showcase's deployment and public readback are verified.
+Physical iOS Safari/Android playback and audio/subtitle quality have not been
+verified. Local screenshots and logs remain outside the repository.
 
 ## Mobile reading layout
 
@@ -39,7 +93,7 @@ model asset, decoder, dependency version or generated journal data was changed.
 See [current visual behavior](./visual-design.md) and the
 [previous design](./archive/2026-09-13-pre-mobile-visual-design.md).
 
-## Verification
+## Mobile-layout verification (2026-09-13)
 
 Node.js 22.22.3 / npm 10.9.8:
 

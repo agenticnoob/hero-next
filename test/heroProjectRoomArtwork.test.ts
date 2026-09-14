@@ -4,6 +4,8 @@ import {
   drawProjectRoomEndpoint,
 } from "../src/projects/artwork";
 import { getHeroChapterContent } from "../src/chapters/content";
+import { projectRoomExhibitLayout as exhibit } from "../src/projects/exhibit";
+import { projectRoomConfig as config } from "../src/projects/room";
 
 const originalGetContext = HTMLCanvasElement.prototype.getContext;
 afterEach(() =>
@@ -15,6 +17,14 @@ afterEach(() =>
 );
 
 describe("project room text and endpoint projection", () => {
+  test("preserves the poster's aspect ratio on the physical wall", () => {
+    const width = (exhibit.width / config.textureWidth) * 2 * config.radius;
+    const height =
+      (exhibit.posterHeight / config.textureHeight) * 2 * config.halfHeight;
+    expect(width / height).toBeCloseTo(16 / 10, 8);
+    expect(exhibit.labelTop).toBeGreaterThan(exhibit.y + exhibit.posterHeight);
+    expect(exhibit.bottom).toBeLessThan(config.textureHeight);
+  });
   test.each([0, 1, 3, 5])(
     "rejects %i projects before allocating a four-wall texture",
     (count) => {
@@ -85,8 +95,13 @@ describe("project room text and endpoint projection", () => {
       expect(texture.height).toBe(2880);
       const drawn = ctx.fillText.mock.calls.map(([text]) => text).join("");
       for (const project of getHeroChapterContent("builds", locale).body
-        .sections)
+        .sections) {
         expect(drawn).toContain(project.title);
+        if (project.showcase)
+          expect(drawn.replace(/\s/g, "")).toContain(
+            `${project.showcase.label} →`.replace(/\s/g, ""),
+          );
+      }
       const target = document.createElement("canvas").getContext("2d");
       if (!target) throw new Error("Missing test canvas");
       drawProjectRoomEndpoint(target, { width: 1440, height: 900 }, texture);

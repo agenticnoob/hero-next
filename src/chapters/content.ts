@@ -205,7 +205,11 @@ export const heroChapterContent = {
           {
             label: "视觉测量",
             title: "SyringeMeter",
-            body: "一个用于受控场景的本地针筒视觉测量原型。结合目标检测、颜色标记与活塞边缘，从摄像头画面计算容量，在桌面界面展示稳定读数和实时曲线，并支持 CSV 记录。当前面向纯黑背景下的单支带标记针筒。",
+            body: "在受控场景中，将摄像头里的针筒画面转化为稳定容量读数、实时曲线与 CSV 记录的本地桌面应用。",
+            showcase: {
+              href: "/projects/syringe-meter",
+              label: "进入项目 · 观看演示",
+            },
             link: {
               href: heroPublicLinks.syringeMeter,
               label: "在 GitHub 查看 SyringeMeter",
@@ -269,7 +273,11 @@ export const heroChapterContent = {
           {
             label: "VISUAL MEASUREMENT",
             title: "SyringeMeter",
-            body: "A local vision-based syringe measurement prototype for controlled conditions. Object detection, color markers and the plunger edge turn camera images into volume readings, with stabilized values, live charts and CSV recording in a desktop interface. Its current scope is one marked syringe against a pure black background.",
+            body: "A local desktop application that turns camera images of a syringe into stable volume readings, live charts and CSV records under controlled conditions.",
+            showcase: {
+              href: "/projects/syringe-meter",
+              label: "Explore project · Watch demo",
+            },
             link: {
               href: heroPublicLinks.syringeMeter,
               label: "View SyringeMeter on GitHub",
@@ -498,3 +506,262 @@ export function getHeroChapterContent(
 ): HeroChapterLocalizedContent {
   return heroChapterContent[chapterId][locale];
 }
+
+export const syringeMeterCaseStudy = {
+  zh: {
+    eyebrow: "计算机视觉 / 桌面应用 · v0.2.0 MVP",
+    title: "SyringeMeter",
+    subtitle: "从摄像头画面，到稳定读数与可追溯的记录。",
+    introduction:
+      "一个在本地 CPU 上运行的针筒视觉测量应用。定位、方向、量程和活塞位置共同生成连续容量读数，再接上实时曲线和由用户控制的 CSV 记录。这份案例记录了一个视觉原型如何走到桌面交互、失败处理与 Windows 分发。",
+    previewLabel: "效果预览 · 17 秒",
+    fullLabel: "完整演示 · 3:13",
+    videoCaption:
+      "演示录制于 macOS，以 Python 源码运行，展示该次运行中的可见行为。Windows 安装包的验证范围见文末。",
+    videoFallback: "浏览器无法播放时，可直接打开视频文件。",
+    backLabel: "返回项目空间",
+    tocLabel: "阅读目录",
+    chaptersLabel: "按片段观看",
+    sections: [
+      {
+        id: "problem",
+        title: "一次检测，怎样变成连续测量？",
+        paragraphs: [
+          "起点是一支出现在摄像头里的针筒。它可能倾斜，活塞会移动，颜色标记也可能暂时看不清。检测框只能告诉系统目标在哪里；要回答“现在还有多少容量”，还需要确认方向、量程与活塞位置，并让这些证据落在同一帧、同一套坐标里。",
+          "当读数走进桌面应用，问题也随之扩大：界面要保持响应，曲线要跟上测量，开始和停止必须有明确含义，异常退出时也不能把记录状态留给用户猜测。SyringeMeter 因而围绕从画面到记录的整条工作流展开。",
+        ],
+      },
+      {
+        id: "measurement",
+        title: "先统一方向，再计算容量",
+        paragraphs: [
+          "系统先用 YOLO OBB 定位带有旋转角度的针筒区域，再把这块画面转换成方向统一的局部测量区域。针筒在摄像头里转动时，后续判断仍然可以使用一致的坐标。",
+          "在这个区域里，绿色标记提供方向，双红色量程线给出测量范围，活塞位置提供当前容量的依据。只有这些条件共同成立，才会产生连续容量结果，再经过时间稳定处理，进入界面的读数和曲线。",
+        ],
+        points: [
+          "目标定位：确定针筒在画面中的位置和角度。",
+          "局部测量：将方向、量程和活塞放进统一坐标。",
+          "结果展示：把有效容量转换成可持续观察的读数与曲线。",
+        ],
+      },
+      {
+        id: "reliability",
+        title: "稳定读数，也要诚实地失效",
+        paragraphs: [
+          "平滑可以减轻跳动，也可能掩盖丢失的证据。如果当前帧的颜色标记、量程锚点或上游判断无效，应用会明确显示没有有效读数，不继续沿用上一帧容量。这样，屏幕上的稳定仍然对应眼前的画面。",
+          "运行时把不同的数据分开处理。子进程独占摄像头、模型、视觉测量和 CSV 写入；父进程负责 Qt 界面与用户操作。视频通道只保留最新画面，测量样本则使用有界无损通道，让显示的流畅性与记录的完整性各自有明确的处理方式。",
+        ],
+      },
+      {
+        id: "recording",
+        title: "每一段记录，都由用户明确开始",
+        paragraphs: [
+          "打开摄像头不等于开始保存数据。只有点击 Start，应用才会创建记录会话并写入标量 CSV。产品不保存摄像头图片或视频，留下的是测量数据，以及能与这次操作对应的时间记录。",
+          "Start、Stop、Reset 和退出命令都在处理帧的边界生效。Reset 会结束当前会话、清空曲线并回到 READY；下一次显式 Start 才创建新的 CSV，从 0 ms 重新计时。一次重置因此有清楚的前后边界。",
+        ],
+        points: [
+          "观看：实时查看容量与曲线，不自动开始 CSV 记录。",
+          "记录：点击 Start，开启一次独立的测量会话。",
+          "重置：关闭当前会话，清空曲线，等待下一次 Start。",
+        ],
+      },
+      {
+        id: "delivery",
+        title: "把原型交付成可以安装的应用",
+        paragraphs: [
+          "项目把摄像头、连续测量、Qt 交互、曲线和 CSV 串成了端到端链路，并为单元逻辑、集成行为、界面、进程和记录建立测试。接口约定与文档也进入验证范围，便于区分代码行为、测试结果和真实设备证据。",
+          "v0.2.0 提供 Windows x64 CPU-only 安装程序和便携 ZIP，由 GitHub Actions 配合 PyInstaller 与 Inno Setup 构建。发布任务对两份分发产物执行校验；模型不进入 Git 历史，只经获批的 Release 链路，在 SHA-256 校验后装入产物。",
+          "这些工作建立了可重复的构建与分发路径。安装包在目标机器上的安装、摄像头与真实推理，需要单独完成硬件验证，不能由自动化构建结果替代。",
+        ],
+      },
+      {
+        id: "role",
+        title: "我的角色：定义系统应该如何成立",
+        paragraphs: [
+          "这是我主导的个人工程项目。我负责定义问题、产品目标、测量语义、失败边界和验收标准，并推动算法、运行时、桌面交互与 Windows 分发形成完整工作流。最终发布决策也由我作出。",
+          "AI 工具参与实现、重构、测试和文档整理。我持续判断哪些行为值得实现、哪些证据足以接受，以及哪些结果还必须回到真实硬件上确认。这个项目也是一次 AI-native 协作实践：让迭代最终收敛成行为明确、结果可验证、责任清楚的系统。",
+        ],
+      },
+      {
+        id: "boundaries",
+        title: "当前证据与适用边界",
+        paragraphs: [
+          "SyringeMeter 是受控场景中的工程 MVP，当前展示围绕带标记的单支针筒展开。它不是医疗设备，不宣称适用于任意针筒、光照或部署环境。",
+          "本页视频来自 macOS Python 源码运行，只证明该次演示中可见的行为。v0.2.0 的 Windows 构建和 Release 已完成自动化验证；当前 Windows 包的安装、摄像头和真实推理尚未重新完成目标机实测。源码、自动化检查、演示与安装包验证分别记录，最新进展以项目验证状态为准。",
+        ],
+      },
+    ],
+    pipelineTitle: "从画面到记录",
+    pipeline: [
+      { title: "采集画面", detail: "摄像头提供当前帧，在本地处理。" },
+      { title: "定位针筒", detail: "YOLO OBB 找到目标位置与旋转角度。" },
+      { title: "统一坐标", detail: "转换局部画面，建立一致的测量方向。" },
+      { title: "读取证据", detail: "结合绿色方向标记、双红线量程与活塞位置。" },
+      { title: "稳定容量", detail: "质量检查与时间稳定共同决定有效读数。" },
+      {
+        title: "显示与记录",
+        detail: "实时读数和曲线；显式开始后写入标量 CSV。",
+      },
+    ],
+    linksTitle: "继续查看项目",
+    githubLabel: "源码与项目文档",
+    releaseLabel: "Windows v0.2.0 发布包",
+    statusLabel: "当前验证状态",
+    roleTitle: "我的角色",
+  },
+  en: {
+    eyebrow: "COMPUTER VISION / DESKTOP · v0.2.0 MVP",
+    title: "SyringeMeter",
+    subtitle: "From camera images to stable readings and traceable records.",
+    introduction:
+      "A syringe measurement application that runs locally on the CPU. Detection, orientation, range markers and plunger position produce continuous volume readings, live charts and CSV records controlled by the user. This case study follows a vision prototype through desktop interaction, failure handling and Windows distribution.",
+    previewLabel: "Quick preview · 17 sec",
+    fullLabel: "Full demonstration · 3:13",
+    videoCaption:
+      "Recorded on macOS running the Python source. The video shows the behavior visible in that session. See the verification scope below for the Windows package.",
+    videoFallback:
+      "If your browser cannot play the video, open the video file directly.",
+    backLabel: "Back to the project room",
+    tocLabel: "In this case study",
+    chaptersLabel: "Watch by chapter",
+    sections: [
+      {
+        id: "problem",
+        title: "How does a detection become a continuous measurement?",
+        paragraphs: [
+          "The starting point is a syringe in a camera image. It can tilt, its plunger moves, and its color markers may briefly become unreadable. A detection box locates the object. Answering how much volume it contains also requires orientation, range and plunger evidence from the same frame, in the same coordinate system.",
+          "Bringing that reading into a desktop application adds further responsibilities. The interface must stay responsive, charts must follow measurements, and starting or stopping must have a clear meaning. Unexpected exits must not leave recording state ambiguous. SyringeMeter was built around this entire journey from image to record.",
+        ],
+      },
+      {
+        id: "measurement",
+        title: "Align the measurement before calculating volume",
+        paragraphs: [
+          "YOLO OBB first locates the syringe and its rotation. The detected region is then transformed into a consistently oriented local image. As the syringe turns in the camera view, the measurement logic can continue working in the same coordinates.",
+          "Within that image, a green marker establishes direction, two red range lines define the measurement span, and the plunger position supplies the current volume evidence. Together, valid observations produce a continuous volume result. Temporal stabilization then prepares it for the live reading and chart.",
+        ],
+        points: [
+          "Locate the object: establish the syringe's position and angle.",
+          "Measure locally: bring direction, range and plunger into one coordinate system.",
+          "Display the result: turn valid volume estimates into readings and charts that can be followed over time.",
+        ],
+      },
+      {
+        id: "reliability",
+        title: "A stable reading must also know when to disappear",
+        paragraphs: [
+          "Smoothing can reduce jitter, but it can also conceal missing evidence. When the current frame has invalid color markers, range anchors or upstream evidence, the application explicitly reports no valid reading. It does not retain the previous volume. A steady number must still correspond to the image being observed.",
+          "The runtime treats video and measurements separately. A worker process owns the camera, model, visual measurement and CSV writing; the parent process handles the Qt interface and user actions. The video channel keeps only the latest frame, while measurement samples use a bounded lossless channel. Display responsiveness and recording integrity each have their own data path.",
+        ],
+      },
+      {
+        id: "recording",
+        title: "Every recording begins with an explicit action",
+        paragraphs: [
+          "Opening the camera does not start saving data. A recording session and scalar CSV are created only after the user presses Start. The product does not save camera images or video. It records measurements and timing that belong to that session.",
+          "Start, Stop, Reset and exit commands take effect at processing frame boundaries. Reset closes the current session, clears the chart and returns the application to READY. Only the next explicit Start creates a new CSV and restarts timing at 0 ms, giving each session a clear boundary.",
+        ],
+        points: [
+          "Observe: follow the live volume and chart without automatically recording a CSV.",
+          "Record: press Start to begin a separate measurement session.",
+          "Reset: close the session, clear the chart and wait for the next Start.",
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivering an application people can install",
+        paragraphs: [
+          "The project connects camera input, continuous measurement, Qt interaction, charts and CSV in an end-to-end workflow. Tests cover unit logic, integration, the interface, processes and recording. Interface contracts and documentation are also checked, keeping implemented behavior, automated results and physical evidence distinguishable.",
+          "Version 0.2.0 provides a Windows x64 CPU-only installer and portable ZIP, built by GitHub Actions with PyInstaller and Inno Setup. The release job verifies checksums for both artifacts. Model files stay out of Git history and enter installation artifacts through the approved release pipeline after SHA-256 verification.",
+          "This establishes a repeatable build and distribution path. Installation, camera access and real inference on the target machine still require their own physical verification; a successful automated build cannot establish those results.",
+        ],
+      },
+      {
+        id: "role",
+        title: "My role: defining what the system must get right",
+        paragraphs: [
+          "I led this personal engineering project, defining the problem, product goals, measurement semantics, failure boundaries and acceptance criteria. I brought the algorithm, runtime, desktop interaction and Windows distribution into one workflow, and retained the final release decision.",
+          "AI tools contributed to implementation, refactoring, tests and documentation. My responsibility was to decide which behavior to build, which evidence was sufficient to accept it, and which results still needed real hardware. The project is also a practice in AI-native collaboration: bringing iteration to a system with explicit behavior, verifiable results and clear responsibility.",
+        ],
+      },
+      {
+        id: "boundaries",
+        title: "Evidence and scope",
+        paragraphs: [
+          "SyringeMeter is an engineering MVP for controlled conditions, demonstrated with a single marked syringe. It is not a medical device and makes no claim to support arbitrary syringes, lighting or deployment environments.",
+          "The videos on this page were recorded on macOS running the Python source and establish only the behavior visible in those sessions. The v0.2.0 Windows build and release have passed automated verification. Installation, camera access and real inference for the current Windows package have not yet been reverified on the target machine. Source, automated checks, demonstrations and package verification are recorded separately; the project status tracks further progress.",
+        ],
+      },
+    ],
+    pipelineTitle: "From image to record",
+    pipeline: [
+      { title: "Capture", detail: "Process the current camera frame locally." },
+      {
+        title: "Locate",
+        detail: "Find the syringe and its rotation with YOLO OBB.",
+      },
+      {
+        title: "Align",
+        detail:
+          "Transform the local image into a consistent measurement direction.",
+      },
+      {
+        title: "Read evidence",
+        detail:
+          "Combine the green direction marker, two red range lines and plunger position.",
+      },
+      {
+        title: "Stabilize",
+        detail:
+          "Use quality checks and temporal stabilization to determine valid readings.",
+      },
+      {
+        title: "Display & record",
+        detail:
+          "Show live readings and charts; write scalar CSV after an explicit Start.",
+      },
+    ],
+    linksTitle: "Explore the project",
+    githubLabel: "Source & project documentation",
+    releaseLabel: "Windows v0.2.0 release",
+    statusLabel: "Current verification status",
+    roleTitle: "My role",
+  },
+} as const;
+
+export const syringeMeterShowcaseUi = {
+  zh: {
+    demoTitle: "SyringeMeter 运行演示",
+    posterAlt: "针筒实时画面、容量读数和随活塞变化的曲线",
+    readCase: "阅读完整案例",
+    chapters: ["实时测量", "开始记录", "查看 CSV"],
+    playbackError: "视频暂时无法播放。可重试播放按钮，或直接打开视频。",
+    openVideo: "打开视频",
+    measurementAlt:
+      "macOS 上运行的 SyringeMeter：右侧针筒检测与容量读数，左侧实时曲线",
+    measurementCaption:
+      "完整演示 02:00：检测画面、容量读数与正在记录的曲线。截图来自实际运行。",
+    csvAlt:
+      "演示中打开的 CSV 表格，包含时间、会话标识、测量值和无有效检测的记录",
+    csvCaption:
+      "完整演示 03:00：查看生成的 CSV。记录保留会话与测量状态，便于回看一次操作。",
+  },
+  en: {
+    demoTitle: "SyringeMeter demonstration",
+    posterAlt:
+      "Live syringe image, volume reading and a chart following the plunger",
+    readCase: "Read the full case study",
+    chapters: ["Live measurement", "Start recording", "Inspect the CSV"],
+    playbackError:
+      "The video could not play. Try a playback button again or open the video directly.",
+    openVideo: "Open video",
+    measurementAlt:
+      "SyringeMeter running on macOS, with detection and volume on the right and a live chart on the left",
+    measurementCaption:
+      "Full demo at 02:00: detection, volume readings and the chart during recording. Captured from the running application.",
+    csvAlt:
+      "The exported CSV with timestamps, session identifiers, measurements and invalid detection records",
+    csvCaption:
+      "Full demo at 03:00: inspecting the generated CSV. Session and measurement states make the operation traceable.",
+  },
+} as const;

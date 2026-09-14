@@ -68,7 +68,9 @@ describe("project room semantic interface", () => {
         ),
       );
       const links = Array.from(
-        host.querySelectorAll<HTMLAnchorElement>(".hero-projects__content a"),
+        host.querySelectorAll<HTMLAnchorElement>(
+          ".hero-projects__content a[target='_blank']",
+        ),
       );
       expect(links.map((link) => link.href)).toEqual([
         "https://github.com/AXMORF/axmorf-studio",
@@ -77,6 +79,27 @@ describe("project room semantic interface", () => {
         "https://github.com/agenticnoob/vibe-journal-pipeline",
       ]);
       expect(links.every((link) => link.tabIndex === 0)).toBe(true);
+      const showcase = host.querySelector<HTMLAnchorElement>(
+        ".hero-projects__case-link",
+      );
+      expect(showcase?.getAttribute("href")).toBe("/projects/syringe-meter");
+      expect(showcase?.tabIndex).toBe(0);
+      const wallEntry = host.querySelector<HTMLAnchorElement>(
+        ".hero-projects__exhibit",
+      );
+      expect(wallEntry).not.toBeNull();
+      expect(room.getExhibits().get(2)).toBe(wallEntry);
+      expect(wallEntry?.querySelector("img")).toBeNull();
+      expect(wallEntry?.getAttribute("aria-disabled")).toBe("true");
+      showcase?.addEventListener("click", (event) => event.preventDefault());
+      await act(() =>
+        showcase?.dispatchEvent(
+          new MouseEvent("click", { bubbles: true, cancelable: true }),
+        ),
+      );
+      expect(room.getSnapshot().selected).toBe(2);
+      await act(() => room.select(0));
+      expect(host.querySelector("#project-room")).not.toBeNull();
       expect(
         host.querySelector<HTMLElement>(".hero-projects__controls")?.hidden,
       ).toBe(true);
@@ -87,6 +110,7 @@ describe("project room semantic interface", () => {
         host.querySelector<HTMLElement>(".hero-projects__controls")?.hidden,
       ).toBe(false);
       expect(links.every((link) => link.tabIndex === -1)).toBe(true);
+      expect(showcase?.tabIndex).toBe(-1);
       const buttons = host.querySelectorAll<HTMLButtonElement>("nav button");
       await act(() => buttons[2].click());
       expect(room.getSnapshot().selected).toBe(2);
@@ -96,10 +120,27 @@ describe("project room semantic interface", () => {
       );
       expect(source?.href).toBe("https://github.com/agenticnoob/syringe-meter");
       expect(source?.tabIndex).toBe(-1);
+      const exhibit = host.querySelector<HTMLAnchorElement>(
+        ".hero-projects__exhibit",
+      );
+      expect(exhibit?.getAttribute("href")).toBe("/projects/syringe-meter");
+      expect(exhibit).toBe(wallEntry);
+      expect(exhibit?.tabIndex).toBe(0);
+      await act(() => room.select(1));
+      expect(host.querySelector(".hero-projects__exhibit")).toBe(wallEntry);
+      expect(exhibit?.getAttribute("aria-disabled")).toBe("false");
+      exhibit?.addEventListener("click", (event) => event.preventDefault());
+      await act(() =>
+        exhibit?.dispatchEvent(
+          new MouseEvent("click", { bubbles: true, cancelable: true }),
+        ),
+      );
+      expect(room.getSnapshot().selected).toBe(2);
       await act(() =>
         room.publishFrame({ ready: true, active: true, settled: true }),
       );
       expect(source?.tabIndex).toBe(0);
+      expect(exhibit?.tabIndex).toBe(0);
       await act(() =>
         room.publishFrame({ ready: false, active: false, settled: true }),
       );
@@ -110,6 +151,7 @@ describe("project room semantic interface", () => {
       expect(onLayoutChange).toHaveBeenCalledTimes(3);
     } finally {
       await act(() => root.unmount());
+      expect(room.getExhibits().size).toBe(0);
     }
   });
 });

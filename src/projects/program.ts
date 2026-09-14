@@ -2,22 +2,35 @@ import type { WebGLEffectMaterialProgram } from "@viselora/dom-webgl";
 import { projectRoomConfig as config } from "./room";
 import { projectRoomAtlas, projectRoomWallIndex } from "./model";
 import { heroTransitionConfig } from "../transition/transitionConfig";
+import { projectRoomExhibitLayout as exhibit } from "./exhibit";
 
 export function createProjectRoomProgram(
   texture: HTMLCanvasElement,
+  showcaseFace = -1,
+  poster?: HTMLImageElement,
 ): WebGLEffectMaterialProgram {
   return {
     blend: "normal",
     uniforms: {
       inkAtlas: { kind: "canvas-texture", source: texture },
+      poster: poster
+        ? { kind: "image-texture", source: poster }
+        : { kind: "canvas-texture", source: texture },
+      posterReady: poster ? 1 : 0,
+      showcaseFace,
       viewport: [1440, 900],
       view: [0, 0, 0, 0],
+      approach: 0,
       ...projectRoomColors(false),
     },
     fragmentShader: `
       uniform sampler2D inkAtlas;
+      uniform sampler2D poster;
+      uniform float posterReady;
+      uniform float showcaseFace;
       uniform vec2 viewport;
       uniform vec4 view;
+      uniform float approach;
       uniform vec3 backgroundColor;
       uniform vec3 foregroundColor;
       varying vec2 vUv;
@@ -32,7 +45,7 @@ export function createProjectRoomProgram(
         ray = vec3(ray.x, cp * ray.y - sp * ray.z, sp * ray.y + cp * ray.z);
         float cy = cos(view.x), sy = sin(view.x);
         ray = vec3(cy * ray.x - sy * ray.z, ray.y, sy * ray.x + cy * ray.z);
-        vec3 eye = vec3(view.z * cy, view.w, view.z * sy);
+        vec3 eye = vec3(view.z * cy + sy * approach, view.w, view.z * sy - cy * approach);
         vec3 direction = mix(vec3(-1.0), vec3(1.0), step(vec3(0.0), ray));
         vec3 bound = vec3(R, H, R) * direction;
         vec3 distances = (bound - eye) / (direction * max(abs(ray), vec3(0.00001)));
@@ -42,6 +55,7 @@ export function createProjectRoomProgram(
         float shade = horizontal ? 0.063 : (distances.x < distances.z ? 0.11 : 0.0);
         float line = 0.0;
         float glyph = 0.0;
+        vec4 photograph = vec4(0.0);
         if (!horizontal) {
           float face;
           float u;
@@ -58,6 +72,11 @@ export function createProjectRoomProgram(
           // Keep the wall under the reader's gaze bright; adjacent planes recede.
           float facing = distances.x < distances.z ? abs(ray.x) / length(ray.xz) : abs(ray.z) / length(ray.xz);
           glyph *= mix(0.55, 1.0, pow(facing, 4.0));
+          vec2 posterUv = (vec2(u, v) * vec2(${config.textureWidth.toFixed(1)}, ${config.textureHeight.toFixed(1)}) - vec2(${exhibit.x.toFixed(1)}, ${exhibit.y.toFixed(1)})) / vec2(${exhibit.width.toFixed(1)}, ${exhibit.posterHeight.toFixed(1)});
+          if (abs(face - showcaseFace) < 0.1 && posterReady > 0.5 && all(greaterThanEqual(posterUv, vec2(0.0))) && all(lessThanEqual(posterUv, vec2(1.0)))) {
+            photograph = texture2D(poster, vec2(posterUv.x, 1.0 - posterUv.y));
+            photograph.rgb *= mix(0.7, 1.0, pow(facing, 4.0));
+          }
           float edge = min(min(u, 1.0-u), min(v, 1.0-v));
           line = 1.0 - smoothstep(0.001, 0.003, edge);
         } else {
@@ -66,6 +85,7 @@ export function createProjectRoomProgram(
         }
         vec3 color = mix(backgroundColor, foregroundColor, shade);
         color = mix(color, foregroundColor, glyph);
+        color = mix(color, photograph.rgb, photograph.a);
         color = mix(color, mix(backgroundColor, foregroundColor, 0.32), line);
         gl_FragColor = vec4(color, 1.0);
       }

@@ -2,6 +2,10 @@ import type { WebGLDeclaration } from "@viselora/dom-webgl";
 import { WebGLTarget } from "@viselora/dom-webgl/react";
 import { WebGLScrollTimeline } from "@viselora/scroll-adapters/react";
 import React, { useEffect, useMemo, useSyncExternalStore } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { syringeMeterMedia } from "./media";
+import { syringeMeterShowcaseUi } from "../chapters/content";
 import type { HeroChapterBodyProps } from "../chapters/HeroChapter";
 import {
   formatHeroChapterCounter,
@@ -10,7 +14,8 @@ import {
 import { heroInterfaceContent } from "../chapters/uiContent";
 import type { HeroLocale, HeroLocaleStore } from "../preferences/locale";
 import { assertProjectRoomSections } from "./model";
-import type { ProjectRoomStore } from "./room";
+import { projectRoomAnchorId, type ProjectRoomStore } from "./room";
+import { projectRoomExhibitLayout } from "./exhibit";
 
 export function HeroProjectRoomStage({
   locale,
@@ -81,6 +86,11 @@ export function HeroProjectsChapterBody({
       data-room-selected={snapshot.selected}
       data-room-settled={snapshot.settled}
     >
+      <span
+        id={projectRoomAnchorId}
+        className="hero-projects__return-anchor"
+        aria-hidden="true"
+      />
       <div className="hero-projects__content">
         <p className="hero-chapter__index">
           {formatHeroChapterCounter(definition)}
@@ -95,6 +105,25 @@ export function HeroProjectsChapterBody({
               </p>
               <h3>{project.title}</h3>
               <p>{project.body}</p>
+              {project.showcase && (
+                <Link
+                  href={project.showcase.href}
+                  prefetch={false}
+                  scroll={false}
+                  className="hero-projects__case-link"
+                  tabIndex={snapshot.ready ? -1 : undefined}
+                  onClick={() => room.select(index)}
+                >
+                  <Image
+                    src={syringeMeterMedia.poster}
+                    alt={syringeMeterShowcaseUi[locale].posterAlt}
+                    width={1280}
+                    height={800}
+                    unoptimized
+                  />
+                  <span>{project.showcase.label} →</span>
+                </Link>
+              )}
               {project.link && (
                 <a
                   href={project.link.href}
@@ -124,6 +153,32 @@ export function HeroProjectsChapterBody({
           <span>{formatHeroChapterHeading(definition, ui.title)}</span>
           <span className="hero-projects__hint">{ui.hint}</span>
         </header>
+        {projects.map(
+          (project, index) =>
+            project.showcase && (
+              <Link
+                key={project.title}
+                ref={(element) => room.registerExhibit(index, element)}
+                className="hero-projects__exhibit"
+                href={project.showcase.href}
+                prefetch={false}
+                scroll={false}
+                style={{
+                  width: projectRoomExhibitLayout.width,
+                  height: projectRoomExhibitLayout.height,
+                }}
+                aria-label={`${project.title} · ${project.showcase.label}`}
+                aria-disabled={!controlsEnabled}
+                tabIndex={controlsEnabled ? 0 : -1}
+                onClick={(event) => {
+                  if (!controlsEnabled) event.preventDefault();
+                  else room.select(index);
+                }}
+              >
+                <span className="hero-sr-only">{project.showcase.label} →</span>
+              </Link>
+            ),
+        )}
         <button
           type="button"
           className="hero-projects__turn hero-projects__turn--left"

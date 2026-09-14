@@ -55,7 +55,8 @@ import { HeroAxiomsStage } from "../axioms/HeroAxiomsReader";
 import { heroAxiomsReaderEffect } from "../axioms/effect";
 import { HeroProjectRoomStage } from "../projects/HeroProjectRoom";
 import { heroProjectRoomEffect } from "../projects/effect";
-import { createProjectRoomStore } from "../projects/room";
+import { useHeroSiteState } from "./HeroSiteState";
+import { useProjectRoomReturn } from "../projects/useProjectRoomReturn";
 import type { JournalManifest } from "../journal/model";
 import { useJournal } from "../journal/useJournal";
 import { HeroJournalStage } from "../journal/HeroJournal";
@@ -171,7 +172,8 @@ function HeroScene({
   const viewport = useHeroViewport();
   const journal = useJournal(journalManifest, store.source, viewport);
   useEffect(refreshHeroScrollLayout, [journal.panels, viewport]);
-  const [projectRoom] = useState(createProjectRoomStore);
+  const { projectRoom } = useHeroSiteState();
+  useProjectRoomReturn(projectRoom, viewport);
   const signalWriter = useMemo<HeroTransitionSignalWriter>(
     () => ({ set: (key, value) => store.set(key, value) }),
     [store],

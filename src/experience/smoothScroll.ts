@@ -28,6 +28,16 @@ export function restoreHeroReadingPosition(top: number) {
 }
 
 let pendingRefresh = 0;
+
+// The room keeps its scroll coordinate while the native project dialog is read.
+export function suspendHeroScroll() {
+  const lenis = activeLenis;
+  const wasStopped = lenis?.isStopped;
+  lenis?.stop();
+  return () => {
+    if (lenis === activeLenis && !wasStopped) lenis?.start();
+  };
+}
 export function refreshHeroScrollLayout(): void {
   if (typeof window === "undefined" || pendingRefresh) return;
   pendingRefresh = window.requestAnimationFrame(() => {

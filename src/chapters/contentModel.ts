@@ -8,6 +8,7 @@ export type HeroChapterBodySection = {
   readonly title: string;
   readonly body: string;
   readonly link?: HeroChapterLink;
+  readonly showcase?: HeroChapterLink;
   readonly directory?: { readonly name: string; readonly detail: string };
   readonly image?: {
     readonly src: string;

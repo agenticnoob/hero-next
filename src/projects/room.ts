@@ -2,6 +2,8 @@ import type { HeroViewport } from "../shared/viewport";
 import { heroFinePointerQuery } from "../shared/layoutTokens";
 import { projectRoomWallCount } from "./model";
 
+export const projectRoomAnchorId = "project-room";
+
 export const projectRoomConfig = {
   desktopQuery: heroFinePointerQuery,
   radius: 3,
@@ -60,25 +62,32 @@ export type RoomSnapshot = {
   readonly ready: boolean;
   readonly active: boolean;
   readonly settled: boolean;
+  readonly exhibition: boolean;
+  readonly returnRequested: boolean;
 };
 const initialRoomSnapshot: RoomSnapshot = {
   selected: 0,
   ready: false,
   active: false,
   settled: true,
+  exhibition: false,
+  returnRequested: false,
 };
 
 export function createProjectRoomStore() {
   let snapshot = initialRoomSnapshot;
   let hovered = false;
   let focused = false;
+  const exhibits = new Map<number, HTMLAnchorElement>();
   const listeners = new Set<() => void>();
   const publish = (next: RoomSnapshot) => {
     if (
       next.selected === snapshot.selected &&
       next.ready === snapshot.ready &&
       next.active === snapshot.active &&
-      next.settled === snapshot.settled
+      next.settled === snapshot.settled &&
+      next.exhibition === snapshot.exhibition &&
+      next.returnRequested === snapshot.returnRequested
     )
       return;
     snapshot = next;
@@ -94,6 +103,7 @@ export function createProjectRoomStore() {
       };
     },
     select(index: number) {
+      if (snapshot.exhibition) return;
       if (!Number.isInteger(index)) return;
       const selected =
         ((index % projectRoomWallCount) + projectRoomWallCount) %
@@ -101,8 +111,19 @@ export function createProjectRoomStore() {
       if (selected !== snapshot.selected)
         publish({ ...snapshot, selected, settled: false });
     },
-    publishFrame(frame: Omit<RoomSnapshot, "selected">) {
+    publishFrame(
+      frame: Omit<RoomSnapshot, "selected" | "exhibition" | "returnRequested">,
+    ) {
       publish({ ...snapshot, ...frame });
+    },
+    setExhibition(exhibition: boolean) {
+      publish({ ...snapshot, exhibition });
+    },
+    requestReturn() {
+      publish({ ...snapshot, returnRequested: true });
+    },
+    finishReturn() {
+      publish({ ...snapshot, returnRequested: false });
     },
     setHovered(value: boolean) {
       hovered = value;
@@ -110,7 +131,12 @@ export function createProjectRoomStore() {
     setFocused(value: boolean) {
       focused = value;
     },
-    pointerLocked: () => hovered || focused,
+    registerExhibit(index: number, element: HTMLAnchorElement | null) {
+      if (element) exhibits.set(index, element);
+      else exhibits.delete(index);
+    },
+    getExhibits: (): ReadonlyMap<number, HTMLAnchorElement> => exhibits,
+    pointerLocked: () => hovered || focused || snapshot.exhibition,
   };
 }
 export type ProjectRoomStore = ReturnType<typeof createProjectRoomStore>;

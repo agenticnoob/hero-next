@@ -7,6 +7,13 @@ Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
 
 Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
 
+SyringeMeter has a complete bilingual case study at `/projects/syringe-meter`:
+on-demand demonstrations, a measurement walkthrough, engineering decisions,
+real screenshots, recording semantics and verification boundaries. Opening it
+from chapter three preserves the room behind a native reading dialog; opening
+or refreshing its URL renders a standalone page. The shared root site state
+keeps one theme, locale and room selection across these routes.
+
 The site has four chapters: self, AI/philosophy axioms, public builds and public
 channels, followed by the daily journal. Chinese and English share typed content
 and a persisted locale. Chapter one uses the public nickname and abstract figure;
@@ -123,6 +130,13 @@ npm run build
 
 ## Boundary
 
+Project case-study components and media configuration live in `src/projects/`;
+their bilingual copy remains in `src/chapters/content.ts`. `app/@project/` owns
+the intercepted exhibition route, and `app/projects/syringe-meter/` owns the
+standalone page and metadata. `src/experience/HeroSiteState.tsx` provides the
+shared state above both routes. See the media and extension notes in
+[visual design](./docs/visual-design.md).
+
 - Consume public Viselora entrypoints only.
 - Keep one runtime and one canvas.
 - CSS owns semantic DOM layout, accessible theme tokens, stacking, overflow,
@@ -142,7 +156,7 @@ npm run build
 | Chapter content, semantic composition, and locale control                          | `src/chapters/content.ts`, `src/chapters/contentModel.ts`, `src/chapters/uiContent.ts`, `src/chapters/HeroChapterNarrative.tsx`, `src/chapters/HeroChapter.tsx`, `src/chapters/HeroLocaleControl.tsx`, `src/chapters/HeroChapterNavigation.tsx` |
 | Chapter-one profile body, model declaration, and scroll effect                     | `src/profile/`                                                                                                                                                                                                                                  |
 | Chapter-two article index, reading layout, sheets and managed effect               | `src/axioms/`                                                                                                                                                                                                                                   |
-| Chapter-three project room, pointer navigation, and semantic controls              | `src/projects/`                                                                                                                                                                                                                                 |
+| Chapter-three project room, exhibitions, and semantic controls                     | `src/projects/`                                                                                                                                                                                                                                 |
 | Chapter-four public directory, previews, and endpoint artwork                      | `src/signals/`                                                                                                                                                                                                                                  |
 | Final journal data, paginated reading list, native text targets and scroll mapping | `src/journal/`                                                                                                                                                                                                                                  |
 | Journal export, Actions deployment and public verification                         | `scripts/sync-journal.mjs`, `scripts/verify-journal-deployment.mjs`, `.github/workflows/journal-build.yml`, `vercel.json`                                                                                                                       |
