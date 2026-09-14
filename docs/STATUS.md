@@ -156,11 +156,14 @@ committed bytes by SHA-256; both videos returned the expected HTTP 206 byte rang
 Wall and article screenshots were inspected and remain outside Git.
 
 With reduced motion enabled, edge-pointer movement left the desktop entry transform
-and selected wall unchanged. At 390×844 with touch and reduced motion, the independent
-case → home → project card → dialog → close path passed: all seven sections remained,
+and selected wall unchanged; the independent mobile page also retained all seven
+sections. At 390×844 with touch, the independent case → home → project card → dialog →
+close path passed: all seven sections remained,
 the dialog and page had no horizontal overflow, one canvas remained behind the dialog,
 and closing restored focus to the visible project card. The mobile screenshot was
-inspected. These are browser-emulation checks; physical-device limits remain below.
+inspected. Navigation reset the browser's emulated reduced-motion setting, so the
+complete mobile dialog path was verified with normal motion. These are browser-emulation
+checks; physical-device limits remain below.
 
 No page/console errors were captured in these sampled interactions. Vercel's runtime
 log query for this deployment found no error/fatal entries between publication and
