@@ -167,7 +167,7 @@ loop. A regression test reproduces the previously negative geometry. This does
 not redesign the second chapter for very short landscape viewports.
 
 Both repositories now have workflow files for `repository_dispatch` notification
-and verified website builds. See [journal publishing](./journal-publishing.md) for
+and verified website builds. See [journal publishing](../journal-publishing.md) for
 setup. The receiver builds an artifact only. No website remote is configured in
 this checkout, no cloud workflow has run, and no deployment platform or Secrets
 have been configured. No commit, repository creation, push or site publication

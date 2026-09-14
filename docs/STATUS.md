@@ -1,7 +1,7 @@
 # Current Status
 
 Last verified locally: 2026-09-15 (four-project case-study integration).
-Last production readback: 2026-09-14 (SyringeMeter release).
+Last production readback: 2026-09-15 (four-project case studies).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -184,6 +184,45 @@ use the same [production workflow](https://github.com/agenticnoob/hero-next/acti
 The workflow resolves exact website/data commits, runs the quality gate, builds with
 Vercel CLI, publishes prebuilt output and verifies the public page/snapshot bytes.
 An apparently green stale run is insufficient: publication and readback steps must run.
+
+### Four-project release (2026-09-15)
+
+Application `ea7ea2bf417ad76b78b60d7cee36740d20d4e36a` was committed and pushed to
+`main`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/34884679241)
+completed in 3m04s, including a 34-second production build. Publication, public
+snapshot verification and receipt recording all completed successfully. Deployment
+`dpl_9nZNy8wfYugmH8xH6gz5KR3KgSfy` reported `READY` for that exact application SHA,
+with the production domain assigned. The release retains the 108-date journal
+snapshot, source revision and SHA-256 recorded under Data and limitations.
+
+Independent HTTP readback returned 200 for all four project pages. Each contained
+seven sections with paragraphs matching the committed source, valid reading
+anchors, the correct canonical URL and a return link. Home exposed all four
+destinations; an unknown project returned 404. Both SyringeMeter MP4s returned
+HTTP 206 and the expected total byte sizes. The public journal page and snapshot
+passed the repository verification script independently of the Actions check.
+
+Production Codex in-app Chromium at 1440×900 opened all four room entries, switched
+their seven sections between Chinese and English, followed the final article
+anchor and returned through Escape to the matching wall, scroll 33399 and entry
+focus. Browser forward reopened the journal exhibition. Resizing that exhibition
+1440×900 → 390×844 → 1440×900 restored the correct card or wall in both directions;
+the last short card stayed inside the visible reading range at scroll 10722.
+At 390×844, each new case passed direct page → home → keyboard entry → dialog →
+close, with the correct focus and visible chapter. Sampled pages had no horizontal
+overflow; independent cases had zero canvases and home/dialog retained one.
+The SyringeMeter preview played with readyState 4, and its full-demo control
+selected the correct source at 166 seconds. Reduced-motion article navigation
+was separately verified with the media query confirmed active. Desktop case and
+mobile return screenshots were inspected.
+
+The final bounded browser log sample had no exceptions or console entries.
+Earlier events were evicted from the browser buffer, so this is not an error-free
+claim for the whole session; the local resize warning and physical-device limits
+above remain open. Vercel runtime logs for this deployment returned no error/fatal
+entries from 2026-09-14 19:07:40 to 19:13:16 UTC. Persistent monitoring and log drains
+were not audited or changed. Documentation follow-up revisions use the same
+pipeline; each run records its own exact website SHA and snapshot verification.
 
 ### SyringeMeter release (2026-09-14)
 
