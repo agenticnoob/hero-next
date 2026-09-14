@@ -1,13 +1,13 @@
 # Current Status
 
-Last verified: 2026-09-14 (local SyringeMeter showcase; production receipt below is unchanged).
+Last verified: 2026-09-14 (SyringeMeter production release and public readback).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
 
-## SyringeMeter showcase (local, 2026-09-14)
+## SyringeMeter showcase (2026-09-14)
 
 Chapter three now opens a complete bilingual project exhibition: a 17-second
 preview, 3:13 demonstration with three chapter jumps, seven long-form sections,
@@ -56,10 +56,9 @@ or console errors. Screenshots of the room, case and prose were inspected.
 With JavaScript disabled, all seven sections and both video file links remained
 available. The full video supports HTTP 206 byte ranges; both media files decoded.
 
-Production publication is pending; the preceding release receipts below remain
-unchanged until this showcase's deployment and public readback are verified.
-Physical iOS Safari/Android playback and audio/subtitle quality have not been
-verified. Local screenshots and logs remain outside the repository.
+Production publication and browser readback are recorded below. Physical iOS
+Safari/Android playback and audio/subtitle quality have not been verified.
+Local screenshots and logs remain outside the repository.
 
 ## Mobile reading layout
 
@@ -134,6 +133,41 @@ use the same [production workflow](https://github.com/agenticnoob/hero-next/acti
 The workflow resolves exact website/data commits, runs the quality gate, builds with
 Vercel CLI, publishes prebuilt output and verifies the public page/snapshot bytes.
 An apparently green stale run is insufficient: publication and readback steps must run.
+
+### SyringeMeter release (2026-09-14)
+
+Application `e6e67dd8daf242ca8d3895b9ee2ec5fbfd501fd6` was committed and pushed to
+`main`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/34837239880)
+completed in 3m49s, including a 29-second production build. Publication, public
+snapshot verification and receipt recording all ran successfully. Vercel deployment
+`dpl_6CjCLWyxBQLp2UhkUM6gifuosWeS` reported `READY` for that exact application SHA,
+with the production domain assigned. It includes the unchanged 108-date journal
+snapshot and exact source/hash recorded below.
+
+Production Ego/Chromium at 1440×900 verified direct case → home → project dialog,
+the wall poster during both left and right turns, pointer parallax, seven sections
+in Chinese and English, article anchors and Escape return. The entry's projected
+x coordinate changed from 553.98 to 545.75 with pointer movement; closing restored
+scroll 33399 and entry focus. The preview played at 1280×800 for a 17-second source;
+the 193.109-second full demo decoded at 1440×900 and played from 02:46. The independent
+case had no canvas; the home/dialog kept one. Before requesting playback there was
+no video element or MP4 request. All four production image files matched the local
+committed bytes by SHA-256; both videos returned the expected HTTP 206 byte ranges.
+Wall and article screenshots were inspected and remain outside Git.
+
+With reduced motion enabled, edge-pointer movement left the desktop entry transform
+and selected wall unchanged. At 390×844 with touch and reduced motion, the independent
+case → home → project card → dialog → close path passed: all seven sections remained,
+the dialog and page had no horizontal overflow, one canvas remained behind the dialog,
+and closing restored focus to the visible project card. The mobile screenshot was
+inspected. These are browser-emulation checks; physical-device limits remain below.
+
+No page/console errors were captured in these sampled interactions. Vercel's runtime
+log query for this deployment found no error/fatal entries between publication and
+the 2026-09-14 11:24 UTC check. This is a bounded release check; persistent monitoring
+and log-drain configuration were not audited or changed.
+
+### Previous mobile release (2026-09-13)
 
 Application `a010b837dffa6dba8238188cc8d2aabe9b395359` was committed and pushed to
 `main`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/34746790657)
