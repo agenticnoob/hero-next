@@ -1,12 +1,88 @@
 # Current Status
 
-Last verified locally: 2026-09-15 (four-project case-study integration).
+Last verified locally: 2026-09-17 (reading-layout theme button).
 Last production readback: 2026-09-15 (four-project case studies).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
-Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
+Production: [zzzxc.com](https://zzzxc.com).
+
+## Reading-layout theme control (2026-09-17)
+
+Mobile, touch and short landscape layouts now show a 44px theme button beside
+language controls throughout the home page. Its bilingual accessible name and
+pressed state describe color inversion; keyboard activation uses native button
+semantics. Opening hints match each layout. Desktop retains real mesh holds at a
+complete Hub. Reading layouts ignore holds and cancel an incomplete desktop hold
+on layout change. The button commits to the existing persisted theme store, and
+the managed effect reconciles its material and transition signals on the next
+frame. No new canvas, theme store or frame-driven React state is introduced.
+
+Regression tests cover a held mesh across layout changes, button commits in both
+directions, shared shader/signals, localStorage, bilingual controls and stable
+effect declarations. `npm run check` passes (50 files / 377 tests, lint,
+formatting, both typechecks and the 111-file standalone boundary), as do
+`npm run build` and `git diff --check`. React Doctor's changed-file local scan
+found no issues; network scoring and supply-chain queries were disabled.
+
+Ego Lite verified the production build at 390×844: button commits, persisted
+refresh, a 1.6-second touch hold without a theme change, English keyboard
+activation, and a chapter-two button click. At 320×740 with 200% root text and
+reduced motion, controls retain 44px minimum targets, no overlap and no horizontal
+overflow. At 1440×900 the button is absent and an actual mesh hold commits the
+theme. Sampled mobile paths kept one canvas and recorded no instrumented page
+errors; the initial button path also recorded no console errors. Physical mobile
+browsers and native long-press menus were not tested. Production release evidence
+is recorded separately below.
+
+## Axioms text-atlas clarity (2026-09-17)
+
+The old uniform-cell atlas sized every cell for the widest header and tallest paper.
+With eight articles, the 4096px limit reduced text to 0.623 backing pixels per logical
+pixel at 1440×900. Variable-size shelf packing now uses the actual tile dimensions,
+keeps original tile identities, and shares explicit logical origins with the shader.
+The 2× target and 4096px per-side cap are unchanged; improved density uses more of
+that existing area budget. Layer ownership, disposal and page canvas count are unchanged.
+
+Measurements using the browser's actual Canvas font metrics for the current content:
+1440×900 Chinese 0.623 → 1.848 and English 0.623 → 1.673; 1920×1080 both languages
+0.468 → 1.553. These are atlas sampling densities, not perceptual-quality scores.
+Two regression cases first reproduced the low-density failure and now require at least
+1.5× sampling for both languages at 1440×900, with bounded dimensions, in-bounds tiles,
+non-overlapping gutters and matching shader origins. Existing 0/1/4/7/12-article
+render and overflow checks also pass.
+
+`npm run check` passes (50 files / 375 tests, lint, format, both typechecks and standalone
+boundary); `npm run build` passes. Ego Lite checks covered 1440×900 DPR 1 in Chinese
+and English, 1920×1080 DPR 2 with reduced motion, and 390×844 mobile reading with
+final-article anchor navigation. Screenshots show clearer glyph edges; sampled paths
+kept one canvas, no horizontal overflow, and no instrumented page/console errors.
+Physical devices and other browsers were not tested. Local changes are not published.
+
+## Profile and working propositions (2026-09-17)
+
+Chapter one now describes concrete projects, full-stack delivery, tool selection,
+and Agent engineering habits in both languages, drawing on the local résumé while
+preserving the public identity boundary. Opening and chapter portal copy follow
+that direction. Chapter two expands from four to eight bilingual working propositions,
+retains existing article IDs, and connects each idea to practice or an explicitly
+open question. The desktop reader derives an 820svh body from the same registry.
+
+Browser verification reproduced a reading-layout defect: navigating to a short final
+article crossed into the exit runway, hiding its text and preventing focus. The final
+article now reserves a viewport minus the anchor inset as its minimum height.
+The same index click now keeps the article visible and focuses its heading container.
+
+`npm run check` passes (49 files / 373 tests, lint, format, both typechecks and the
+111-file standalone boundary); `npm run build` passes. Existing render assertions
+follow the revised copy while retaining wrapping, tail-content and privacy checks.
+The local production build was inspected in Ego Lite at 1440×900 and 390×844, in
+Chinese and English. Profile/model separation, all eight semantic articles, desktop
+final-card reading, mobile index jumps and reduced-motion navigation were checked.
+The sampled paths kept one canvas, had no horizontal overflow, and recorded no
+page exceptions or console errors after instrumentation. Physical devices and other
+browsers remain unverified. These changes are local; they have not been published.
 
 ## Four-project case studies (2026-09-15)
 

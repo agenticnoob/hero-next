@@ -30,11 +30,14 @@ export const heroSiteContent = {
   zh: {
     ariaLabel: "noobli 的四章节 Agent-first 个人站",
     localeControlLabel: "选择语言",
+    themeControlLabel: "反转配色",
     intro: {
       eyebrow: "NOOBLI / 独立构建者",
       title: "为智能体重新思考软件",
-      summary: "在技术、认知与自由的交界处，构建 AI-native 系统。",
+      summary:
+        "与 Agent 一起开发应用、连接工具，让想法成为可以运行和验证的作品。",
       hint: "滚动进入四个章节 · 长按四面体切换主题",
+      readingHint: "滚动进入四个章节 · 右上角按钮切换主题",
     },
     intermediateHub: "回到完整四面体，继续前往下一章。",
     profileModelLabel: "抽象个人形象",
@@ -42,12 +45,15 @@ export const heroSiteContent = {
   en: {
     ariaLabel: "noobli's four-chapter agent-first personal site",
     localeControlLabel: "Choose language",
+    themeControlLabel: "Invert colors",
     intro: {
       eyebrow: "NOOBLI / INDEPENDENT BUILDER",
       title: "Rethinking software for agents",
       summary:
-        "Building AI-native systems where technology, cognition, and freedom meet.",
+        "Building applications and connecting tools with agents, turning ideas into work that can run and be verified.",
       hint: "Scroll through four chapters · Hold the tetrahedron to switch theme",
+      readingHint:
+        "Scroll through four chapters · Use the theme button at the top right",
     },
     intermediateHub:
       "Back at the complete tetrahedron. Continue to the next chapter.",
@@ -59,11 +65,13 @@ export const heroSiteContent = {
     {
       readonly ariaLabel: string;
       readonly localeControlLabel: string;
+      readonly themeControlLabel: string;
       readonly intro: {
         readonly eyebrow: string;
         readonly title: string;
         readonly summary: string;
         readonly hint: string;
+        readonly readingHint: string;
       };
       readonly intermediateHub: string;
       readonly profileModelLabel: string;
@@ -77,41 +85,42 @@ export const heroChapterContent = {
       portal: {
         left: {
           label: formatHeroChapterHeading(heroChapterDefinitions.self, "来路"),
-          body: "一条没有被预先写好的线，在阅读、代码与独立构建之间展开。",
+          body: "从一个真实问题出发，和 AI 一起做出作品，再把经验变成下一次构建的方法。",
         },
         right: {
-          label: "沿途坐标",
-          items: ["阅读与疑问", "书页与像素", "智能与自由"],
+          label: "我在做什么",
+          items: ["AI 应用与自动化", "全栈构建与交付", "Agent 协作与验证"],
         },
       },
       body: {
         eyebrow: "SELF / NOOBLI",
-        title: "我不是沿一条直线抵达这里。",
+        title: "把想法做成作品，也把方法留下来。",
         intro:
-          "以独立构建者的视角，在书页与浏览器的微光里寻找方向。让好奇心引路，让想法接受实践的检验，继续探问智能、软件与自由如何彼此照亮。",
+          "我是 noobli，一名面向 AI 应用的独立构建者。我围绕自己的需求，与 Agent 一起开发软件、连接工具、验证结果。从视频生产到全栈应用，我关心一个想法怎样真正运行起来，以及下一次能否做得更好。",
         sections: [
           {
-            label: "阅读 / 疑问",
-            title: "让每一次阅读，打开一个新的问题。",
-            body: "知识不必是一张通往确定答案的地图，也可以是一扇扇窗。在不同的观点之间停留，为尚未理解的事物留出空间，让判断在思考与实践中慢慢成形。",
+            label: "作品 / 从零到可用",
+            title: "这个网站，也建立在我自己发布的工具上。",
+            body: "我主导构建并发布了 Viselora，让 DOM 内容与 WebGL 视觉通过公开接口协作；你正在浏览的网站就是它的实际应用。另一个项目 AXMORF Studio，把视频创作组织成 Agent 能参与、程序能校验的生产流程。",
           },
           {
-            label: "代码 / 像素",
-            title: "在浏览器的光里，构建可以运行的世界。",
-            body: "代码把抽象变成可触碰的界面。一个布局、一次交互、一段流动的光，让想法有了形状，也让每个设计决定都能接受真实使用的检验。",
+            label: "全栈 / 走完交付",
+            title: "从页面和接口，一直做到数据与部署。",
+            body: "在庐居项目中，我与 Agent 一起贯通选房、报价、预订和入住流程，把服务与数据库部署到 Ubuntu 演示环境。也探索了本地视觉测量、文档问答与开发日志流水线。每个项目都明确记录做到哪里、验证过什么。",
           },
           {
-            label: "构建 / 实验",
-            title: "把尚未确定的想法，交给一次具体的尝试。",
-            body: "从一个问题出发，做出能够运行的最小作品，再观察、修正与继续。保留独立判断，也欢迎不同的反馈，让构建成为理解世界的一种方式。",
+            label: "探索 / 工具判断",
+            title: "先弄清问题，再选择当下合适的工具。",
+            body: "许多工具是我在与 AI 讨论、查阅官方资料和尝试开源项目时逐步认识的。我先比较可选路径，再用小任务试验；效果不合适就调整。我并不精通每一种工具，但愿意深入关键环节，持续更新自己的判断。",
           },
           {
-            label: "此刻 / 未完成",
-            title: "让软件理解意图，也让自己继续改变。",
-            body: "现在，我把目光投向 AI、Agent 与认知边界：尝试让系统不只执行指令，也能承接意图；同时保留人的判断、责任，以及随时改变方向的权利。",
+            label: "协作 / 工程习惯",
+            title: "让 Agent 接得上，也让结果经得起检查。",
+            body: "我在独立的 Mac 用户环境与专用 Ubuntu 主机上开展 Agent 工作，通过 Tailscale 远程连接。把反复使用的方法整理为 Skills，维护代码边界、项目文档和验证流程；AI 参与执行，我负责目标、取舍与最终验收。",
           },
         ],
-        closing: "不把身份写成终点，只把它当作下一次出发前，暂时落下的坐标。",
+        closing:
+          "对我来说，AI 时代的能力，体现在提出的问题、做出的作品，以及不断修正方法的过程里。",
       },
     },
     en: {
@@ -121,47 +130,46 @@ export const heroChapterContent = {
             heroChapterDefinitions.self,
             "THE WAY HERE",
           ),
-          body: "An unwritten line through reading, code, and independent building.",
+          body: "Start with a real problem, build with AI, and carry what worked into the next project.",
         },
         right: {
-          label: "COORDINATES",
+          label: "WHAT I WORK ON",
           items: [
-            "Reading and questions",
-            "Pages and pixels",
-            "Intelligence and freedom",
+            "AI applications and automation",
+            "Full-stack delivery",
+            "Agent collaboration and verification",
           ],
         },
       },
       body: {
         eyebrow: "SELF / NOOBLI",
-        title: "I did not arrive here in a straight line.",
+        title: "Build something real. Keep what it teaches you.",
         intro:
-          "Looking for direction in the quiet glow of books and browsers, through the lens of an independent builder. Curiosity leads, practice tests each idea, and the question remains: how might intelligence, software, and freedom illuminate one another?",
+          "I’m noobli, an independent builder focused on AI applications. I work with agents to develop software, connect tools, and verify results for problems I encounter. From video production to full-stack applications, I care about getting an idea to work—and learning how to build the next one better.",
         sections: [
           {
-            label: "READING / QUESTIONS",
-            title: "Let every page open a new question.",
-            body: "Knowledge can be a field of windows rather than a map to certain answers. Spend time with different perspectives, leave room for what remains unclear, and let judgment take shape through thought and practice.",
+            label: "PROJECTS / IDEA TO USE",
+            title: "This site runs on a tool I built and published.",
+            body: "I led the development and publication of Viselora, a runtime connecting DOM content and WebGL visuals through public APIs. This website puts it to use. Another project, AXMORF Studio, organizes video production into creative tasks for agents and verifiable steps for software.",
           },
           {
-            label: "CODE / PIXELS",
-            title: "Build small worlds that can run in the browser's light.",
-            body: "Code turns abstraction into touchable surfaces. A layout, an interaction, a moving patch of light gives an idea a shape and lets each design decision meet the test of actual use.",
+            label: "FULL STACK / DELIVERY",
+            title: "From pages and APIs to data and deployment.",
+            body: "For Luju Living, I worked with agents on room selection, quotes, bookings, and check-in, deploying the service and database to an Ubuntu demo environment. I also explore local vision measurement, document Q&A, and development-journal pipelines. Each project records its progress and verification limits.",
           },
           {
-            label: "BUILDING / EXPERIMENTS",
-            title: "Give an uncertain idea a concrete first attempt.",
-            body: "Start with a question, make the smallest working version, then observe, revise, and continue. Keep an independent judgment and welcome different feedback, treating building as a way to understand the world.",
+            label: "EXPLORATION / JUDGMENT",
+            title: "Understand the problem, then choose the tools.",
+            body: "I discover tools through conversations with AI, official documentation, and open-source experiments. I compare approaches and try small tasks before committing, changing direction when the results call for it. I don’t claim mastery of every tool; I learn the parts that matter and keep revising my judgment.",
           },
           {
-            label: "NOW / UNFINISHED",
-            title:
-              "Let software understand intent—and let the self keep changing.",
-            body: "Today I look toward AI, agents, and the edges of cognition: building systems that can carry intent, while preserving human judgment, responsibility, and the right to change direction.",
+            label: "COLLABORATION / ENGINEERING",
+            title: "Give agents context. Give results a check.",
+            body: "I use a separate Mac user environment and a dedicated Ubuntu machine, connected remotely through Tailscale. I turn recurring methods into Skills and maintain code boundaries, project documentation, and verification steps. AI helps execute; I own the goals, tradeoffs, and final acceptance.",
           },
         ],
         closing:
-          "I do not write identity as an ending—only as a coordinate set down briefly before the next departure.",
+          "For me, capability in the AI era shows in the questions we ask, the work we deliver, and the methods we keep improving.",
       },
     },
   },

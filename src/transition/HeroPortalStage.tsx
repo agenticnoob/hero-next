@@ -120,7 +120,7 @@ function HeroReadingPortal({
       <h1>{getHeroChapterContent(id, locale).body.eyebrow}</h1>
       <p>{copy.left.secondary}</p>
       <p className="hero-reading-portal__hint">
-        {heroSiteContent[locale].intro.hint}
+        {heroSiteContent[locale].intro.readingHint}
       </p>
     </div>
   );

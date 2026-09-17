@@ -209,7 +209,17 @@ export const heroTetrahedronEffect = defineWebGLSceneObjectEffect<
       pointerX: ctx.pointer.normalizedX,
       pointerY: ctx.pointer.normalizedY,
     });
+    const viewport = readHeroViewport();
+    const committedScheme = params.theme.getSnapshot();
+    // Button commits and layout changes cancel any incomplete desktop hold.
+    if (
+      state.transition.committedScheme !== committedScheme ||
+      (viewport.reading && state.transition.phase !== "idle")
+    ) {
+      state.transition = createHeroHoldTransitionState(committedScheme);
+    }
     const primaryPointerDown =
+      !viewport.reading &&
       ctx.pointer.isDown &&
       (ctx.pointer.button === "primary" ||
         ctx.pointer.buttons.includes("primary"));
@@ -217,7 +227,6 @@ export const heroTetrahedronEffect = defineWebGLSceneObjectEffect<
       x: clamp((ctx.pointer.normalizedX + 1) * 0.5, 0, 1),
       y: clamp((ctx.pointer.normalizedY + 1) * 0.5, 0, 1),
     };
-    const viewport = readHeroViewport();
     const chapter = readHeroChapterScrollState(ctx.progress);
     const flightPresence = heroFlightPresence(chapter);
     stepHeroFlight(state.flight, {
@@ -245,7 +254,7 @@ export const heroTetrahedronEffect = defineWebGLSceneObjectEffect<
 
     const previousCommittedScheme = state.transition.committedScheme;
     state.transition = stepHeroHoldTransition(state.transition, {
-      interactionEnabled: chapter.hubInteractive,
+      interactionEnabled: !viewport.reading && chapter.hubInteractive,
       meshPressed: ctx.objectPointer.isPressed,
       primaryPointerDown,
       hitConfirmed: ctx.objectPointer.hit !== undefined,

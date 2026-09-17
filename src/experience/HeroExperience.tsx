@@ -284,6 +284,8 @@ function HeroScene({
       <HeroChapterNarrative
         locale={locale.locale}
         onLocaleChange={locale.store.commit}
+        scheme={theme.scheme}
+        onThemeChange={theme.store.commit}
         onLayoutChange={refreshHeroScrollLayout}
         projectRoom={projectRoom}
         journal={journal}

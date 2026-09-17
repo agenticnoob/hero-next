@@ -368,7 +368,7 @@ describe("HeroExperience", () => {
       ).toBe("hidden");
       expect(
         host.querySelector(".hero-axioms__semantic")?.textContent,
-      ).toContain("AI-native 必然走向 Agent-first");
+      ).toContain("为 Agent 设计可操作的软件");
     } finally {
       act(() => root.unmount());
       progressStore.source.get.mockImplementation(() => 0);
@@ -475,7 +475,7 @@ describe("HeroExperience", () => {
     expect(html).toContain('id="chapter-3"');
     expect(html).toContain('id="chapter-4"');
     expect(html).toContain("为智能体重新思考软件");
-    expect(html).toContain("真正的颠覆，不只是更好的答案");
+    expect(html).toContain("与 AI 一起工作之后，我重新想过这些事。");
     expect(html).toContain("把想法，做成可以运行的东西。");
     expect(html).toContain("愿与同道者共研同进，或有所得，亦未可知");
     expect(html).not.toContain('class="hero-chapter__frame');
@@ -576,6 +576,58 @@ describe("HeroExperience", () => {
     );
 
     act(() => root.unmount());
+  });
+
+  test("offers a persisted theme button only in reading layout with stable mesh effects", () => {
+    const media = window.matchMedia;
+    const query = vi
+      .spyOn(window, "matchMedia")
+      .mockImplementation((value) => ({
+        ...media(value),
+        matches: value.includes("pointer: coarse"),
+      }));
+    const host = document.createElement("div");
+    const root = createRoot(host);
+    try {
+      act(() => root.render(createElement(HeroExperience)));
+      const effects = capturedEffects.at(-1);
+      const button = host.querySelector<HTMLButtonElement>(
+        ".hero-theme-control",
+      );
+      expect(button).not.toBeNull();
+      expect(button?.getAttribute("aria-label")).toBe("反转配色");
+      expect(
+        host.querySelector(".hero-opening-copy__hint")?.textContent,
+      ).not.toContain("长按");
+      for (const scheme of ["inverted", "initial"] as const) {
+        act(() => button?.click());
+        expect(host.querySelector("main")?.dataset.heroTheme).toBe(scheme);
+        expect(button?.getAttribute("aria-pressed")).toBe(
+          String(scheme === "inverted"),
+        );
+        expect(window.localStorage.setItem).toHaveBeenLastCalledWith(
+          "viselora.hero.theme.v1",
+          scheme,
+        );
+        expect(capturedEffects.at(-1)).toBe(effects);
+      }
+      act(() =>
+        host
+          .querySelector<HTMLButtonElement>('[data-hero-locale-option="en"]')
+          ?.click(),
+      );
+      expect(button?.getAttribute("aria-label")).toBe("Invert colors");
+      expect(
+        host.querySelector(".hero-opening-copy__hint")?.textContent,
+      ).toContain("theme button");
+    } finally {
+      act(() => root.unmount());
+      query.mockRestore();
+    }
+    const desktopRoot = createRoot(host);
+    act(() => desktopRoot.render(createElement(HeroExperience)));
+    expect(host.querySelector(".hero-theme-control")).toBeNull();
+    act(() => desktopRoot.unmount());
   });
 
   test("switches semantic content and persists locale without replacing effect declarations", () => {

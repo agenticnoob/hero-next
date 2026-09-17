@@ -115,19 +115,18 @@ describe("hero chapter atlas", () => {
       expect.any(Number),
       expect.any(Number),
     );
-    expect(renderedText).toContain("我不是沿一条直线抵达这里。");
+    expect(renderedText).toContain(
+      getHeroChapterContent("self", "zh").body.title.replace(/\s/g, ""),
+    );
     expect(renderedText).toContain("这是我的正面");
-    expect(fillText).toHaveBeenCalledWith(
-      "直线抵达",
+    expect(fillText).not.toHaveBeenCalledWith(
+      getHeroChapterContent("self", "zh").body.title,
       expect.any(Number),
       expect.any(Number),
     );
-    expect(fillText).toHaveBeenCalledWith(
-      "这里。",
-      expect.any(Number),
-      expect.any(Number),
+    expect(renderedText).toContain(
+      getAxiomsContent("zh").body.title.replace(/\s/g, ""),
     );
-    expect(renderedText).toContain("真正的颠覆，不只是更好的答案。");
     expect(renderedText).toContain("把未完成的思考，放进真实交流。");
     expect(renderedText).not.toContain("SELF/NOOBLI");
     expect(
@@ -146,7 +145,9 @@ describe("hero chapter atlas", () => {
       .map(([text]) => text)
       .join("")
       .replace(/\s/g, "");
-    expect(renderedEnglish).toContain("Ididnotarrivehereinastraightline.");
+    expect(renderedEnglish).toContain(
+      getHeroChapterContent("self", "en").body.title.replace(/\s/g, ""),
+    );
   });
 
   test("invalidates text layout when root font size changes without a resize", () => {
@@ -242,9 +243,9 @@ describe("hero chapter atlas", () => {
       .replace(/\s/g, "");
 
     expect(atlas.canvas.height).toBe(atlas.tileHeight * 4);
-    expect(renderedText).toContain(
-      "不把身份写成终点，只把它当作下一次出发前，暂时落下的坐标。",
-    );
+    const profileClosing = getHeroChapterContent("self", "zh").body.closing;
+    expect(profileClosing).toBeTruthy();
+    expect(renderedText).toContain(profileClosing?.replace(/\s/g, ""));
     const lastArticle = getAxiomsContent("zh").body.sections.at(-1);
     expect(lastArticle).toBeDefined();
     expect(renderedText).toContain(lastArticle?.title.replace(/\s/g, ""));

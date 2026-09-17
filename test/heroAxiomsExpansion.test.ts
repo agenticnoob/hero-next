@@ -53,9 +53,7 @@ describe("data-driven axioms articles", () => {
       canvas.height = packed.height;
       const texture = { ...packed, canvas };
       expect(texture.tiles).toHaveLength(1 + 2 * count);
-      expect(texture.columns * texture.rows).toBeGreaterThanOrEqual(
-        texture.tiles.length,
-      );
+      expect(texture.tileOrigins).toHaveLength(texture.tiles.length);
       expect(texture.canvas.width).toBeLessThanOrEqual(4096);
       expect(texture.canvas.height).toBeLessThanOrEqual(4096);
       const frame = resolveAxiomsFrame(1, artwork.layout);
@@ -77,12 +75,7 @@ describe("data-driven axioms articles", () => {
             ])
           : [[0, 0]],
       );
-      expect(program.uniforms?.tileOrigins).toEqual(
-        packed.tiles.map((_, i) => [
-          (i % packed.columns) * packed.cellWidth + packed.gutter,
-          Math.floor(i / packed.columns) * packed.cellHeight + packed.gutter,
-        ]),
-      );
+      expect(program.uniforms?.tileOrigins).toEqual(packed.tileOrigins);
       expect(program.fragmentShader).not.toContain("mod(float(index)");
       expect(program.fragmentShader).not.toContain("floor(float(index)");
       expect(program.fragmentShader).toContain(`tileSizes[${1 + 2 * count}]`);

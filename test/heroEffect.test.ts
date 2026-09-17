@@ -22,6 +22,8 @@ import {
 import { heroTransitionConfig } from "../src/transition/transitionConfig";
 import { getHeroChapterDefinition } from "../src/chapters/definitions";
 import type { HeroTransitionSignalWriter } from "../src/transition/signals";
+import { heroReadingQuery } from "../src/shared/layoutTokens";
+import { createHeroThemeStore } from "../src/preferences/theme";
 import { heroTetrahedronRadialShaderKey } from "../src/tetrahedron/shader";
 
 const desktop = { width: 1200, height: 835 } as const;
@@ -32,7 +34,9 @@ function createThemeStore(scheme: "initial" | "inverted" = "initial") {
     getSnapshot: () => scheme,
     getServerSnapshot: () => "initial" as const,
     subscribe: () => () => undefined,
-    commit: vi.fn(),
+    commit: vi.fn((next: "initial" | "inverted") => {
+      scheme = next;
+    }),
   };
 }
 
@@ -601,6 +605,67 @@ describe("hero tetrahedron effect", () => {
     });
     expect(theme.commit).toHaveBeenCalledTimes(1);
     expect(theme.commit).toHaveBeenCalledWith("inverted");
+  });
+
+  test("disables holds in reading layout, cancels pending holds and follows button commits", () => {
+    const media = window.matchMedia;
+    let reading = false;
+    const query = vi
+      .spyOn(window, "matchMedia")
+      .mockImplementation((value) => ({
+        ...media(value),
+        matches: value === heroReadingQuery && reading,
+      }));
+    const target = createTarget();
+    const theme = createHeroThemeStore({
+      getItem: () => null,
+      setItem: vi.fn(),
+    });
+    const params = {
+      kind: "hero.tetrahedron.motion" as const,
+      signals: { set: vi.fn() },
+      frameBinding: createHeroTetrahedronFrameBinding(),
+      theme,
+      locale: createLocaleStore(),
+    };
+    const state = createHeroEffectState(false);
+    try {
+      heroTetrahedronEffect.update(createContext(target), state, params);
+      expect(state.transition.phase).toBe("expanding");
+      reading = true;
+      for (let frame = 0; frame < 100; frame++) {
+        heroTetrahedronEffect.update(createContext(target), state, params);
+      }
+      expect(state.transition).toMatchObject({
+        phase: "idle",
+        coverage: 0,
+        committedScheme: "initial",
+      });
+      expect(theme.getSnapshot()).toBe("initial");
+      for (const scheme of ["inverted", "initial"] as const) {
+        theme.commit(scheme);
+        heroTetrahedronEffect.update(createContext(target), state, params);
+        expect(state.transition).toMatchObject({
+          phase: "idle",
+          committedScheme: scheme,
+          targetScheme: scheme,
+          coverage: 0,
+        });
+        expect(params.signals.set).toHaveBeenCalledWith(
+          heroTransitionConfig.signalKeys.committedScheme,
+          heroTransitionConfig.signalCodes.scheme[scheme],
+        );
+        expect(target.material.color.set).toHaveBeenLastCalledWith(
+          scheme === "initial" ? "#424242" : "#C8C8C8",
+        );
+      }
+      reading = false;
+      for (let frame = 0; frame < 100; frame++)
+        heroTetrahedronEffect.update(createContext(target), state, params);
+      expect(theme.getSnapshot()).toBe("inverted");
+    } finally {
+      query.mockRestore();
+    }
   });
 
   test("keeps the base material committed and drives shared radial shader uniforms", () => {

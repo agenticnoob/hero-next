@@ -44,8 +44,9 @@ Read [README.md](./README.md) and
   and shader definitions referentially stable.
 - High-frequency transition state stays in the scene-object effect and progress
   store, not React props/state.
-- A real primary-pointer mesh hit is the interaction source; do not replace it
-  with a page-level DOM press shortcut.
+- Desktop theme holds require a real primary-pointer mesh hit; do not simulate
+  a mesh press from DOM. Reading layouts disable holds and use an explicit theme
+  button that commits to the same shared store.
 - Preserve reduced-motion content and transition semantics while removing
   unnecessary motion.
 

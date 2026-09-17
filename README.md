@@ -5,7 +5,7 @@ It consumes published Viselora packages through their public entrypoints.
 Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
 `0.1.0-alpha.2` from npm; see [current verification](./docs/STATUS.md).
 
-Production: [hero-next-jade.vercel.app](https://hero-next-jade.vercel.app).
+Production: [zzzxc.com](https://zzzxc.com).
 
 All four projects have complete bilingual case studies: `/projects/axmorf-studio`,
 `/projects/viselora`, `/projects/syringe-meter` and `/projects/vibe-journal-pipeline`.
@@ -47,8 +47,10 @@ hidden. Reduced motion keeps readable content and reversible chapter semantics.
 
 The semantic palette is light `#C8C8C8` and dark `#424242`, with at least 4.5:1
 normal-text contrast in either direction. Chapter colors invert the committed
-Hub theme. A real mesh hold at a complete Hub remains the only theme-switch
-interaction, and the chosen scheme persists across refreshes. The optimized
+Hub theme. Desktop uses a real mesh hold at a complete Hub to switch themes.
+Reading layouts use an accessible button beside the language controls, available
+throughout the page; tetrahedron holds are disabled there. Both commit to the same
+store and persist across refreshes. Changing to a reading layout cancels a pending hold. The optimized
 profile GLB stays below 5 MB; its original asset remains outside the repository.
 
 ## Run

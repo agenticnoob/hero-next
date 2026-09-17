@@ -215,6 +215,7 @@ a {
   border: 0;
 }
 
+.hero-controls,
 .hero-locale {
   position: fixed;
   z-index: 30;
@@ -227,6 +228,21 @@ a {
   pointer-events: auto;
 }
 
+.hero-controls {
+  gap: 0.65rem;
+}
+
+.hero-controls .hero-locale {
+  position: static;
+}
+
+.hero-theme-control {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.hero-theme-control,
 .hero-locale button {
   min-width: 2.75rem;
   min-height: 2.75rem;
@@ -1160,10 +1176,18 @@ a {
     min-height: 44px;
     padding-block: 0.5rem;
   }
+  .hero-controls,
   .hero-locale {
     top: max(1rem, env(safe-area-inset-top));
     right: var(--hero-reading-inset);
   }
+  .hero-controls {
+    gap: 6px;
+  }
+  .hero-controls .hero-locale {
+    gap: 4px;
+  }
+  .hero-theme-control,
   .hero-locale button {
     min-width: 44px;
     min-height: 44px;
@@ -1335,6 +1359,10 @@ a {
   margin-top: 2rem;
   padding: 1.5rem 0;
   border-top: 2px dotted currentColor;
+}
+.hero-axioms--reading article:last-child {
+  /* Keep the final anchor above the chapter's exit runway, even for short copy. */
+  min-height: calc(100svh - 5.5rem);
 }
 .hero-axioms--reading article > p:first-child {
   font-size: 0.875rem;

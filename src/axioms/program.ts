@@ -24,10 +24,7 @@ export function createAxiomsProgram(
     uniforms: {
       ...createAxiomsUniforms(artwork, frame, false),
       inkAtlas: { kind: "canvas-texture", source: texture.canvas },
-      atlasSize: [
-        texture.cellWidth * texture.columns,
-        texture.cellHeight * texture.rows,
-      ],
+      atlasSize: [texture.logicalWidth, texture.logicalHeight],
       tileOrigins: texture.tileOrigins,
       tileSizes: texture.tiles.map((tile) => [tile.width, tile.height]),
       stampPitches: stamps.length

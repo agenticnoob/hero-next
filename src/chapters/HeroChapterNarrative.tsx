@@ -10,6 +10,7 @@ import {
 } from "./definitions";
 import { HeroChapter } from "./HeroChapter";
 import { HeroLocaleControl } from "./HeroLocaleControl";
+import type { HeroSchemeName } from "../transition/transitionConfig";
 import type { HeroLocale } from "../preferences/locale";
 import { HeroProfileChapterBody } from "../profile/HeroProfileChapterBody";
 import { HeroAxiomsChapterBody } from "../axioms/HeroAxiomsReader";
@@ -23,11 +24,15 @@ import type { HeroJournalState } from "../journal/useJournal";
 export function HeroChapterNarrative({
   locale,
   onLocaleChange,
+  scheme,
+  onThemeChange,
   onLayoutChange,
   projectRoom,
   journal,
 }: {
   readonly locale: HeroLocale;
+  readonly scheme: HeroSchemeName;
+  readonly onThemeChange: (scheme: HeroSchemeName) => void;
   readonly onLocaleChange: (locale: HeroLocale) => void;
   readonly onLayoutChange: () => void;
   readonly projectRoom: ProjectRoomStore;
@@ -49,7 +54,39 @@ export function HeroChapterNarrative({
 
   return (
     <>
-      <HeroLocaleControl locale={locale} onLocaleChange={onLocaleChange} />
+      <div className="hero-controls">
+        {reading && (
+          <button
+            type="button"
+            className="hero-theme-control"
+            aria-label={site.themeControlLabel}
+            title={site.themeControlLabel}
+            aria-pressed={scheme === "inverted"}
+            onClick={() =>
+              onThemeChange(scheme === "initial" ? "inverted" : "initial")
+            }
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle
+                cx="10"
+                cy="10"
+                r="8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <path d="M10 2a8 8 0 0 1 0 16Z" fill="currentColor" />
+            </svg>
+          </button>
+        )}
+        <HeroLocaleControl locale={locale} onLocaleChange={onLocaleChange} />
+      </div>
       {reading && <HeroChapterNavigation locale={locale} />}
 
       <section
@@ -61,7 +98,7 @@ export function HeroChapterNarrative({
             <p>{site.intro.eyebrow}</p>
             <h1>{site.intro.title}</h1>
             <p>{site.intro.summary}</p>
-            <p className="hero-opening-copy__hint">{site.intro.hint}</p>
+            <p className="hero-opening-copy__hint">{site.intro.readingHint}</p>
           </header>
         ) : (
           <p className="hero-sr-only">
