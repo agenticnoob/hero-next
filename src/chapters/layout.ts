@@ -17,8 +17,11 @@ import type {
 } from "../profile/wrap";
 import type { HeroChapterId } from "./definitions";
 
-const atlasMaxTileWidth = 1_024;
-const atlasMaxTileHeight = 1_024;
+// Eight endpoints occupy two columns and four rows of one bounded texture.
+const atlasMaxSize = 4_096;
+const atlasTargetScale = 2;
+const atlasMaxTileWidth = atlasMaxSize / 2;
+const atlasMaxTileHeight = atlasMaxSize / 4;
 const { arialChWidthRatio } = heroLayoutTokens;
 
 export type HeroProfileSpeechBubbleLayout = {
@@ -85,7 +88,7 @@ export function resolveHeroChapterAtlasResolution(
   const width = positive(viewport.width, heroDefaultViewport.width);
   const height = positive(viewport.height, heroDefaultViewport.height);
   const scale = Math.min(
-    1,
+    atlasTargetScale,
     atlasMaxTileWidth / width,
     atlasMaxTileHeight / height,
   );

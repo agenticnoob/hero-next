@@ -99,12 +99,12 @@ describe("hero chapter atlas", () => {
     const atlas = createHeroChapterAtlas({ width: 1280, height: 720 });
 
     expect(atlas).toMatchObject({
-      tileWidth: 1024,
-      tileHeight: 576,
+      tileWidth: 1820,
+      tileHeight: 1024,
       layoutWidth: 1280,
       layoutHeight: 720,
     });
-    expect(atlas.canvas).toMatchObject({ width: 2048, height: 2304 });
+    expect(atlas.canvas).toMatchObject({ width: 3640, height: 4096 });
     expect(atlas.locale).toBe("zh");
     const renderedText = fillText.mock.calls
       .map(([text]) => text)
@@ -212,7 +212,7 @@ describe("hero chapter atlas", () => {
     expect(context.stroke).toHaveBeenCalled();
     expect(fillStyles).toContain("white");
     expect(strokeStyles).toContain("black");
-    expect(context.translate).toHaveBeenCalledWith(0, 1152);
+    expect(context.translate).toHaveBeenCalledWith(0, 2048);
     // Each endpoint clips its fan viewport, visible fan titles and article sheets.
     const articleCount = getAxiomsContent("zh").body.sections.length;
     const visibleFanCount = Math.min(
@@ -226,7 +226,7 @@ describe("hero chapter atlas", () => {
     expect(clip).toHaveBeenCalledTimes(clipCount + 1 + articleCount);
     expect(
       rect.mock.calls.filter(
-        ([, , width, height]) => width === 1024 && height === 576,
+        ([, , width, height]) => width === 1820 && height === 1024,
       ),
     ).toHaveLength(8);
     expect(fillText).not.toHaveBeenCalledWith(
@@ -257,12 +257,12 @@ describe("hero chapter atlas", () => {
     const atlas = createHeroChapterAtlas({ width: 2400, height: 1800 });
 
     expect(atlas).toMatchObject({
-      tileWidth: 1024,
-      tileHeight: 768,
+      tileWidth: 1365,
+      tileHeight: 1024,
       layoutWidth: 2400,
       layoutHeight: 1800,
     });
-    expect(context.scale).toHaveBeenCalledWith(1024 / 2400, 1024 / 2400);
+    expect(context.scale).toHaveBeenCalledWith(1365 / 2400, 1024 / 1800);
     expect(
       heroChapterAtlasMatchesViewport(atlas, { width: 2400, height: 1800 }),
     ).toBe(true);
@@ -271,8 +271,8 @@ describe("hero chapter atlas", () => {
   test("wraps the same body title and intro for the mobile face", () => {
     const atlas = createHeroChapterAtlas({ width: 390, height: 844 });
 
-    expect(atlas).toMatchObject({ tileWidth: 390, tileHeight: 844 });
-    expect(atlas.canvas).toMatchObject({ width: 780, height: 3376 });
+    expect(atlas).toMatchObject({ tileWidth: 473, tileHeight: 1024 });
+    expect(atlas.canvas).toMatchObject({ width: 946, height: 4096 });
     expect(fillText).toHaveBeenCalledWith(
       "01 / 04",
       expect.any(Number),

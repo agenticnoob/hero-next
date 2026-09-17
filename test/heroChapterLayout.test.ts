@@ -146,6 +146,51 @@ describe("hero chapter shared layout", () => {
     expect(layout.intro.left).toBeCloseTo(486.4, 12);
   });
 
+  test.each([
+    { width: 1440, height: 900 },
+    { width: 1920, height: 1080 },
+  ])(
+    "preserves near-native face text density at $width x $height",
+    (viewport) => {
+      const resolution = resolveHeroChapterAtlasResolution(viewport);
+      expect(resolution.tileWidth / viewport.width).toBeGreaterThanOrEqual(
+        0.94,
+      );
+      expect(resolution.tileHeight / viewport.height).toBeGreaterThanOrEqual(
+        0.94,
+      );
+      expect(resolution.tileWidth * 2).toBeLessThanOrEqual(4096);
+      expect(resolution.tileHeight * 4).toBeLessThanOrEqual(4096);
+    },
+  );
+
+  test("supersamples small face artwork within the same atlas limit", () => {
+    expect(
+      resolveHeroChapterAtlasResolution({ width: 800, height: 450 }),
+    ).toEqual({
+      tileWidth: 1600,
+      tileHeight: 900,
+    });
+  });
+
+  test.each([
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+    { width: 3840, height: 2160 },
+    { width: 5120, height: 1440 },
+    { width: 1, height: 1 },
+    { width: Number.NaN, height: 0 },
+  ])("bounds texture allocation for $width x $height", (viewport) => {
+    const { tileWidth, tileHeight } =
+      resolveHeroChapterAtlasResolution(viewport);
+    expect(Number.isInteger(tileWidth)).toBe(true);
+    expect(Number.isInteger(tileHeight)).toBe(true);
+    expect(tileWidth).toBeGreaterThan(0);
+    expect(tileHeight).toBeGreaterThan(0);
+    expect(tileWidth * 2).toBeLessThanOrEqual(4096);
+    expect(tileHeight * 4).toBeLessThanOrEqual(4096);
+  });
+
   test("caps only atlas backing pixels while retaining logical viewport coordinates", () => {
     const layout = resolveHeroChapterLayout(
       { width: 2400, height: 1800 },
@@ -157,6 +202,6 @@ describe("hero chapter shared layout", () => {
     });
 
     expect(layout.viewport).toEqual({ width: 2400, height: 1800 });
-    expect(resolution).toEqual({ tileWidth: 1024, tileHeight: 768 });
+    expect(resolution).toEqual({ tileWidth: 1365, tileHeight: 1024 });
   });
 });

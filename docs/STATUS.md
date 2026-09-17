@@ -1,12 +1,45 @@
 # Current Status
 
-Last verified locally: 2026-09-17 (chapter-four resume entry).
+Last verified locally: 2026-09-18 (tetrahedron face-text resolution).
 Last production readback: 2026-09-17 (chapter-four resume entry).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## Tetrahedron face-text resolution (2026-09-18)
+
+The eight endpoint tiles keep their existing 2-column / 4-row mapping. A 2×
+rasterization target now uses the available atlas width: tile limits are 2048×1024,
+with a 4096px maximum on either atlas side. The former 1024px width limit reduced
+1440×900 content to 0.711× logical resolution; it now uses 1638×1024 tiles (about
+1.138×). At 1920×1080, density increases from 0.533× to about 0.948×; at 390×844,
+from 1× to about 1.213×. Logical layout, face UVs, entry/tail selection, material
+sampling, runtime ownership and dependencies are unchanged.
+
+This uses more actual texture area: at 1440×900 the base RGBA allocation rises
+from 20 MiB to about 51.2 MiB, excluding mipmaps and the CPU canvas. The existing
+4096px side limit bounds the base allocation to 64 MiB. Small and oblique faces
+still have perspective/minification limits; this is not a hardware-anisotropy
+change or a measured GPU performance improvement.
+
+Regression tests first reproduced desktop undersampling and the missing small-view
+supersampling. Density, small-view 2× rendering, portrait/landscape/4K/ultrawide
+allocation bounds, invalid dimensions, actual Canvas tile transforms and existing
+bilingual entry/tail content are covered. `npm run check` passes (50 files / 386
+tests, zero-warning lint, formatting, both typechecks and the 111-file standalone
+boundary); `npm run build` and `git diff --check` pass.
+
+The local production build was inspected with Ego Lite at 1440×900 DPR 1 with
+reduced motion, 1920×1080 DPR 2 with normal motion, and 390×844 DPR 2 with touch
+and reduced motion. Checks covered Hub/approach, all four incoming faces, the
+first chapter's tail/retreat, language changes and mobile approach. Screenshots
+show improved face-text edges; sampled states kept one canvas, no horizontal
+overflow and no instrumented page/console errors. Instrumentation was attached
+after navigation, so this does not establish an error-free initial load. Screenshots
+remain outside Git. Physical devices, sustained motion shimmer and GPU memory/frame
+time were not measured. Changes are local and have not been published.
 
 ## Chapter-four resume entry (2026-09-17)
 
