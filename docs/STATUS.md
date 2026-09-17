@@ -1,7 +1,7 @@
 # Current Status
 
 Last verified locally: 2026-09-18 (tetrahedron face-text resolution).
-Last production readback: 2026-09-17 (chapter-four resume entry).
+Last production readback: 2026-09-18 (tetrahedron face-text resolution).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -39,7 +39,7 @@ show improved face-text edges; sampled states kept one canvas, no horizontal
 overflow and no instrumented page/console errors. Instrumentation was attached
 after navigation, so this does not establish an error-free initial load. Screenshots
 remain outside Git. Physical devices, sustained motion shimmer and GPU memory/frame
-time were not measured. Changes are local and have not been published.
+time were not measured. Production publication and readback are recorded below.
 
 ## Chapter-four resume entry (2026-09-17)
 
@@ -317,6 +317,32 @@ use the same [production workflow](https://github.com/agenticnoob/hero-next/acti
 The workflow resolves exact website/data commits, runs the quality gate, builds with
 Vercel CLI, publishes prebuilt output and verifies the public page/snapshot bytes.
 An apparently green stale run is insufficient: publication and readback steps must run.
+
+### Tetrahedron face-text release (2026-09-18)
+
+Application `90f0d7e483d726a14974be413edf4050ec5a1f7f` was committed and pushed to
+`main`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/35259122568)
+passed all 386 tests and the full quality gate, completed the production build
+step in 32 seconds, published `hero-next-lmfl3ud3f-agent-first.vercel.app`, and
+completed public snapshot verification. Vercel deployment
+`dpl_GZNm4T3acEuGeSguXqAhNnm8QD2s` reported `READY` for that exact application SHA
+and was aliased to [zzzxc.com](https://zzzxc.com). The selected journal source was
+`242c3fee901d148b47f37be3889de923a8b74726`.
+
+Ego Lite read back the production domain at 1440×900 DPR 1 and 390×844 DPR 2,
+with reduced motion confirmed active and mobile touch enabled. Instrumented Canvas
+creation after navigation and desktop language changes confirmed the actual face
+atlas sizes: 3276×4096 on desktop and 946×4096 on mobile. Chinese/English face text
+and mobile approach screenshots were inspected; sampled states kept one visible
+canvas, no horizontal overflow and no captured page/console errors. Instrumentation
+began after navigation; physical devices and sustained GPU performance remain
+unverified. Screenshots and diagnostic logs stay outside Git.
+
+A deployment-scoped Vercel error/fatal log query found no matching entries from
+2026-09-17 18:23:43 to 18:33:43 UTC. This is a bounded release observation;
+persistent monitoring and log drains were not audited or changed.
+Documentation-only follow-up pushes retain the same application behavior and run
+the same deployment pipeline; each run records its exact commit and receipt in Actions.
 
 ### Resume directory release (2026-09-17)
 
