@@ -125,7 +125,7 @@ describe("chapter four public directory", () => {
     },
   );
 
-  test("keeps all six rows and their previews within narrow and desktop viewports", () => {
+  test("keeps all seven rows and their previews within narrow and desktop viewports", () => {
     expect(
       resolveSignalPreviewPosition(
         { x: 100, y: 100 },
@@ -167,7 +167,7 @@ describe("chapter four public directory", () => {
       const layout = resolveSignalsLayout(viewport);
       const rowCount = getHeroChapterContent("signals", "zh").body.sections
         .length;
-      expect(rowCount).toBe(6);
+      expect(rowCount).toBe(7);
       expect(layout.top + layout.rowHeight * rowCount).toBeLessThan(
         viewport.height * 0.88,
       );
@@ -200,6 +200,7 @@ describe("chapter four public directory", () => {
         "博客",
         "GitHub",
         "力扣",
+        "简历",
       ]);
       expect(Array.from(rows, (r) => r.getAttribute("href"))).toEqual([
         heroPublicLinks.douyin,
@@ -208,6 +209,7 @@ describe("chapter four public directory", () => {
         heroPublicLinks.blog,
         heroPublicLinks.githubProfile,
         heroPublicLinks.leetcode,
+        heroPublicLinks.resume,
       ]);
       for (const row of rows) {
         expect(row.hasAttribute("aria-disabled")).toBe(false);
@@ -343,6 +345,7 @@ describe("chapter four public directory", () => {
         "Blog",
         "GitHub",
         "LeetCode",
+        "Resume",
       ]);
       const click = new MouseEvent("click", {
         bubbles: true,
@@ -371,6 +374,11 @@ describe("chapter four public directory", () => {
       expect(
         host.querySelector(".hero-signals__preview")?.textContent,
       ).toContain("skedush");
+      expect(rows[6].getAttribute("href")).toBe("https://resume.zzzxc.com/");
+      await act(() => pointer(rows[6], "pointerover"));
+      expect(
+        host.querySelector(".hero-signals__preview")?.textContent,
+      ).toContain("My resume homepage");
     } finally {
       await act(() => root.unmount());
     }
@@ -399,7 +407,7 @@ describe("chapter four public directory", () => {
         3,
       );
       expect(host.querySelectorAll(".hero-signals__inline-copy")).toHaveLength(
-        3,
+        4,
       );
       expect(rows[5].textContent).toContain("@skedush");
       expect(rows[5].href).toBe(heroPublicLinks.leetcode);

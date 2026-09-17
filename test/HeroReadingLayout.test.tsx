@@ -106,7 +106,7 @@ describe("mobile reading experience", () => {
     },
   );
 
-  test("keeps six direct profile links separate from the three QR disclosures", async () => {
+  test("keeps seven direct profile links separate from the three QR disclosures", async () => {
     const host = document.createElement("div");
     const root = createRoot(host);
     try {
@@ -120,7 +120,10 @@ describe("mobile reading experience", () => {
           }),
         ),
       );
-      expect(host.querySelectorAll("a")).toHaveLength(6);
+      expect(host.querySelectorAll("a")).toHaveLength(7);
+      expect(
+        host.querySelector('a[href="https://resume.zzzxc.com/"]')?.textContent,
+      ).toContain("简历");
       expect(
         host.querySelector(`a[href="${heroPublicLinks.leetcode}"]`),
       ).not.toBeNull();

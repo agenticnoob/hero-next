@@ -44,6 +44,7 @@ describe("hero chapter content", () => {
       "https://github.com/agenticnoob/dom-webgl-workspace",
     );
     expect(heroPublicLinks.blog).toBe("https://blog.zzzxc.com");
+    expect(heroPublicLinks.resume).toBe("https://resume.zzzxc.com/");
     expect(heroPublicLinks.leetcode).toBe("https://leetcode.cn/u/skedush/");
     expect(heroPublicLinks.douyin).toBe(
       "https://www.douyin.com/user/MS4wLjABAAAATcqt2Tq3UxNiJz8Qg5eEHhOkdpfNuEP1KuthHYn-oIycjaF24_KxkL9pY8bgbW3Z",
@@ -64,11 +65,19 @@ describe("hero chapter content", () => {
         ],
       );
       expect(sections.slice(0, 3).every((section) => section.image)).toBe(true);
-      expect(sections).toHaveLength(6);
-      expect(sections.at(-1)).toMatchObject({
+      expect(sections).toHaveLength(7);
+      expect(sections[5]).toMatchObject({
         directory: { detail: "@skedush" },
         link: { href: heroPublicLinks.leetcode },
       });
+      expect(sections.at(-1)).toMatchObject({
+        title: locale === "zh" ? "简历" : "Resume",
+        directory: { detail: "resume.zzzxc.com" },
+        link: { href: heroPublicLinks.resume },
+      });
+      expect(
+        getHeroChapterContent("signals", locale).portal.right.items,
+      ).toContain(locale === "zh" ? "简历" : "Resume");
     }
     expect(Object.keys(heroPublicLinks)).not.toContain("email");
     expect(Object.keys(heroPublicLinks)).not.toContain("phone");

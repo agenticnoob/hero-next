@@ -140,9 +140,10 @@ SyringeMeter 保留 `syringeMeterCaseStudy` 与 `syringeMeterShowcaseUi`；媒�
 
 ## 第四章：公共入口与跟随预览
 
-目录包含抖音、小红书、哔哩哔哩、博客、GitHub、力扣；地址均来自章节内容，
-力扣指向用户提供的 `https://leetcode.cn/u/skedush/`。
-大屏保留居中的六行目录、整行跟随预览和点击跳转；10svh 行高、9svh 字号上限确保页脚空间。
+目录包含抖音、小红书、哔哩哔哩、博客、GitHub、力扣、简历；地址均来自章节内容，
+力扣指向用户提供的 `https://leetcode.cn/u/skedush/`，简历指向 `https://resume.zzzxc.com/`。
+简历在中英文目录、跟随预览、手机阅读列表和转场入口中保持一致。
+大屏保留居中的七行目录、整行跟随预览和点击跳转；9svh 行高、8svh 字号上限确保页脚空间。
 指针/键盘选择、边缘限位、Escape 关闭与离开目录行为保持不变。
 
 阅读布局首先展示平台链接、账号和简介。三张二维码置于原生 details/summary 内，默认关闭，

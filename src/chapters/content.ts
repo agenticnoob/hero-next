@@ -24,6 +24,7 @@ export const heroPublicLinks = {
   vibeJournalPipeline: "https://github.com/agenticnoob/vibe-journal-pipeline",
   blog: "https://blog.zzzxc.com",
   leetcode: "https://leetcode.cn/u/skedush/",
+  resume: "https://resume.zzzxc.com/",
 } as const;
 
 export const heroSiteContent = {
@@ -343,7 +344,15 @@ export const heroChapterContent = {
         },
         right: {
           label: "公共信号",
-          items: ["抖音", "小红书", "哔哩哔哩", "博客", "GitHub", "力扣"],
+          items: [
+            "抖音",
+            "小红书",
+            "哔哩哔哩",
+            "博客",
+            "GitHub",
+            "力扣",
+            "简历",
+          ],
         },
       },
       body: {
@@ -414,6 +423,13 @@ export const heroChapterContent = {
             body: "skedush 的力扣主页，在一道道问题里练习拆解、推理与实现。",
             link: { href: heroPublicLinks.leetcode, label: "查看力扣主页" },
           },
+          {
+            label: "简历 / RESUME",
+            title: "简历",
+            directory: { name: "个人履历", detail: "resume.zzzxc.com" },
+            body: "个人简历主页，集中了解我的经历、技能与项目实践。",
+            link: { href: heroPublicLinks.resume, label: "查看简历主页" },
+          },
         ],
         closing: "愿与同道者共研同进，或有所得，亦未可知。",
       },
@@ -436,6 +452,7 @@ export const heroChapterContent = {
             "Blog",
             "GitHub",
             "LeetCode",
+            "Resume",
           ],
         },
       },
@@ -518,6 +535,13 @@ export const heroChapterContent = {
               href: heroPublicLinks.leetcode,
               label: "Visit LeetCode profile",
             },
+          },
+          {
+            label: "RESUME",
+            title: "Resume",
+            directory: { name: "Background", detail: "resume.zzzxc.com" },
+            body: "My resume homepage, bringing together experience, skills and project work.",
+            link: { href: heroPublicLinks.resume, label: "View resume" },
           },
         ],
         closing: "May kindred minds inquire and move forward together.",

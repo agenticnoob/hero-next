@@ -30,9 +30,10 @@ chapter menu uses the same Lenis instance as page scrolling. Entry and exit
 runways are 110svh and 60svh in this layout; content has natural height.
 
 Wide windows with a fine pointer retain the circular article index and moving
-postage-edged sheets, the four-wall project room, six public-directory hover
+postage-edged sheets, the four-wall project room, seven public-directory hover
 previews and the perspective journal. The public directory includes Douyin,
-Xiaohongshu, Bilibili, Blog, GitHub and the supplied LeetCode profile. Large-screen
+Xiaohongshu, Bilibili, Blog, GitHub, the supplied LeetCode profile and the
+[resume homepage](https://resume.zzzxc.com/). Large-screen
 profile copy retains its two columns, measured model/bubble exclusions and
 reversible model turn. See [visual behavior and extension instructions](./docs/visual-design.md).
 

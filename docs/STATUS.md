@@ -1,12 +1,35 @@
 # Current Status
 
-Last verified locally: 2026-09-17 (reading-layout theme button).
+Last verified locally: 2026-09-17 (chapter-four resume entry).
 Last production readback: 2026-09-17 (reading-layout theme button and chapter updates).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## Chapter-four resume entry (2026-09-17)
+
+The public directory now includes the user-supplied [resume homepage](https://resume.zzzxc.com/)
+as its seventh entry, titled 简历 / Resume. Both portal lists, desktop hover previews,
+reading-layout links and transition artwork use the same bilingual chapter content.
+Desktop rows use 9svh height and an 8svh font-size cap in both DOM and Canvas,
+keeping the seventh row above the footer. The existing six destinations and three
+QR disclosures remain intact.
+
+`npm run check` passes (50 files / 377 tests, zero-warning lint, formatting, both
+typechecks and the 111-file standalone boundary). `npm run build` and
+`git diff --check` pass. Regression assertions cover the exact destination in
+both languages, seven entries, resume preview, mobile link and both atlas endpoints.
+
+Ego Lite inspected the local production build at 1440×900 and 390×844. Desktop
+Chinese/English hover previews render correctly; the last row ends at y=756 and
+the footer begins at y=784. Mobile chapter navigation, bilingual content and
+keyboard activation opened the supplied resume URL in a new tab; reduced motion
+was confirmed for that activation. Sampled states retained one canvas, no horizontal
+overflow and no instrumented page/console errors. Desktop and mobile screenshots
+were inspected and remain outside Git. Physical devices and other browsers were
+not tested. Production publication is recorded separately below after verification.
 
 ## Reading-layout theme control (2026-09-17)
 
@@ -203,8 +226,8 @@ The approved mobile audit recommendations are implemented across the experience:
   root-font and body-height changes refresh scroll boundaries and endpoint artwork;
   layout changes preserve the current reading chapter through the same scroll controller.
 - The article index links to complete full-width prose. Project cards have compact
-  spacing. All six public profiles remain direct links, including the exact LeetCode
-  destination; three QR disclosures are separate from the links and initially closed.
+  spacing. All seven public entries remain direct links, including the exact LeetCode
+  and resume destinations; three QR disclosures are separate from the links and initially closed.
 - The journal displays the latest 12 dates and appends 12 earlier dates per action.
   Each date retains its complete tools and event. Reading mode does not mount the
   spatial article surface or perspective journal text targets.
