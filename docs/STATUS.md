@@ -1,7 +1,7 @@
 # Current Status
 
 Last verified locally: 2026-09-17 (reading-layout theme button).
-Last production readback: 2026-09-15 (four-project case studies).
+Last production readback: 2026-09-17 (reading-layout theme button and chapter updates).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -58,7 +58,8 @@ boundary); `npm run build` passes. Ego Lite checks covered 1440×900 DPR 1 in Ch
 and English, 1920×1080 DPR 2 with reduced motion, and 390×844 mobile reading with
 final-article anchor navigation. Screenshots show clearer glyph edges; sampled paths
 kept one canvas, no horizontal overflow, and no instrumented page/console errors.
-Physical devices and other browsers were not tested. Local changes are not published.
+Physical devices and other browsers were not tested. Included in the September 17
+production release recorded below.
 
 ## Profile and working propositions (2026-09-17)
 
@@ -82,7 +83,7 @@ Chinese and English. Profile/model separation, all eight semantic articles, desk
 final-card reading, mobile index jumps and reduced-motion navigation were checked.
 The sampled paths kept one canvas, had no horizontal overflow, and recorded no
 page exceptions or console errors after instrumentation. Physical devices and other
-browsers remain unverified. These changes are local; they have not been published.
+browsers remain unverified. Included in the September 17 production release below.
 
 ## Four-project case studies (2026-09-15)
 
@@ -260,6 +261,22 @@ use the same [production workflow](https://github.com/agenticnoob/hero-next/acti
 The workflow resolves exact website/data commits, runs the quality gate, builds with
 Vercel CLI, publishes prebuilt output and verifies the public page/snapshot bytes.
 An apparently green stale run is insufficient: publication and readback steps must run.
+
+### Mobile theme and chapter release (2026-09-17)
+
+Application `0c3ccdec4c8bc1437471efe7c39aedf4835e054f` was committed and pushed to
+`main`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/35181039130)
+completed in 3m06s; quality checks, production build, publication and public snapshot
+verification all ran successfully. Vercel deployment
+`hero-next-pp4e53zmb-agent-first.vercel.app` was aliased to [zzzxc.com](https://zzzxc.com).
+The selected journal source was `242c3fee901d148b47f37be3889de923a8b74726`.
+
+Ego Lite read back the public custom domain at 390×844 DPR 2. The new theme button
+changed the DOM and rendered WebGL palette, localStorage and pressed state;
+refresh retained the selection, and a 1.6-second touch hold left it unchanged.
+The opening copy and button hint match this release. The sampled click recorded
+no page/console errors, kept one canvas and had no horizontal overflow. Broader
+local interaction checks are described above; physical devices remain unverified.
 
 ### Four-project release (2026-09-15)
 
