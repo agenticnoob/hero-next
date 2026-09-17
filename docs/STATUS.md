@@ -1,7 +1,7 @@
 # Current Status
 
 Last verified locally: 2026-09-17 (chapter-four resume entry).
-Last production readback: 2026-09-17 (reading-layout theme button and chapter updates).
+Last production readback: 2026-09-17 (chapter-four resume entry).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -29,7 +29,7 @@ keyboard activation opened the supplied resume URL in a new tab; reduced motion
 was confirmed for that activation. Sampled states retained one canvas, no horizontal
 overflow and no instrumented page/console errors. Desktop and mobile screenshots
 were inspected and remain outside Git. Physical devices and other browsers were
-not tested. Production publication is recorded separately below after verification.
+not tested. Production publication and readback are recorded separately below.
 
 ## Reading-layout theme control (2026-09-17)
 
@@ -284,6 +284,23 @@ use the same [production workflow](https://github.com/agenticnoob/hero-next/acti
 The workflow resolves exact website/data commits, runs the quality gate, builds with
 Vercel CLI, publishes prebuilt output and verifies the public page/snapshot bytes.
 An apparently green stale run is insufficient: publication and readback steps must run.
+
+### Resume directory release (2026-09-17)
+
+Application `31d518f6024e53b3bc382ba8e290351aa2e52b1c` was committed and pushed to
+`main`. Its [successful workflow](https://github.com/agenticnoob/hero-next/actions/runs/35211084042)
+ran the full quality gate, built production output in 30 seconds, published
+`hero-next-c4tizffpe-agent-first.vercel.app` and completed public snapshot verification.
+The selected journal source was `242c3fee901d148b47f37be3889de923a8b74726`.
+
+Ego Lite read back [zzzxc.com](https://zzzxc.com) at 1440×900 and 390×844.
+The desktop directory has seven entries and the correct Chinese/English resume
+hover previews. Mobile chapter navigation and a click on 简历, with reduced motion
+confirmed active, opened `https://resume.zzzxc.com/` in a new tab. Sampled states
+kept one canvas, no horizontal overflow and no instrumented page/console errors.
+The production desktop screenshot was inspected; physical devices were not tested.
+Documentation-only follow-up runs retain the same application behavior and record
+their exact commit and deployment receipt in Actions.
 
 ### Mobile theme and chapter release (2026-09-17)
 
