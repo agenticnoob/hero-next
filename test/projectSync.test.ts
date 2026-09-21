@@ -185,6 +185,34 @@ describe("public project synchronization", () => {
     ).toThrow();
   });
 
+  test("automatically discovers untagged public projects while retaining eligibility and manual exclusions", async () => {
+    const untagged = { ...repo, topics: [] };
+    const plan = await collectProjects(
+      { ...config, topic: null, excludeIds: [50] },
+      empty,
+      apiFor([
+        untagged,
+        { ...untagged, id: 50 },
+        { ...untagged, id: 51, owner: { login: "foreign" } },
+        ...["private", "fork", "archived", "disabled"].map((flag, index) => ({
+          ...untagged,
+          id: 60 + index,
+          [flag]: true,
+        })),
+      ]),
+    );
+    expect(plan.projects.map((project: { id: number }) => project.id)).toEqual([
+      42,
+    ]);
+  });
+
+  test.each([undefined, false, 123, {}, ""])(
+    "rejects malformed topic filters: %j",
+    (topic) => {
+      expect(() => validateConfig({ ...config, topic })).toThrow();
+    },
+  );
+
   test("retains previously published data when source disappears or README is missing", async () => {
     const snapshot = mergeGenerated(
       empty,

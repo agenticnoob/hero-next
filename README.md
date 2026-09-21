@@ -16,8 +16,8 @@ room behind a native reading dialog; opening or refreshing its URL renders a
 standalone page. The shared root state keeps one theme, locale and room selection.
 
 Chapter three also links to `/projects`, a bilingual directory containing the four
-selected cases and generated public projects. GitHub-hosted Actions scans selected
-repositories daily, uses Codex only for changed README inputs, and proposes a
+selected cases and generated public projects. GitHub-hosted Actions discovers owned
+public repositories daily, uses Codex only for changed README inputs, and proposes a
 content-only PR. Merging an approved PR uses the existing production pipeline.
 See [project publishing](./docs/project-publishing.md) for subscription authentication,
 selection rules, Actions permissions and activation steps. No local computer is required.

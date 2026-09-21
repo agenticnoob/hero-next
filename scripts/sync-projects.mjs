@@ -28,7 +28,9 @@ export function validateConfig(value) {
   if (
     value.version !== 1 ||
     !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,38}$/.test(value.owner) ||
-    !/^[a-z0-9-]{1,50}$/.test(value.topic) ||
+    (value.topic !== null &&
+      (typeof value.topic !== "string" ||
+        !/^[a-z0-9-]{1,50}$/.test(value.topic))) ||
     !Array.isArray(value.include) ||
     value.include.some(
       (name) =>
@@ -85,7 +87,8 @@ export async function collectProjects(configInput, snapshotInput, api) {
       !repo.disabled &&
       repo.owner?.login.toLowerCase() === config.owner.toLowerCase() &&
       !config.excludeIds.includes(repo.id) &&
-      (repo.topics?.includes(config.topic) ||
+      (config.topic === null ||
+        repo.topics?.includes(config.topic) ||
         config.include.some(
           (name) => name.toLowerCase() === repo.full_name.toLowerCase(),
         )),

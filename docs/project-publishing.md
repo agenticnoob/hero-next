@@ -33,9 +33,11 @@ remains subject to the GitHub account's minutes and storage limits.
    GitHub Actions to create and approve pull requests**. This workflow creates PRs
    but never approves or merges them. Organization policy may restrict this setting.
 6. Publish these changes to the default branch; scheduled workflows only run there.
-   This implementation does not itself push or deploy. Add the `portfolio` topic to
-   an owned public repository, or its full `agenticnoob/name` to the config's `include`
-   list. Forks, archived, disabled and private source repositories remain excluded.
+   With `topic: null`, the scan automatically discovers owned public repositories,
+   including newly created ones. To opt into manual selection instead, set `topic`
+   to `portfolio`; matching topics or full `agenticnoob/name` entries in `include`
+   then select repositories. Forks, archived, disabled and private source repositories
+   remain excluded in either mode.
 7. Run **Review GitHub project content** from Actions once. Check generation and
    credential writeback, review the content PR, then merge it to deploy. An unchanged
    or empty source selection tests only scanning, not subscription authentication.
@@ -73,9 +75,9 @@ rm -rf -- "$project_auth_dir"
 Do not run `codex logout` on the copied session: it is now owned by the cloud job.
 No laptop, desktop application or home server needs to stay running afterward.
 
-The initial include list is deliberately empty. On 2026-09-21 the public repository
-inventory contained no `portfolio` topics, so the initial scan had no eligible new
-projects. The config excludes existing manual cases by immutable repository id:
+The default `topic: null` needs no tag maintenance for new public projects. A local
+scan on 2026-09-22 found four eligible projects; missing READMEs are skipped. The
+config excludes existing manual cases by immutable repository id:
 `1272434230` (Viselora's `dom-webgl-workspace`) and `1312260600` (SyringeMeter).
 The other manual source repositories were outside that owned-public inventory.
 If another manual case becomes eligible, add its id to `excludeIds` to avoid

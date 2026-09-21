@@ -1,7 +1,7 @@
 # Current Status
 
-Last verified locally: 2026-09-21 (GitHub project catalog and publishing pipeline).
-Last production readback: 2026-09-18 (tetrahedron face-text resolution).
+Last verified locally: 2026-09-22 (GitHub project catalog and publishing pipeline).
+Last production readback: 2026-09-22 (project directory HTTP and rendered content).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -16,14 +16,14 @@ generated entries have stable repository-id routes and no invented artwork. Nati
 route dialogs preserve the room's selected wall and restore directory scroll and
 focus when returning from a case. Direct directory and case URLs also work.
 
-The daily GitHub-hosted workflow scans explicitly selected public repositories at
+The daily GitHub-hosted workflow discovers eligible owned public repositories at
 10:43 Asia/Shanghai. Changed README sources pass through the pinned Codex CLI
 in an isolated container using subscription authentication, strict validation, full
 checks and a production build before a content-only PR is created. An existing
 content PR pauses generation. Human merging uses the
 existing deployment workflow. See [project publishing](./project-publishing.md).
 
-Local verification: `npm run check` (54 files / 421 tests), `npm run build`, React
+Local verification: `npm run check` (54 files / 427 tests), `npm run build`, React
 Doctor (100/100) and `git diff --check`. Tests cover source filtering, incremental
 generation, malformed responses, retained entries, generated routes, catalog
 deduplication and directory return behavior. Independent review also verified
@@ -46,13 +46,21 @@ Instrumented mobile navigation reported no page/console errors; instrumentation 
 not cover every initial load. Screenshots were inspected and remain outside Git.
 Physical devices and live model-generated content were not tested.
 
-This implementation is local and has not been published or run in GitHub Actions.
-Activation requires default-branch publication, a dedicated subscription login and
-a GitHub credential-write token in the `project-content` environment, plus permission
-for Actions to create PRs. No OpenAI API key is used. The environment must be supported
-for this private repository by the GitHub account plan. The initial public inventory
-had no `portfolio` topics; the snapshot is empty until a repository is selected and its
-generated content reviewed. No production verification is claimed for this change.
+Implementation commit `35ab0ea` is published to `main`. The private
+`project-content` environment exists with a main-only branch policy, and Actions
+PR creation is enabled. The first [cloud scan](https://github.com/agenticnoob/hero-next/actions/runs/35618929809)
+passed with zero changed sources under the original topic filter; generation and PR
+jobs were skipped. The default now uses `topic: null` to discover new public projects
+automatically; a local read-only scan found four eligible sources. The dedicated
+subscription login is saved in the environment; the restricted environment-secret
+write token is still pending GitHub user authentication. No OpenAI API key is used,
+and no live model generation is claimed. The snapshot remains empty until generated
+content is reviewed.
+
+The [production deployment](https://github.com/agenticnoob/hero-next/actions/runs/35618865637)
+passed its checks, build, publication and public-journal verification. A public readback
+of `/projects` returned HTTP 200 and the expected curated case links. This readback
+does not replace the local browser interaction evidence above.
 
 ## Tetrahedron face-text resolution (2026-09-18)
 
