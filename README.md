@@ -15,6 +15,13 @@ measurement/CSV screenshots. Opening a case from chapter three preserves the
 room behind a native reading dialog; opening or refreshing its URL renders a
 standalone page. The shared root state keeps one theme, locale and room selection.
 
+Chapter three also links to `/projects`, a bilingual directory containing the four
+selected cases and generated public projects. GitHub-hosted Actions scans selected
+repositories daily, uses Codex only for changed README inputs, and proposes a
+content-only PR. Merging an approved PR uses the existing production pipeline.
+See [project publishing](./docs/project-publishing.md) for subscription authentication,
+selection rules, Actions permissions and activation steps. No local computer is required.
+
 The site has four chapters: self, AI/philosophy axioms, public builds and public
 channels, followed by the daily journal. Chinese and English share typed content
 and a persisted locale. Chapter one uses the public nickname and abstract figure;
@@ -137,7 +144,9 @@ npm run build
 Project case-study components and media configuration live in `src/projects/`;
 their bilingual copy remains in `src/chapters/content.ts`. `app/@project/` owns
 the intercepted exhibition routes, and `app/projects/[slug]/` owns the
-standalone pages and metadata. `projectCaseStudies` defines the supported slugs;
+standalone pages and metadata. `projectCaseStudies` defines the curated slugs;
+`src/projects/catalog.ts` adds validated `data/projects.json` entries with stable
+`gh-<repository id>` slugs. `src/projects/ProjectDirectory.tsx` renders the directory.
 `src/projects/ProjectShowcase.tsx` renders their shared reading layout.
 `src/experience/HeroSiteState.tsx` provides the
 shared state above both routes. See the media and extension notes in

@@ -16,6 +16,7 @@ import type { HeroLocale, HeroLocaleStore } from "../preferences/locale";
 import { assertProjectRoomSections } from "./model";
 import { projectRoomAnchorId, type ProjectRoomStore } from "./room";
 import { projectExhibitLayout } from "./exhibit";
+import { projectDirectoryCopy } from "../chapters/uiContent";
 
 export function HeroProjectRoomStage({
   locale,
@@ -97,6 +98,16 @@ export function HeroProjectsChapterBody({
         </p>
         <h2 id={bodyId}>{content.body.title}</h2>
         <p>{content.body.intro}</p>
+        <Link
+          href="/projects"
+          prefetch={false}
+          scroll={false}
+          className="hero-projects__directory"
+          data-project-directory-entry="reading"
+          tabIndex={snapshot.ready ? -1 : undefined}
+        >
+          {projectDirectoryCopy[locale].title} ↗
+        </Link>
         <div className="hero-chapter__notes">
           {projects.map((project, index) => (
             <section className="hero-chapter__note" key={project.title}>
@@ -155,6 +166,15 @@ export function HeroProjectsChapterBody({
         <header className="hero-projects__heading">
           <span>{formatHeroChapterHeading(definition, ui.title)}</span>
           <span className="hero-projects__hint">{ui.hint}</span>
+          <Link
+            href="/projects"
+            prefetch={false}
+            scroll={false}
+            className="hero-projects__directory"
+            data-project-directory-entry="desktop"
+          >
+            {projectDirectoryCopy[locale].title} ↗
+          </Link>
         </header>
         {projects.map(
           (project, index) =>

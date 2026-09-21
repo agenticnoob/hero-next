@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { projectCaseStudies, type HeroProjectSlug } from "../chapters/content";
+import { projectCatalog } from "./catalog";
 
 export type ProjectPageProps = {
   readonly params: Promise<{ slug: string }>;
@@ -7,6 +7,6 @@ export type ProjectPageProps = {
 
 export async function readProjectSlug(params: ProjectPageProps["params"]) {
   const { slug } = await params;
-  if (!Object.hasOwn(projectCaseStudies, slug)) notFound();
-  return slug as HeroProjectSlug;
+  if (!projectCatalog.getCase(slug, "zh")) notFound();
+  return slug;
 }

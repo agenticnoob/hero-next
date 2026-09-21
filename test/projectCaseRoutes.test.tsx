@@ -7,6 +7,7 @@ import Page, { generateMetadata, dynamic } from "../app/projects/[slug]/page";
 import ExhibitionPage, {
   generateStaticParams,
 } from "../app/@project/(.)projects/[slug]/page";
+import { projectCatalog } from "../src/projects/catalog";
 
 vi.mock("next/navigation", () => ({
   notFound: () => {
@@ -29,7 +30,7 @@ describe("registered project routes", () => {
     }
     expect(
       generateStaticParams().map(({ slug }) => `/projects/${slug}`),
-    ).toEqual(paths);
+    ).toEqual(projectCatalog.entries.map(({ slug }) => `/projects/${slug}`));
     expect(dynamic).toBe("force-dynamic");
   });
 

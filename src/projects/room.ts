@@ -103,6 +103,7 @@ const initialRoomSnapshot: RoomSnapshot = {
 
 export function createProjectRoomStore() {
   let snapshot = initialRoomSnapshot;
+  let directoryReturn: { slug: string; scrollTop: number } | undefined;
   let hovered = false;
   let focused = false;
   const exhibits = new Map<number, HTMLAnchorElement>();
@@ -122,6 +123,13 @@ export function createProjectRoomStore() {
   };
   return {
     getSnapshot: () => snapshot,
+    rememberDirectoryReturn(slug: string, scrollTop: number) {
+      directoryReturn = { slug, scrollTop };
+    },
+    getDirectoryReturn: () => directoryReturn,
+    finishDirectoryReturn() {
+      directoryReturn = undefined;
+    },
     getServerSnapshot: () => initialRoomSnapshot,
     subscribe(listener: () => void) {
       listeners.add(listener);

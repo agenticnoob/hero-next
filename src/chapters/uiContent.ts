@@ -78,3 +78,33 @@ export const heroInterfaceContent = {
     },
   },
 } as const satisfies Readonly<Record<HeroLocale, HeroInterfaceContent>>;
+
+export const projectDirectoryCopy = {
+  zh: {
+    title: "全部项目",
+    intro: "从创意到实现，持续构建与探索。",
+    back: "返回项目空间",
+    selected: "精选项目",
+    more: "更多项目",
+    source: "项目源码",
+    read: "阅读项目",
+    toc: "阅读目录",
+    links: "继续了解",
+    generated: "根据项目 README 整理",
+    backToDirectory: "返回全部项目",
+  },
+  en: {
+    title: "All projects",
+    intro:
+      "From ideas to working software. An ongoing collection of builds and explorations.",
+    back: "Back to project space",
+    selected: "Selected work",
+    more: "More projects",
+    source: "Project source",
+    read: "Read project",
+    toc: "Contents",
+    links: "Explore further",
+    generated: "Adapted from the project README",
+    backToDirectory: "Back to all projects",
+  },
+} as const;

@@ -7,11 +7,9 @@ import {
   restoreHeroReadingPosition,
   suspendHeroScroll,
 } from "../experience/smoothScroll";
-import {
-  getHeroChapterContent,
-  type HeroProjectSlug,
-} from "../chapters/content";
+import { getHeroChapterContent } from "../chapters/content";
 import { ProjectShowcase } from "./ProjectShowcase";
+import { ProjectDirectory } from "./ProjectDirectory";
 import {
   projectRoomEntrySelector,
   readProjectRoomReturnPosition,
@@ -35,7 +33,9 @@ function captureRoomReturn(trigger: HTMLElement | null, index: number) {
         ?.getAttribute("data-reading-layout") === "true";
     const target = changed
       ? document.querySelector<HTMLElement>(
-          projectRoomEntrySelector(index, reading),
+          index < 0
+            ? `[data-project-directory-entry="${reading ? "reading" : "desktop"}"]`
+            : projectRoomEntrySelector(index, reading),
         )
       : trigger;
     if (!target?.isConnected) return;
@@ -52,11 +52,7 @@ function captureRoomReturn(trigger: HTMLElement | null, index: number) {
   };
 }
 
-export function ProjectExhibition({
-  project,
-}: {
-  readonly project: HeroProjectSlug;
-}) {
+export function ProjectExhibition({ project }: { readonly project?: string }) {
   const router = useRouter();
   const { projectRoom } = useHeroSiteState();
   const dialog = useRef<HTMLDialogElement>(null);
@@ -76,7 +72,8 @@ export function ProjectExhibition({
     const index = getHeroChapterContent("builds", "zh").body.sections.findIndex(
       (section) => section.showcase?.href === `/projects/${project}`,
     );
-    projectRoom.select(index);
+    if (index >= 0 && !projectRoom.getDirectoryReturn())
+      projectRoom.select(index);
     const restoreRoom = captureRoomReturn(trigger, index);
     const html = document.documentElement;
     const previousOverflow = html.style.overflow;
@@ -131,7 +128,11 @@ export function ProjectExhibition({
         close();
       }}
     >
-      <ProjectShowcase project={project} onClose={close} />
+      {project ? (
+        <ProjectShowcase project={project} onClose={close} />
+      ) : (
+        <ProjectDirectory onClose={close} />
+      )}
     </dialog>
   );
 }

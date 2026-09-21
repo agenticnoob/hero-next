@@ -13,3 +13,4 @@ output/
 .journal/
 public/journal/
 .journal-source/
+auth.json

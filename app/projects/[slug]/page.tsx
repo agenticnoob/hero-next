@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ProjectShowcase } from "../../../src/projects/ProjectShowcase";
-import { projectCaseStudies } from "../../../src/chapters/content";
+import { projectCatalog } from "../../../src/projects/catalog";
 import {
   readProjectSlug,
   type ProjectPageProps,
@@ -31,7 +31,7 @@ export async function generateMetadata({
 }: ProjectPageProps): Promise<Metadata> {
   const slug = await readProjectSlug(params);
   if (slug === "syringe-meter") return syringeMeterMetadata;
-  const copy = projectCaseStudies[slug].zh;
+  const copy = projectCatalog.getCase(slug, "zh")!;
   const title = `${copy.title} — ${copy.subtitle}`;
   return {
     title: `${title} | noobli`,

@@ -5,9 +5,7 @@ import Link from "next/link";
 import type { MouseEvent } from "react";
 import {
   getHeroChapterContent,
-  projectCaseStudies,
   syringeMeterShowcaseUi,
-  type HeroProjectSlug,
 } from "../chapters/content";
 import type { HeroProjectCaseStudy } from "../chapters/contentModel";
 import { HeroLocaleControl } from "../chapters/HeroLocaleControl";
@@ -19,6 +17,7 @@ import {
 import { ProjectVideo } from "./ProjectVideo";
 import { syringeMeterMedia } from "./media";
 import { projectRoomAnchorId } from "./room";
+import { projectCatalog } from "./catalog";
 
 function readSection(event: MouseEvent<HTMLAnchorElement>, id: string) {
   event.preventDefault();
@@ -47,13 +46,13 @@ export function ProjectShowcase({
   project,
   onClose,
 }: {
-  readonly project: HeroProjectSlug;
+  readonly project: string;
   readonly onClose?: () => void;
 }) {
   const { locale, store } = useHeroLocaleState();
   const { scheme } = useHeroThemeState();
   const { projectRoom } = useHeroSiteState();
-  const copy: HeroProjectCaseStudy = projectCaseStudies[project][locale];
+  const copy: HeroProjectCaseStudy = projectCatalog.getCase(project, locale)!;
   const hasMedia = project === "syringe-meter";
   const ui = syringeMeterShowcaseUi[locale];
   const firstSectionId = `project-${copy.sections[0].id}`;
@@ -64,8 +63,10 @@ export function ProjectShowcase({
     ).body.sections.findIndex(
       (section) => section.showcase?.href === `/projects/${project}`,
     );
-    projectRoom.select(index);
-    projectRoom.requestReturn();
+    if (index >= 0) {
+      projectRoom.select(index);
+      projectRoom.requestReturn();
+    }
   };
 
   return (
@@ -84,7 +85,11 @@ export function ProjectShowcase({
           </button>
         ) : (
           <Link
-            href={`/#${projectRoomAnchorId}`}
+            href={
+              project.startsWith("gh-")
+                ? "/projects"
+                : `/#${projectRoomAnchorId}`
+            }
             prefetch={false}
             onClick={returnToRoom}
           >
@@ -146,7 +151,7 @@ export function ProjectShowcase({
                     ))}
                   </ul>
                 )}
-                {section.id === "problem" && (
+                {section.id === "problem" && copy.pipeline.length > 0 && (
                   <section
                     className="project-case__pipeline"
                     aria-label={copy.pipelineTitle}

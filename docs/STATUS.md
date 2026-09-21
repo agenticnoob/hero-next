@@ -1,12 +1,58 @@
 # Current Status
 
-Last verified locally: 2026-09-18 (tetrahedron face-text resolution).
+Last verified locally: 2026-09-21 (GitHub project catalog and publishing pipeline).
 Last production readback: 2026-09-18 (tetrahedron face-text resolution).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## GitHub project catalog and publishing pipeline (2026-09-21)
+
+Chapter three retains its four curated walls and adds an all-projects directory.
+The directory combines the manual cases with validated bilingual static snapshots;
+generated entries have stable repository-id routes and no invented artwork. Native
+route dialogs preserve the room's selected wall and restore directory scroll and
+focus when returning from a case. Direct directory and case URLs also work.
+
+The daily GitHub-hosted workflow scans explicitly selected public repositories at
+10:43 Asia/Shanghai. Changed README sources pass through the pinned Codex CLI
+in an isolated container using subscription authentication, strict validation, full
+checks and a production build before a content-only PR is created. An existing
+content PR pauses generation. Human merging uses the
+existing deployment workflow. See [project publishing](./project-publishing.md).
+
+Local verification: `npm run check` (54 files / 421 tests), `npm run build`, React
+Doctor (100/100) and `git diff --check`. Tests cover source filtering, incremental
+generation, malformed responses, retained entries, generated routes, catalog
+deduplication and directory return behavior. Independent review also verified
+formatting a nonempty generated snapshot and exporting the workflow's isolated
+journal fixture. Actionlint passes for the subscription workflow (ShellCheck was
+not available); its CLI flags were checked against the Codex 0.155.1 binary.
+
+Subscription regression tests cover owner-only login files, unsupported auth modes,
+refreshed-token writeback, storage failures, container cleanup after failed generation,
+credential-output rejection, environment/concurrency gates and code-only scan skips.
+The local Docker daemon is unavailable; the Linux container, real subscription login
+and GitHub secret rotation have not been exercised. These require a configured first
+cloud run. No API credentials or existing desktop login were read or transferred.
+
+Ego Lite inspected the local production build at 1440×900 and 390×844, including
+directory/case navigation, language switching, back/Escape, selected-wall retention,
+directory return focus, mobile reduced motion and desktop-to-mobile resize. Sampled
+views had no horizontal overflow; the home-backed dialogs retained one canvas.
+Instrumented mobile navigation reported no page/console errors; instrumentation did
+not cover every initial load. Screenshots were inspected and remain outside Git.
+Physical devices and live model-generated content were not tested.
+
+This implementation is local and has not been published or run in GitHub Actions.
+Activation requires default-branch publication, a dedicated subscription login and
+a GitHub credential-write token in the `project-content` environment, plus permission
+for Actions to create PRs. No OpenAI API key is used. The environment must be supported
+for this private repository by the GitHub account plan. The initial public inventory
+had no `portfolio` topics; the snapshot is empty until a repository is selected and its
+generated content reviewed. No production verification is claimed for this change.
 
 ## Tetrahedron face-text resolution (2026-09-18)
 

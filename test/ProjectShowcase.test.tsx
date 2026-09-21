@@ -18,6 +18,7 @@ import { ProjectExhibition } from "../src/projects/ProjectExhibition";
 import { ProjectVideo } from "../src/projects/ProjectVideo";
 import { ProjectShowcase } from "../src/projects/ProjectShowcase";
 import { syringeMeterMedia } from "../src/projects/media";
+import { projectCatalog } from "../src/projects/catalog";
 
 const { goBack, resumeScroll, restorePosition, suspendScroll } = vi.hoisted(
   () => {
@@ -174,6 +175,33 @@ afterEach(async () => {
 });
 
 describe("project case studies", () => {
+  test("restores directory scroll and focus without changing the selected wall", async () => {
+    await renderSite(<div />);
+    const room = siteState!.projectRoom;
+    room.select(2);
+    room.rememberDirectoryReturn("viselora", 640);
+    await renderSite(<ProjectExhibition key="case" project="viselora" />);
+    expect(room.getSnapshot().selected).toBe(2);
+    await renderSite(<ProjectExhibition key="directory" />);
+    await flushAnimationFrame();
+    const dialog = host.querySelector("dialog")!;
+    expect(dialog.scrollTop).toBe(640);
+    expect(document.activeElement).toBe(
+      dialog.querySelector('a[href="/projects/viselora"]'),
+    );
+    expect(room.getSnapshot().selected).toBe(2);
+    expect(room.getDirectoryReturn()).toBeUndefined();
+  });
+
+  test("opens the directory without selecting an unrelated wall", async () => {
+    await renderSite(<ProjectExhibition />);
+    expect(host.querySelector("dialog")?.open).toBe(true);
+    expect(host.querySelectorAll(".project-directory__link")).toHaveLength(
+      projectCatalog.entries.length,
+    );
+    expect(siteState!.projectRoom.getSnapshot().selected).toBe(0);
+    expect(document.activeElement).toBe(host.querySelector("h1"));
+  });
   const writtenProjects: HeroProjectSlug[] = [
     "axmorf-studio",
     "viselora",

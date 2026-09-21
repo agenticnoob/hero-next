@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "sync:journal": "node scripts/sync-journal.mjs",
+    "sync:projects": "node scripts/sync-projects.mjs",
+    "check:projects": "node scripts/sync-projects.mjs validate",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
@@ -15,7 +17,7 @@
     "test:watch": "vitest",
     "typecheck:tests": "tsc -p tsconfig.test.json --noEmit",
     "check:standalone": "node scripts/check-standalone.mjs",
-    "check": "npm run lint && npm run format:check && npm test && npm run typecheck:tests && npm run check:standalone && npm run typecheck"
+    "check": "npm run check:projects && npm run lint && npm run format:check && npm test && npm run typecheck:tests && npm run check:standalone && npm run typecheck"
   },
   "dependencies": {
     "@viselora/dom-webgl": "0.1.0-alpha.2",
