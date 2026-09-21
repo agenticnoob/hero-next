@@ -11,6 +11,10 @@ The content generator uses ChatGPT-managed Codex authentication and the subscrip
 usage limits. It does not use an OpenAI API key. GitHub Actions usage is separate and
 remains subject to the GitHub account's minutes and storage limits.
 
+The dedicated `hero-next-codex-auth-writeback` token is restricted to `hero-next`
+with Environments read/write and Metadata read. It expires on **2026-12-21**;
+replace `CODEX_AUTH_WRITE_TOKEN` in `project-content` before that date.
+
 1. Keep this website repository **private**. The workflow refuses public repositories.
    Public source repositories are read as data; the authenticated job belongs to this
    private website repository.
@@ -106,7 +110,9 @@ unprivileged Docker container. Shell, web search, code mode and subagents are di
 The container receives only the prompt, schema, dedicated auth directory and output
 directory; it does not mount the checkout, Docker socket, GitHub token or deployment
 credentials. The Node base image is digest-pinned and the CLI version is fixed.
-Model stdout/stderr are suppressed because they could include newly rotated tokens.
+Raw model stdout/stderr are suppressed because they could include newly rotated tokens.
+The runner reports only fixed diagnostic categories (for example TLS, authorization,
+rate-limit, stream-retry or timeout); these are troubleshooting hints, not raw errors.
 It emits only numeric ids and plain bilingual text. A fresh job independently checks
 ids, fields, bounds, locale structure and the input digest before composing trusted
 GitHub URLs. Only `data/projects.json` can enter the automated PR. No README HTML,

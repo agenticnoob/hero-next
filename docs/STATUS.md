@@ -23,7 +23,7 @@ checks and a production build before a content-only PR is created. An existing
 content PR pauses generation. Human merging uses the
 existing deployment workflow. See [project publishing](./project-publishing.md).
 
-Local verification: `npm run check` (54 files / 427 tests), `npm run build`, React
+Local verification: `npm run check` (54 files / 429 tests), `npm run build`, React
 Doctor (100/100) and `git diff --check`. Tests cover source filtering, incremental
 generation, malformed responses, retained entries, generated routes, catalog
 deduplication and directory return behavior. Independent review also verified
@@ -34,9 +34,14 @@ not available); its CLI flags were checked against the Codex 0.155.1 binary.
 Subscription regression tests cover owner-only login files, unsupported auth modes,
 refreshed-token writeback, storage failures, container cleanup after failed generation,
 credential-output rejection, environment/concurrency gates and code-only scan skips.
-The local Docker daemon is unavailable; the Linux container, real subscription login
-and GitHub secret rotation have not been exercised. These require a configured first
-cloud run. No API credentials or existing desktop login were read or transferred.
+The local Docker daemon is unavailable. The first configured cloud run built the Linux
+container, restored the dedicated subscription login and successfully wrote it back to
+the environment secret. [Generation timed out after 12 minutes](https://github.com/agenticnoob/hero-next/actions/runs/35646078597);
+the failure path stopped the container, saved the current login and removed temporary
+authentication successfully. It produced no content artifact or PR. Fixed diagnostic
+categories now report process/network/auth failures without forwarding raw output;
+generation is still being verified. No API credentials or existing desktop login were
+read or transferred.
 
 Ego Lite inspected the local production build at 1440×900 and 390×844, including
 directory/case navigation, language switching, back/Escape, selected-wall retention,
@@ -52,10 +57,10 @@ PR creation is enabled. The first [cloud scan](https://github.com/agenticnoob/he
 passed with zero changed sources under the original topic filter; generation and PR
 jobs were skipped. The default now uses `topic: null` to discover new public projects
 automatically; a local read-only scan found four eligible sources. The dedicated
-subscription login is saved in the environment; the restricted environment-secret
-write token is still pending GitHub user authentication. No OpenAI API key is used,
-and no live model generation is claimed. The snapshot remains empty until generated
-content is reviewed.
+subscription login and restricted environment-secret write token are saved in the
+environment. The token only grants Environments read/write and Metadata read on
+`hero-next`, and expires on 2026-12-21. No OpenAI API key is used. The snapshot remains
+empty until generated content is reviewed.
 
 The [production deployment](https://github.com/agenticnoob/hero-next/actions/runs/35618865637)
 passed its checks, build, publication and public-journal verification. A public readback

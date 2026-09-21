@@ -14,6 +14,8 @@ import path from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   containerArgs,
+  diagnosticCodes,
+  execute,
   generateContent,
   persistAuth,
   restoreAuth,
@@ -53,6 +55,44 @@ afterEach(async () => {
 });
 
 describe("subscription authentication lifecycle", () => {
+  test("classifies process failures without reproducing secret-bearing output", () => {
+    expect(
+      diagnosticCodes(
+        "ERROR error sending request: invalid peer certificate synthetic-secret",
+      ),
+    ).toEqual(["tls-certificate", "network-request"]);
+    expect(diagnosticCodes("unexpected argument synthetic-secret")).toEqual([]);
+    expect(
+      diagnosticCodes("error: unexpected argument synthetic-secret"),
+    ).toEqual(["invalid-cli-option"]);
+    expect(diagnosticCodes("ERROR 401 Unauthorized synthetic-secret")).toEqual([
+      "unauthorized",
+    ]);
+  });
+
+  test("process diagnostics remain bounded and suppress child output on failure and timeout", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await expect(
+        execute(process.execPath, [
+          "-e",
+          "console.error('ERROR 403 Forbidden synthetic-secret'); process.exit(1)",
+        ]),
+      ).rejects.toThrow("Process failed");
+      expect(log.mock.calls).toEqual([["Process diagnostic hint: forbidden"]]);
+      await expect(
+        execute(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
+          timeout: 100,
+        }),
+      ).rejects.toThrow("Process failed");
+      expect(log.mock.calls.flat().join(" ")).not.toContain("synthetic-secret");
+      expect(log).toHaveBeenCalledWith(
+        "Process diagnostic hint: execution-timeout",
+      );
+    } finally {
+      log.mockRestore();
+    }
+  });
   test.each([
     "broken-json synthetic-secret",
     JSON.stringify({ ...auth, auth_mode: "chatgptAuthTokens" }),
@@ -153,7 +193,7 @@ describe("subscription authentication lifecycle", () => {
   test("exports only model output and removes the container before inspecting files", async () => {
     const root = await fixture();
     vi.stubEnv("GH_TOKEN", "host-only-token");
-    const run = vi.fn((_command: string, args: string[]) => {
+    const run = vi.fn(async (_command: string, args: string[]) => {
       if (args[0] === "run") {
         writeFileSync(
           path.join(root, "model-output/generated.json"),
@@ -182,7 +222,7 @@ describe("subscription authentication lifecycle", () => {
 
   test("removes a failed container and still allows saving its refreshed credentials", async () => {
     const root = await fixture();
-    const run = vi.fn((_command: string, args: string[]) => {
+    const run = vi.fn(async (_command: string, args: string[]) => {
       if (args[0] === "run") {
         writeFileSync(
           path.join(root, "codex-home/auth.json"),

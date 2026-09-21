@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { lstat, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { setTimeout } from "node:timers/promises";
@@ -32,15 +32,78 @@ export function validateManagedAuth(raw) {
   return auth;
 }
 
-function execute(command, args, options = {}) {
-  const result = spawnSync(command, args, {
-    ...options,
-    timeout: options.timeout ?? 60_000,
-    stdio: ["pipe", "ignore", "ignore"],
+export function diagnosticCodes(stderr) {
+  // Return fixed labels only. Never redact-and-print raw process output.
+  if (!/error|failed|reconnect|timed?\s*out/i.test(stderr)) return [];
+  const patterns = [
+    ["tls-certificate", /certificate|tls|ssl/i],
+    ["unauthorized", /\b401\b|unauthori[sz]ed|refresh.token/i],
+    ["forbidden", /\b403\b|forbidden/i],
+    ["rate-limit", /\b429\b|rate.limit|usage.limit/i],
+    [
+      "model-unavailable",
+      /model.{0,100}(not.found|not.supported|does.not.exist|not.available)/i,
+    ],
+    [
+      "invalid-cli-option",
+      /unexpected argument|unrecognized|unknown (option|variant|field)/i,
+    ],
+    [
+      "network-request",
+      /error sending request|connect error|dns|connection (reset|refused)/i,
+    ],
+    ["stream-retry", /reconnect|stream.{0,80}(disconnect|error|failed)/i],
+    ["request-timeout", /timed?\s*out|timeout/i],
+  ];
+  return patterns
+    .filter(([, pattern]) => pattern.test(stderr))
+    .map(([code]) => code);
+}
+
+export async function execute(command, args, options = {}) {
+  const { input, timeout = 60_000, ...childOptions } = options;
+  await new Promise((resolve, reject) => {
+    const child = spawn(command, args, {
+      ...childOptions,
+      stdio: ["pipe", "ignore", "pipe"],
+    });
+    const reported = new Set();
+    let tail = "";
+    let expired = false;
+    let inputFailed = false;
+    const timer = globalThis.setTimeout(() => {
+      expired = true;
+      child.kill("SIGKILL");
+    }, timeout);
+    child.stderr.setEncoding("utf8");
+    child.stderr.on("data", (chunk) => {
+      tail = (tail + chunk).slice(-8192);
+      for (const code of diagnosticCodes(tail)) {
+        if (!reported.has(code)) {
+          reported.add(code);
+          console.error(`Process diagnostic hint: ${code}`);
+        }
+      }
+    });
+    // Early child exit can close stdin before the prompt has been written.
+    child.stdin.on("error", () => {
+      inputFailed = true;
+    });
+    child.once("error", () => {
+      clearTimeout(timer);
+      reject(
+        new Error("Process could not start; sensitive output suppressed."),
+      );
+    });
+    child.once("close", (code) => {
+      clearTimeout(timer);
+      if (expired) console.error("Process diagnostic hint: execution-timeout");
+      if (expired || inputFailed || code !== 0) {
+        reject(new Error("Process failed; sensitive output suppressed."));
+      } else resolve();
+    });
+    child.stdin.end(input);
   });
-  if (result.error || result.status !== 0) {
-    throw new Error(`${command} failed; secret-bearing output was suppressed.`);
-  }
 }
 
 async function readAuth(filename) {
@@ -82,7 +145,7 @@ export async function persistAuth(root, repository, token, run = execute) {
   }
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      run(
+      await run(
         "gh",
         ["secret", "set", secret, "--repo", repository, "--env", environment],
         {
@@ -171,13 +234,13 @@ export async function generateContent(root, run = execute) {
   }
   const name = `hero-project-codex-${runId}-${attempt}`;
   try {
-    run("docker", containerArgs(root, name), {
+    await run("docker", containerArgs(root, name), {
       input: await readFile(path.join(root, "prompt.md"), "utf8"),
       timeout: 12 * 60_000,
     });
   } finally {
     // Remove a container left running after timeout before any credential writeback.
-    run("docker", ["rm", "--force", name]);
+    await run("docker", ["rm", "--force", name]);
   }
   const output = path.join(root, "model-output/generated.json");
   const info = await lstat(output);
