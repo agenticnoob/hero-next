@@ -177,9 +177,12 @@ repeat the dedicated login bootstrap while no workflow is running. Do not repeat
 rerun an old seed or copy the desktop's current session. Renew a failed GitHub token
 in the environment before generating again.
 
-The UI and ordinary scan are locally verified. Live subscription authentication,
-container execution and refreshed-secret writeback must be verified on the first
-configured GitHub run; a no-op scan does not establish that they work.
+The [first successful full cloud run](https://github.com/agenticnoob/hero-next/actions/runs/35648295114)
+verified subscription generation in the container, login persistence, content validation,
+the full quality gate, the build and content PR creation. A repeat scan against the
+generated candidate returned zero changes. Token expiry was not forced; the first run
+does not prove long-term unattended refresh. Current publication and verification
+details live in [STATUS.md](./STATUS.md).
 
 Primary documentation:
 [Codex subscription auth in CI](https://learn.chatgpt.com/docs/auth/ci-cd-auth),

@@ -34,16 +34,25 @@ not available); its CLI flags were checked against the Codex 0.155.1 binary.
 Subscription regression tests cover owner-only login files, unsupported auth modes,
 refreshed-token writeback, storage failures, container cleanup after failed generation,
 credential-output rejection, environment/concurrency gates and code-only scan skips.
-The local Docker daemon is unavailable. The first configured cloud run built the Linux
-container, restored the dedicated subscription login and successfully wrote it back to
-the environment secret. [Generation timed out after 12 minutes](https://github.com/agenticnoob/hero-next/actions/runs/35646078597);
-the failure path stopped the container, saved the current login and removed temporary
-authentication successfully. It produced no content artifact or PR. Fixed diagnostic
-categories now report process/network/auth failures without forwarding raw output.
-The diagnostic run reported TLS/network failures. Inspecting all Linux amd64 layers
-of the pinned Node image confirmed no system CA bundle; the runtime now installs
-`ca-certificates` and checks the bundle during its build. Generation is still being
-verified. No API credentials or existing desktop login were read or transferred.
+The local Docker daemon is unavailable, but the
+[configured cloud run](https://github.com/agenticnoob/hero-next/actions/runs/35648295114)
+passed collection, real subscription generation, credential writeback, data validation,
+all checks and the production build. Generation took 2m36s including container setup;
+the review job took 1m34s. It created [content PR #1](https://github.com/agenticnoob/hero-next/pull/1),
+changing only `data/projects.json` with four bilingual projects. The copy was reviewed
+against its pinned READMEs and matched the PR snapshot; scanning again against this
+candidate returned zero changes. The content PR is not merged or deployed. Login
+persistence is verified; no forced expiry/token rotation was induced.
+The [follow-up cloud run](https://github.com/agenticnoob/hero-next/actions/runs/35648826674)
+passed the pending-PR guard and skipped scanning, generation and review as expected.
+
+The initial run timed out because the pinned slim Node image had no system CA bundle.
+The diagnostic run exposed TLS errors, and all Linux amd64 image layers were inspected
+to confirm the missing bundle. The container now installs `ca-certificates` and checks
+it during the build. Both timeout and normal cancellation successfully stopped the
+container, saved the current login and cleaned temporary authentication. Fixed
+diagnostic labels never forward raw process output. No API credentials or existing
+desktop login were read or transferred.
 
 Ego Lite inspected the local production build at 1440×900 and 390×844, including
 directory/case navigation, language switching, back/Escape, selected-wall retention,
@@ -51,7 +60,7 @@ directory return focus, mobile reduced motion and desktop-to-mobile resize. Samp
 views had no horizontal overflow; the home-backed dialogs retained one canvas.
 Instrumented mobile navigation reported no page/console errors; instrumentation did
 not cover every initial load. Screenshots were inspected and remain outside Git.
-Physical devices and live model-generated content were not tested.
+Physical devices and the rendering of the live generated content were not browser-tested.
 
 Implementation commit `35ab0ea` is published to `main`. The private
 `project-content` environment exists with a main-only branch policy, and Actions
@@ -61,8 +70,8 @@ jobs were skipped. The default now uses `topic: null` to discover new public pro
 automatically; a local read-only scan found four eligible sources. The dedicated
 subscription login and restricted environment-secret write token are saved in the
 environment. The token only grants Environments read/write and Metadata read on
-`hero-next`, and expires on 2026-12-21. No OpenAI API key is used. The snapshot remains
-empty until generated content is reviewed.
+`hero-next`, and expires on 2026-12-21. No OpenAI API key is used. The production
+snapshot remains empty until the generated content PR is approved and merged.
 
 The [production deployment](https://github.com/agenticnoob/hero-next/actions/runs/35618865637)
 passed its checks, build, publication and public-journal verification. A public readback
