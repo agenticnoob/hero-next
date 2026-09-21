@@ -39,9 +39,11 @@ container, restored the dedicated subscription login and successfully wrote it b
 the environment secret. [Generation timed out after 12 minutes](https://github.com/agenticnoob/hero-next/actions/runs/35646078597);
 the failure path stopped the container, saved the current login and removed temporary
 authentication successfully. It produced no content artifact or PR. Fixed diagnostic
-categories now report process/network/auth failures without forwarding raw output;
-generation is still being verified. No API credentials or existing desktop login were
-read or transferred.
+categories now report process/network/auth failures without forwarding raw output.
+The diagnostic run reported TLS/network failures. Inspecting all Linux amd64 layers
+of the pinned Node image confirmed no system CA bundle; the runtime now installs
+`ca-certificates` and checks the bundle during its build. Generation is still being
+verified. No API credentials or existing desktop login were read or transferred.
 
 Ego Lite inspected the local production build at 1440×900 and 390×844, including
 directory/case navigation, language switching, back/Escape, selected-wall retention,

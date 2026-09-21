@@ -110,6 +110,8 @@ unprivileged Docker container. Shell, web search, code mode and subagents are di
 The container receives only the prompt, schema, dedicated auth directory and output
 directory; it does not mount the checkout, Docker socket, GitHub token or deployment
 credentials. The Node base image is digest-pinned and the CLI version is fixed.
+The runtime explicitly installs and checks the system CA bundle; the slim Node base
+removes it, while Codex's native HTTPS client requires it to verify server certificates.
 Raw model stdout/stderr are suppressed because they could include newly rotated tokens.
 The runner reports only fixed diagnostic categories (for example TLS, authorization,
 rate-limit, stream-retry or timeout); these are troubleshooting hints, not raw errors.
