@@ -1,4 +1,289 @@
 {
   "version": 1,
-  "projects": []
+  "projects": [
+    {
+      "id": 1240860765,
+      "slug": "gh-1240860765",
+      "repository": "agenticnoob/ai-agent-workstation",
+      "url": "https://github.com/agenticnoob/ai-agent-workstation",
+      "readmeSha": "c81b11723df16872551ac1fd445c305dcf14d865",
+      "sourceCommit": "bf438aea09e04a725215a56b4a315037ea637808",
+      "sourceDigest": "6ffdf373c61f7e8ef8e59d25abadaaf0cf7a889ce9a722606e1cfb6cc90a1158",
+      "updatedAt": "2026-05-19T06:18:33Z",
+      "topics": [],
+      "language": null,
+      "content": {
+        "zh": {
+          "title": "AI Agent Workstation",
+          "summary": "面向本地多智能体协作的工作区，以结构化交接文件连接 Hermes 的规划与评审和 Codex 的实现与测试，并明确人类负责方向、约束、审批与最终决策。",
+          "sections": [
+            {
+              "id": "workflow",
+              "title": "协作流程",
+              "paragraphs": [
+                "工作区按模板、任务、结果、评审、记忆候选和可复用工作流组织内容。主要流程依次产出上下文、Codex 任务、执行结果、评审和记忆候选，使规划、实施与复核拥有清晰的交接边界。"
+              ]
+            },
+            {
+              "id": "roles-and-safety",
+              "title": "角色与安全边界",
+              "paragraphs": [
+                "Hermes 负责规划、协调、评审及上下文和记忆治理；Codex 负责代码修改、测试、构建、调试和结果报告；用户保留产品方向、授权与最终决策。默认规则要求项目与工作流分离存放、避免在交接材料中写入秘密，并在破坏性操作或外部集成前暂停确认。"
+              ]
+            },
+            {
+              "id": "validation",
+              "title": "辅助验证",
+              "paragraphs": [
+                "在配套辅助层可用时，流程可对任务、结果、评审和记忆候选执行制品质量检查。该辅助层只提供模板和验证能力，不取代可见的 Markdown 流程文档，也不应演变为隐藏自动化。"
+              ]
+            }
+          ]
+        },
+        "en": {
+          "title": "AI Agent Workstation",
+          "summary": "A local multi-agent workspace that connects Hermes planning and review with Codex implementation and testing through structured handoff artifacts, while reserving direction, constraints, approvals, and final decisions for the human user.",
+          "sections": [
+            {
+              "id": "workflow",
+              "title": "Collaboration Workflow",
+              "paragraphs": [
+                "The workspace organizes templates, tasks, results, reviews, memory candidates, and reusable workflows. Its primary flow produces context, a Codex task, an execution result, a review, and memory candidates in sequence, giving planning, implementation, and verification clear handoff boundaries."
+              ]
+            },
+            {
+              "id": "roles-and-safety",
+              "title": "Roles and Safety Boundaries",
+              "paragraphs": [
+                "Hermes handles planning, coordination, review, and context and memory hygiene; Codex handles code changes, tests, builds, debugging, and result reports; the user retains product direction, authorization, and final decisions. Defaults separate project repositories from workflow artifacts, prohibit secrets in handoff materials, and require a pause before destructive operations or external integrations."
+              ]
+            },
+            {
+              "id": "validation",
+              "title": "Artifact Validation",
+              "paragraphs": [
+                "When the companion helper layer is available, the workflow can quality-check task, result, review, and memory-candidate artifacts. The helper supplies templates and validation only; it does not replace the visible Markdown workflow or become hidden automation."
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 1253110411,
+      "slug": "gh-1253110411",
+      "repository": "agenticnoob/ai-video-studio",
+      "url": "https://github.com/agenticnoob/ai-video-studio",
+      "readmeSha": "61a324f8ed137411ed39a4e6cf9481e2e688d6ff",
+      "sourceCommit": "6597edd1f508a70f3e624c0ee2269d346892ad40",
+      "sourceDigest": "7c8ce72ba13b01c5270a6e1596bcb8628c1b99ee5bb70a96c620c14ddc1eb9c1",
+      "updatedAt": "2026-07-13T11:25:12Z",
+      "topics": [],
+      "language": "TypeScript",
+      "content": {
+        "zh": {
+          "title": "AI Video Studio",
+          "summary": "基于 TypeScript、Next.js 与 Remotion 的 AI 视频工作区。当前主线是从真实主题出发，通过资料研究、证据素材、先语音后定时和专用合成制作视频；可编辑的网页生成器保留为次要产品化路径。",
+          "sections": [
+            {
+              "id": "producer",
+              "title": "Agent Producer 制作路径",
+              "paragraphs": [
+                "默认流程接收主题或简报，研究资料并优先捕获真实证据；真实捕获失败或不可读时，才记录原因并使用局部来源卡片。随后编写旁白节拍、生成或准备 TTS、盘点已有视觉组件，并组合专用 Remotion 视频供静帧和视频复核。",
+                "复用能力遵循从图元、视觉块、专用合成到配方和模板的渐进式提升方式。生成的截图、旁白音频和渲染视频默认保留在本地，不作为源码提交。"
+              ]
+            },
+            {
+              "id": "web-workflow",
+              "title": "网页编辑与生成路径",
+              "paragraphs": [
+                "次要网页路径采用分阶段的故事板规划、旁白合成、字幕对齐和模板编译流程。它支持整片预览、分段编辑、单段重新生成与本地导出，并以 VideoProject 和 VideoSegment 作为预览、编辑及渲染边界。",
+                "生成内容被限制在已注册模板和配方的参数范围内。当前模板覆盖脚本、聚焦展示、数据看板和技术讲解等类型，旁白及字幕由分段数据持有。"
+              ]
+            },
+            {
+              "id": "architecture",
+              "title": "实现与运行边界",
+              "paragraphs": [
+                "项目以 Docker 优先方式运行 Next.js 和 Remotion，并提供本地 TTS、渲染制品、进度跟踪以及进程内并发保护。DeepSeek 用于规划和模板编译；VoxCPM 是 Agent Producer 的默认旁白方案，F5-TTS 可作为显式后备并支持语音克隆。",
+                "当前限制包括尚未实现持久化与历史记录，也未开放通用媒体库、广泛的媒体层编辑或单段多模板编排。进程内并发限制不构成多实例部署下的全局锁。"
+              ]
+            }
+          ]
+        },
+        "en": {
+          "title": "AI Video Studio",
+          "summary": "An AI-first video workspace built with TypeScript, Next.js, and Remotion. Its primary route produces dedicated videos from real topics using research, evidence assets, TTS-first timing, and custom compositions; an editable web generator remains a secondary productization path.",
+          "sections": [
+            {
+              "id": "producer",
+              "title": "Agent Producer Workflow",
+              "paragraphs": [
+                "The default workflow starts from a topic or brief, researches sources, and attempts to capture real evidence first. If a capture fails or is unreadable, it records the reason before using a localized source-card fallback. It then writes narration beats, generates or prepares TTS, inventories existing visual components, and assembles a dedicated Remotion video for still and video review.",
+                "Reusable work is promoted gradually from primitives and visual blocks through dedicated compositions to recipes and templates. Generated screenshots, narration audio, and rendered videos remain local by default rather than being committed as source."
+              ]
+            },
+            {
+              "id": "web-workflow",
+              "title": "Web Editing and Generation Path",
+              "paragraphs": [
+                "The secondary web path uses staged storyboard planning, narration synthesis, caption alignment, and template compilation. It supports full-project preview, segment editing, selected-segment regeneration, and local export, with VideoProject and VideoSegment serving as the preview, editing, and rendering boundaries.",
+                "Generated output is bounded by registered template and recipe parameters. Current template families cover scripted scenes, spotlights, data dashboards, and technical explainers, while narration and captions are owned by segment data."
+              ]
+            },
+            {
+              "id": "architecture",
+              "title": "Implementation and Runtime Boundaries",
+              "paragraphs": [
+                "The project uses a Docker-first Next.js and Remotion setup with local TTS, render artifacts, progress tracking, and process-local concurrency guards. DeepSeek handles planning and template compilation; VoxCPM is the default Agent Producer narration option, while F5-TTS is an explicit fallback with voice-cloning support.",
+                "Persistence and history are not implemented, and broad media-library editing, generic media-layer composition, and multiple templates per segment remain out of scope. The process-local concurrency guard is not a global lock across multiple application instances."
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 1258561536,
+      "slug": "gh-1258561536",
+      "repository": "agenticnoob/static-25d-hero",
+      "url": "https://github.com/agenticnoob/static-25d-hero",
+      "readmeSha": "598e6001d04b69a54306d75696d59ebfa46f609c",
+      "sourceCommit": "50276daea8fc4fb7916b83da598d0d6db5bb62e5",
+      "sourceDigest": "1d8c5e836d98a34d3f0dd8931f94c80ca0083e8399159950602726c409e1f009",
+      "updatedAt": "2026-06-08T08:37:35Z",
+      "topics": [],
+      "language": "TypeScript",
+      "content": {
+        "zh": {
+          "title": "Spatial：递归智能界面",
+          "summary": "一个以中文叙事为主的空间化 AI 原生个人主页，通过长滚动、固定 WebGL 画布和单一递归巨石，呈现观察、因果、递归、自指与重构五个阶段。",
+          "sections": [
+            {
+              "id": "experience",
+              "title": "空间叙事体验",
+              "paragraphs": [
+                "页面使用 500svh 长滚动表面和固定的全屏 WebGL 画布。五个叙事阶段分别改变文案布局、相机姿态与材质响应，使体验围绕同一个递归巨石展开，而不是作为传统简历或项目索引。",
+                "视觉语言强调建筑感、克制和低饱和双色对比。相机通过环绕、推拉、升降、注视点漂移和滚转塑造接近空间物体的感觉，背景和叙事层则由 CSS 管理。"
+              ]
+            },
+            {
+              "id": "interaction",
+              "title": "交互与渲染架构",
+              "paragraphs": [
+                "项目基于 Next.js、React、TypeScript、Tailwind CSS 和 Three.js。Lenis 与 ScrollTrigger 统一滚动时间线，Motion 处理叙事段落的出现状态，Zustand 保存共享指针、视口与场景模式；自定义逐帧循环协调 DOM、指针和 WebGL 状态。",
+                "WebGL 对象固定在世界空间中，滚动驱动相机路径与材质参数，而不是物理房间、重力或碰撞。场景采用单个 React Three Fiber Canvas，并在字体和模型就绪后完成预载界面到正文的过渡。"
+              ]
+            },
+            {
+              "id": "constraints",
+              "title": "设计边界",
+              "paragraphs": [
+                "当前焦点是单一 GLB 递归巨石及其阶段化材质效果，不包含刚体物理场景，也不使用 UI 组件库。Tailwind CSS 继续承担设计系统层，严格 TypeScript 用于约束实现。"
+              ]
+            }
+          ]
+        },
+        "en": {
+          "title": "Spatial: Recursive Intelligence Interface",
+          "summary": "A Chinese-first spatial, AI-native personal homepage that uses long-form scrolling, a fixed WebGL canvas, and a single recursive monolith to express five stages: observation, causality, recursion, self-reference, and reconstruction.",
+          "sections": [
+            {
+              "id": "experience",
+              "title": "Spatial Narrative Experience",
+              "paragraphs": [
+                "The page uses a 500svh scrolling surface with a fixed full-screen WebGL canvas. Each of five narrative stages changes copy placement, camera posture, and material response, keeping the experience centered on one recursive monolith rather than presenting a conventional résumé or project index.",
+                "Its visual language emphasizes architectural composition, restraint, and low-saturation two-color contrast. Orbit, dolly, height, look-at drift, and roll make scrolling feel like movement around and toward a spatial artifact, while CSS owns the background and narrative layers."
+              ]
+            },
+            {
+              "id": "interaction",
+              "title": "Interaction and Rendering Architecture",
+              "paragraphs": [
+                "The project uses Next.js, React, TypeScript, Tailwind CSS, and Three.js. Lenis and ScrollTrigger coordinate the scroll timeline, Motion supplies narrative-presence primitives, Zustand stores shared pointer, viewport, and scene-mode state, and a custom frame loop coordinates DOM, pointer, and WebGL updates.",
+                "The WebGL object remains fixed in world space while scrolling drives the camera path and material parameters; there is no active physics room, gravity, or collision system. A single React Three Fiber canvas renders the scene, with a preload transition that waits for fonts and the model before revealing the narrative."
+              ]
+            },
+            {
+              "id": "constraints",
+              "title": "Design Boundaries",
+              "paragraphs": [
+                "The current experience is centered on one GLB recursive monolith and its stage-aware material effects. It does not use a UI component kit or a rigid-body scene; Tailwind CSS remains the design-system layer, with strict TypeScript constraining the implementation."
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 1265195464,
+      "slug": "gh-1265195464",
+      "repository": "agenticnoob/webgl-scroll",
+      "url": "https://github.com/agenticnoob/webgl-scroll",
+      "readmeSha": "e47096449ee72a6a5018ce21f83d363010da1ce2",
+      "sourceCommit": "3a6066748e2b7cee8c84e687e04895ea49da393a",
+      "sourceDigest": "d771fdffa9d5572656e9a54e4787f8122831a4092d003b2d70930bf0fc481152",
+      "updatedAt": "2026-06-12T09:07:38Z",
+      "topics": [],
+      "language": "TypeScript",
+      "content": {
+        "zh": {
+          "title": "webgl-scroll",
+          "summary": "面向 React、Next.js 和智能体前端工作流的可组合 WebGL 滚动效果库，提供底层运行时、内置效果与 React 触发器，同时让宿主应用保留画布、渲染循环和销毁逻辑的控制权。",
+          "sections": [
+            {
+              "id": "packages",
+              "title": "模块化包结构",
+              "paragraphs": [
+                "核心包提供运行时、效果注册表、状态树、共享指针输入、GPU 辅助工具和自定义效果接口；效果包提供资源图层、WebGL 标题淡入、GLB 粒子和像素化转场；React 包将声明式触发配置映射为 DOM 元数据。"
+              ]
+            },
+            {
+              "id": "lifecycle",
+              "title": "生命周期与资源加载",
+              "paragraphs": [
+                "效果按其与视口的距离进行预载、暂停和卸载，并可限制并发预载数量。宿主既可以使用效果声明中的资源地址，也可以集中预取资源并通过解析器交给运行时；内置工具还能从效果配置生成资源请求清单。"
+              ]
+            },
+            {
+              "id": "boundaries",
+              "title": "集成边界与状态",
+              "paragraphs": [
+                "库优先提供声明式触发器和已注册效果，宿主应用仍负责 Canvas 初始化、渲染循环与清理。这种边界允许应用先组合常见媒体和粒子效果，再在必要时扩展自定义运行时代码。",
+                "0.1.0 是首个公开发布线。README 所述的生命周期调度、宿主资源解析与相关加载能力位于尚待合并和发布后续版本的开发分支，因此这些更新尚不能视为已发布包能力。"
+              ]
+            }
+          ]
+        },
+        "en": {
+          "title": "webgl-scroll",
+          "summary": "A composable WebGL scroll-effects library for React, Next.js, and agentic frontend workflows. It provides a low-level runtime, built-in effects, and React triggers while leaving canvas setup, the render loop, and teardown under host-app control.",
+          "sections": [
+            {
+              "id": "packages",
+              "title": "Modular Package Structure",
+              "paragraphs": [
+                "The core package supplies the runtime, effect registry, state tree, shared pointer input, GPU helpers, and custom-effect interfaces. The effects package adds asset layers, WebGL title fades, GLB particles, and pixelated transitions, while the React package maps declarative trigger configuration to DOM metadata."
+              ]
+            },
+            {
+              "id": "lifecycle",
+              "title": "Lifecycle and Asset Loading",
+              "paragraphs": [
+                "Effects are preloaded, suspended, and unloaded according to viewport distance, with a configurable limit on concurrent preload work. Hosts can use asset locations declared by effects or prefetch resources centrally and provide them through an asset resolver; a built-in helper can also derive asset requests from effect declarations."
+              ]
+            },
+            {
+              "id": "boundaries",
+              "title": "Integration Boundaries and Status",
+              "paragraphs": [
+                "The library favors declarative triggers and registered effects, while the host application remains responsible for Canvas initialization, rendering, and cleanup. This boundary lets applications compose common media and particle treatments before adding custom runtime code where necessary.",
+                "Version 0.1.0 is described as the first public release line. The lifecycle scheduling, host asset resolver, and related loading updates are documented on a development branch awaiting merge and a subsequent package release, so they should not be treated as capabilities of the published line yet."
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
 }
