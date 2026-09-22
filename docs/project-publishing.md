@@ -34,16 +34,16 @@ replace `CODEX_AUTH_WRITE_TOKEN` in `project-content` before that date.
    the generation job starts, after the workflow concurrency lock, so queued runs
    receive the newly refreshed login.
 5. In **Settings → Actions → General → Workflow permissions**, enable **Allow
-   GitHub Actions to create and approve pull requests**. This workflow creates PRs
-   but never approves or merges them. Organization policy may restrict this setting.
+   GitHub Actions to create and approve pull requests**. This workflow creates and merges its validated data-only PRs
+   using the job-scoped token. It does not approve arbitrary PRs. Organization policy may restrict this setting.
 6. Publish these changes to the default branch; scheduled workflows only run there.
    With `topic: null`, the scan automatically discovers owned public repositories,
    including newly created ones. To opt into manual selection instead, set `topic`
    to `portfolio`; matching topics or full `agenticnoob/name` entries in `include`
    then select repositories. Forks, archived, disabled and private source repositories
    remain excluded in either mode.
-7. Run **Review GitHub project content** from Actions once. Check generation and
-   credential writeback, review the content PR, then merge it to deploy. An unchanged
+7. Run **Publish GitHub project content** from Actions once. Check generation,
+   credential writeback, automatic merging and the dispatched production run. An unchanged
    or empty source selection tests only scanning, not subscription authentication.
 
 ### One-time login bootstrap
@@ -97,15 +97,18 @@ do not call the model again. An id-based `gh-<repository id>` URL survives renam
 
 At most ten changed projects and 180 KB of README source are generated per run.
 Individual READMEs are limited to 120 KB. Unchanged entries and source
-metadata retain their previous values. Additional changes follow after the preceding
-PR is reviewed. One open `axmorf/project-content` PR pauses further generation, which
-avoids repeated model usage and protects human edits in a pending review. Merge it to
-accept, or close it to allow a fresh proposal. Rejected content will be proposed
-again unless its source is excluded or corrected.
+metadata retain their previous values. Additional changes follow on the next run.
+An open `axmorf/project-content` PR skips scanning and generation; the workflow instead
+loads only its data blob into the current trusted main checkout, revalidates it, then
+merges it if all gates pass. It never checks out or executes code from that PR. This
+also resumes earlier manual-review PRs without spending another model call. A failed
+candidate remains open for diagnosis; closing it permits a fresh proposal. Rejected
+content will be proposed again unless its source is excluded or corrected.
 
 README and description text are untrusted input. A separate generation job restores
 subscription auth only when the scan found changes. Codex CLI 0.155.1 runs with
-`gpt-5.6-sol`, a fixed prompt, structured output and read-only sandboxing in a disposable,
+`gpt-5.6-sol` and explicit `model_reasoning_effort="medium"`, a fixed prompt,
+structured output and read-only sandboxing in a disposable,
 unprivileged Docker container. Shell, web search, code mode and subagents are disabled.
 The container receives only the prompt, schema, dedicated auth directory and output
 directory; it does not mount the checkout, Docker socket, GitHub token or deployment
@@ -122,9 +125,27 @@ remote scripts, images, arbitrary URLs or source repository code are executed.
 
 The review job runs `npm run check` and `npm run build` before opening the PR, using
 a synthetic journal fixture solely for that build. The fixture is gitignored and
-never deployed. A PR created with `GITHUB_TOKEN` does **not** trigger other workflows;
-this pipeline does not depend on a follow-up PR check. Human merging starts the
-normal deployment flow, which retrieves the real journal and reruns verification.
+never deployed. This pipeline does not depend on a follow-up PR check. Before
+merging, it requires an open, non-draft, same-repository PR authored by GitHub Actions
+on the dedicated content branch, changing only the regular `data/projects.json` file.
+It rejects deleted entries, conflicting published-data changes, an advanced main
+revision, or a changed PR head/content. GitHub receives the exact checked head SHA
+with the squash-merge request; repository protection rules are not bypassed.
+
+A bot merge using `GITHUB_TOKEN` does not trigger ordinary push workflows. The review
+job therefore has scoped `actions: write` permission and explicitly dispatches
+`journal-build.yml` on main after a successful merge. The production workflow fetches
+the real journal, repeats checks/build, rejects superseded revisions and verifies the
+public journal after deployment. PRs remain as an audit trail; manual approval is no
+longer required. Automatic checks validate structure and builds, not the factual
+accuracy of every generated sentence.
+
+If merging fails, the next run revalidates the pending PR without generating again.
+If deployment dispatch fails after a merge, the sync run fails visibly: rerun **Deploy
+journal to production** on main; the existing daily production schedule also provides
+a fallback. A dispatched run is not itself proof of a completed deployment: follow
+its result from the link in the sync summary. No additional PAT or Vercel credential
+is exposed to the content workflow.
 
 Missing/empty README sources are skipped with a run log; their old entries survive.
 API errors, oversized README files, invalid model output, stale website revisions
@@ -185,6 +206,7 @@ does not prove long-term unattended refresh. Current publication and verificatio
 details live in [STATUS.md](./STATUS.md).
 
 Primary documentation:
+[Codex reasoning configuration](https://learn.chatgpt.com/docs/config-file/config-reference#model_reasoning_effort),
 [Codex subscription auth in CI](https://learn.chatgpt.com/docs/auth/ci-cd-auth),
 [GitHub secret loading times](https://docs.github.com/en/actions/reference/security/secrets#when-github-actions-reads-secrets),
 [environment secret write permissions](https://docs.github.com/en/rest/actions/secrets#create-or-update-an-environment-secret),

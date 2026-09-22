@@ -215,6 +215,8 @@ describe("subscription authentication lifecycle", () => {
       /host-only-token|GH_TOKEN|GITHUB_TOKEN|docker\.sock|GITHUB_WORKSPACE/,
     );
     expect(args).toContain("--read-only");
+    expect(args).toContain("gpt-5.6-sol");
+    expect(args).toContain('model_reasoning_effort="medium"');
     expect(args).toContain('forced_login_method="chatgpt"');
     expect(args).toContain("features.shell_tool=false");
     expect(args).toContain("features.multi_agent=false");
@@ -288,6 +290,8 @@ describe("subscription authentication lifecycle", () => {
     expect(artifact).toContain("/plan.json");
     expect(artifact).toContain("/generated.json");
     expect(artifact).not.toMatch(/auth|codex-home|model-output/);
-    expect(workflow.split("  review:\n")[1]).toContain("needs: generate");
+    expect(workflow.split("  review:\n")[1]).toContain(
+      "needs: [collect, generate]",
+    );
   });
 });

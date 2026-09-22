@@ -18,7 +18,8 @@ standalone page. The shared root state keeps one theme, locale and room selectio
 Chapter three also links to `/projects`, a bilingual directory containing the four
 selected cases and generated public projects. GitHub-hosted Actions discovers owned
 public repositories daily, uses Codex only for changed README inputs, and proposes a
-content-only PR. Merging an approved PR uses the existing production pipeline.
+content-only PR. Passing updates automatically merge and trigger the existing
+production pipeline; failed checks stop publication.
 See [project publishing](./docs/project-publishing.md) for subscription authentication,
 selection rules, Actions permissions and activation steps. No local computer is required.
 

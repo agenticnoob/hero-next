@@ -196,6 +196,8 @@ export function containerArgs(root, name) {
     "exec",
     "--model",
     "gpt-5.6-sol",
+    "-c",
+    'model_reasoning_effort="medium"',
     "--sandbox",
     "read-only",
     "--ephemeral",

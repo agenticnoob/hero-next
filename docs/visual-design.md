@@ -95,7 +95,7 @@ Hub 模型使用较小比例及下移位置，为介绍留出完整阅读区域�
 生成截图、视频或人工案例的完整流程。独立生成详情返回全部项目目录。
 
 `src/projects/catalog.ts` 合并 `data/projects.json` 和现有人工案例；自动化数据不能替代
-精选墙面或覆盖已有演示。更新须经内容 PR 审阅，数据流程见 [project-publishing.md](./project-publishing.md)。
+精选墙面或覆盖已有演示。更新经内容 PR 留档、自动校验通过后合并发布，数据流程见 [project-publishing.md](./project-publishing.md)。
 
 ### 精选展厅
 

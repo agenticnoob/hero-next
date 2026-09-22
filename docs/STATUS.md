@@ -20,8 +20,8 @@ The daily GitHub-hosted workflow discovers eligible owned public repositories at
 10:43 Asia/Shanghai. Changed README sources pass through the pinned Codex CLI
 in an isolated container using subscription authentication, strict validation, full
 checks and a production build before a content-only PR is created. An existing
-content PR pauses generation. Human merging uses the
-existing deployment workflow. See [project publishing](./project-publishing.md).
+content PR skips generation and is revalidated for automatic merging. Successful
+content-only updates explicitly dispatch the existing deployment workflow. See [project publishing](./project-publishing.md).
 
 Local verification: `npm run check` (54 files / 429 tests), `npm run build`, React
 Doctor (100/100) and `git diff --check`. Tests cover source filtering, incremental
@@ -41,7 +41,8 @@ all checks and the production build. Generation took 2m36s including container s
 the review job took 1m34s. It created [content PR #1](https://github.com/agenticnoob/hero-next/pull/1),
 changing only `data/projects.json` with four bilingual projects. The copy was reviewed
 against its pinned READMEs and matched the PR snapshot; scanning again against this
-candidate returned zero changes. The content PR is not merged or deployed. Login
+candidate returned zero changes. At that verification point the content PR was not merged or deployed;
+automatic publication verification is tracked below. Login
 persistence is verified; no forced expiry/token rotation was induced.
 The [follow-up cloud run](https://github.com/agenticnoob/hero-next/actions/runs/35648826674)
 passed the pending-PR guard and skipped scanning, generation and review as expected.
@@ -71,12 +72,27 @@ automatically; a local read-only scan found four eligible sources. The dedicated
 subscription login and restricted environment-secret write token are saved in the
 environment. The token only grants Environments read/write and Metadata read on
 `hero-next`, and expires on 2026-12-21. No OpenAI API key is used. The production
-snapshot remains empty until the generated content PR is approved and merged.
+snapshot was empty before the automatic-publication follow-up below.
 
 The [production deployment](https://github.com/agenticnoob/hero-next/actions/runs/35618865637)
 passed its checks, build, publication and public-journal verification. A public readback
 of `/projects` returned HTTP 200 and the expected curated case links. This readback
 does not replace the local browser interaction evidence above.
+
+## Automatic project publication (2026-09-22)
+
+The user authorized unattended merging and publication. The sync workflow now resumes
+an existing bot content PR without a model call, validates only its data blob against
+trusted main, runs the full quality gate/build, and squash-merges the checked head.
+Only a same-repository, regular-file `data/projects.json` change is eligible. It rejects
+stale main, candidate mutations, conflicting published-data changes and entry deletion.
+After merging, it explicitly dispatches the existing production workflow because a
+`GITHUB_TOKEN` merge does not trigger normal push workflows. No new secrets are needed.
+Codex remains `gpt-5.6-sol`; reasoning is now explicitly pinned to `medium` rather than
+leaving it to the model/CLI default. Local `npm run check` passes (55 files / 450
+tests), as do the production build, Actionlint (without ShellCheck) and diff check.
+A read-only inspection of real PR #1 passed the new publication guard. Cloud
+activation and automatic merge/deployment verification are pending.
 
 ## Tetrahedron face-text resolution (2026-09-18)
 
