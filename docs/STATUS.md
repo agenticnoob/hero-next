@@ -91,8 +91,26 @@ After merging, it explicitly dispatches the existing production workflow because
 Codex remains `gpt-5.6-sol`; reasoning is now explicitly pinned to `medium` rather than
 leaving it to the model/CLI default. Local `npm run check` passes (55 files / 450
 tests), as do the production build, Actionlint (without ShellCheck) and diff check.
-A read-only inspection of real PR #1 passed the new publication guard. Cloud
-activation and automatic merge/deployment verification are pending.
+A read-only inspection of real PR #1 passed the new publication guard.
+
+The [automatic publication run](https://github.com/agenticnoob/hero-next/actions/runs/35682241662)
+passed: collection resumed PR #1, generation was skipped, full checks/build passed,
+and the workflow squash-merged it as `d3911f51493a18d60a9151f4b50dce3b160018cc`.
+The review job completed in 2m17s and explicitly dispatched the
+[production deployment](https://github.com/agenticnoob/hero-next/actions/runs/35682405678),
+which passed publication and public-journal verification in 2m23s. No model call or
+manual merge was needed for this follow-up. The new `medium` setting is covered by
+the invocation regression test; this resumed run did not execute the model again.
+
+Public HTTP/HTML readback returned 200 for `/projects` and all four generated case
+URLs. The directory includes every generated link, and each case contains the exact
+Chinese title and summary from the committed snapshot. This was content verification,
+not a new browser interaction or visual acceptance pass. Existing curated cases and
+media remain unchanged. Implementation commit: `b45e043`.
+
+A future failing candidate stays open and is revalidated on the next run without
+regeneration. A dispatch failure after merging fails the sync job and can be recovered
+by running the production workflow; its existing daily schedule remains a fallback.
 
 ## Tetrahedron face-text resolution (2026-09-18)
 
