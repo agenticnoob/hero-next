@@ -14,7 +14,8 @@ import {
 import { heroInterfaceContent } from "../chapters/uiContent";
 import type { HeroLocale, HeroLocaleStore } from "../preferences/locale";
 import { assertProjectRoomSections } from "./model";
-import { projectRoomAnchorId, type ProjectRoomStore } from "./room";
+import { projectRoomAnchorId } from "./roomNavigation";
+import type { ProjectRoomStore } from "./roomStore";
 import { projectExhibitLayout } from "./exhibit";
 import { projectDirectoryCopy } from "../chapters/uiContent";
 

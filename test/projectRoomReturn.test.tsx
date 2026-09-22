@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   createProjectRoomStore,
   type ProjectRoomStore,
-} from "../src/projects/room";
+} from "../src/projects/roomStore";
 import { useProjectRoomReturn } from "../src/projects/useProjectRoomReturn";
 import type { HeroViewportSnapshot } from "../src/shared/viewportStore";
 

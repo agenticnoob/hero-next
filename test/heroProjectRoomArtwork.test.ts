@@ -10,7 +10,7 @@ import {
   updateProjectRoomExhibits,
 } from "../src/projects/exhibit";
 import { projectHasPoster } from "../src/projects/media";
-import { createProjectRoomStore } from "../src/projects/room";
+import { createProjectRoomStore } from "../src/projects/roomStore";
 import { projectRoomExhibitProjection } from "../src/projects/projection";
 import { projectRoomConfig as config } from "../src/projects/room";
 

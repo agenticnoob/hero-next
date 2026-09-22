@@ -1,79 +1,38 @@
+import {
+  createPersistedPreferenceStore,
+  persistPreference,
+  readPreference,
+  type PreferenceStorage,
+  type PreferenceStore,
+} from "./persistedStore";
+
 export const heroLocales = ["zh", "en"] as const;
-
 export type HeroLocale = (typeof heroLocales)[number];
-
 export const heroLocaleStorageKey = "viselora.hero.locale.v1";
+export type HeroLocaleStorage = PreferenceStorage;
+export type HeroLocaleStore = PreferenceStore<HeroLocale>;
 
-export type HeroLocaleStorage = Pick<Storage, "getItem" | "setItem">;
-
-export type HeroLocaleStore = {
-  getSnapshot(): HeroLocale;
-  getServerSnapshot(): HeroLocale;
-  subscribe(listener: () => void): () => void;
-  commit(locale: HeroLocale): void;
+const localePreference = {
+  key: heroLocaleStorageKey,
+  fallback: "zh" as const,
+  parse: (value: string | null): HeroLocale => (value === "en" ? "en" : "zh"),
 };
 
 export function createHeroLocaleStore(
-  providedStorage?: HeroLocaleStorage,
+  storage?: HeroLocaleStorage,
 ): HeroLocaleStore {
-  const storage = providedStorage ?? readBrowserStorage();
-  let locale = readPersistedHeroLocale(storage);
-  const listeners = new Set<() => void>();
-
-  return {
-    getSnapshot: () => locale,
-    getServerSnapshot: () => "zh",
-    subscribe(listener) {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    commit(nextLocale) {
-      if (nextLocale === locale) {
-        return;
-      }
-      locale = nextLocale;
-      persistHeroLocale(storage, nextLocale);
-      for (const listener of listeners) {
-        listener();
-      }
-    },
-  };
+  return createPersistedPreferenceStore(localePreference, storage);
 }
 
 export function readPersistedHeroLocale(
   storage: Pick<HeroLocaleStorage, "getItem"> | undefined,
 ): HeroLocale {
-  if (!storage) {
-    return "zh";
-  }
-  try {
-    return storage.getItem(heroLocaleStorageKey) === "en" ? "en" : "zh";
-  } catch {
-    return "zh";
-  }
+  return readPreference(storage, localePreference);
 }
 
 export function persistHeroLocale(
   storage: HeroLocaleStorage | undefined,
   locale: HeroLocale,
 ): void {
-  if (!storage) {
-    return;
-  }
-  try {
-    storage.setItem(heroLocaleStorageKey, locale);
-  } catch {
-    return;
-  }
-}
-
-function readBrowserStorage(): HeroLocaleStorage | undefined {
-  if (typeof window === "undefined") {
-    return undefined;
-  }
-  try {
-    return window.localStorage;
-  } catch {
-    return undefined;
-  }
+  persistPreference(storage, heroLocaleStorageKey, locale);
 }

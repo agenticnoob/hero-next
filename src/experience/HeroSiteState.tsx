@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { createHeroLocaleStore } from "../preferences/locale";
 import { createHeroThemeStore } from "../preferences/theme";
-import { createProjectRoomStore } from "../projects/room";
+import { createProjectRoomStore } from "../projects/roomStore";
 
 function createHeroSiteState() {
   return {

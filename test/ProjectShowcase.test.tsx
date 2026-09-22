@@ -175,6 +175,22 @@ afterEach(async () => {
 });
 
 describe("project case studies", () => {
+  test("uses catalog room membership for the return destination", async () => {
+    const entry = projectCatalog.getEntry("viselora")!;
+    vi.spyOn(projectCatalog, "getEntry").mockReturnValue({
+      ...entry,
+      roomIndex: undefined,
+    });
+    await renderSite(<ProjectShowcase project="viselora" />);
+    const back = host.querySelector<HTMLAnchorElement>(
+      ".project-case__bar > a",
+    )!;
+    expect(back.getAttribute("href")).toBe("/projects");
+    back.addEventListener("click", (event) => event.preventDefault());
+    await act(() => back.click());
+    expect(siteState!.projectRoom.getSnapshot().returnRequested).toBe(false);
+  });
+
   test("restores directory scroll and focus without changing the selected wall", async () => {
     await renderSite(<div />);
     const room = siteState!.projectRoom;

@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
+import { createProjectRoomStore } from "../src/projects/roomStore";
 import {
-  createProjectRoomStore,
   projectRoomPoint,
   resolveRoomTurn,
   roomInteractionWeight,

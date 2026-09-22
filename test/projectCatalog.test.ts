@@ -1,5 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { projectCaseStudies } from "../src/chapters/content";
+import {
+  getHeroChapterContent,
+  projectCaseStudies,
+} from "../src/chapters/content";
 import { createProjectCatalog } from "../src/projects/catalog";
 
 const generated = {
@@ -36,6 +39,32 @@ const generated = {
 };
 
 describe("static project catalog", () => {
+  test("derives curated room positions from chapter content in either locale", () => {
+    const catalog = createProjectCatalog([generated]);
+    for (const locale of ["zh", "en"] as const) {
+      const sections = getHeroChapterContent("builds", locale).body.sections;
+      for (const slug of Object.keys(projectCaseStudies)) {
+        const entry = catalog.getEntry(slug)!;
+        expect(entry.featured).toBe(true);
+        expect(entry.roomIndex).toBeDefined();
+        expect(sections[entry.roomIndex!].showcase?.href).toBe(entry.href);
+      }
+    }
+    expect(catalog.getEntry("constructor")).toBeUndefined();
+    expect(catalog.getEntry("unknown")).toBeUndefined();
+  });
+
+  test("keeps generated projects outside the room regardless of their slug prefix", () => {
+    const catalog = createProjectCatalog([
+      { ...generated, slug: "new-project" },
+    ]);
+    expect(catalog.getEntry("new-project")).toMatchObject({
+      href: "/projects/new-project",
+      featured: false,
+      roomIndex: undefined,
+    });
+  });
+
   test("adds generated projects without replacing the four editorial cases", () => {
     const catalog = createProjectCatalog([generated]);
     expect(catalog.entries.map((entry) => entry.slug)).toEqual([

@@ -3,10 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { MouseEvent } from "react";
-import {
-  getHeroChapterContent,
-  syringeMeterShowcaseUi,
-} from "../chapters/content";
+import { syringeMeterShowcaseUi } from "../chapters/content";
 import type { HeroProjectCaseStudy } from "../chapters/contentModel";
 import { HeroLocaleControl } from "../chapters/HeroLocaleControl";
 import { useHeroSiteState } from "../experience/HeroSiteState";
@@ -16,7 +13,7 @@ import {
 } from "../experience/useHeroExperienceState";
 import { ProjectVideo } from "./ProjectVideo";
 import { syringeMeterMedia } from "./media";
-import { projectRoomAnchorId } from "./room";
+import { projectRoomAnchorId } from "./roomNavigation";
 import { projectCatalog } from "./catalog";
 
 function readSection(event: MouseEvent<HTMLAnchorElement>, id: string) {
@@ -53,18 +50,13 @@ export function ProjectShowcase({
   const { scheme } = useHeroThemeState();
   const { projectRoom } = useHeroSiteState();
   const copy: HeroProjectCaseStudy = projectCatalog.getCase(project, locale)!;
+  const entry = projectCatalog.getEntry(project)!;
   const hasMedia = project === "syringe-meter";
   const ui = syringeMeterShowcaseUi[locale];
   const firstSectionId = `project-${copy.sections[0].id}`;
   const returnToRoom = () => {
-    const index = getHeroChapterContent(
-      "builds",
-      locale,
-    ).body.sections.findIndex(
-      (section) => section.showcase?.href === `/projects/${project}`,
-    );
-    if (index >= 0) {
-      projectRoom.select(index);
+    if (entry.roomIndex !== undefined) {
+      projectRoom.select(entry.roomIndex);
       projectRoom.requestReturn();
     }
   };
@@ -86,7 +78,7 @@ export function ProjectShowcase({
         ) : (
           <Link
             href={
-              project.startsWith("gh-")
+              entry.roomIndex === undefined
                 ? "/projects"
                 : `/#${projectRoomAnchorId}`
             }

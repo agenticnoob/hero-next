@@ -7,8 +7,8 @@ import type { HeroViewportSnapshot } from "../shared/viewportStore";
 import {
   projectRoomEntrySelector,
   readProjectRoomReturnPosition,
-  type ProjectRoomStore,
-} from "./room";
+} from "./roomNavigation";
+import type { ProjectRoomStore } from "./roomStore";
 
 export function useProjectRoomReturn(
   room: ProjectRoomStore,

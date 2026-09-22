@@ -11,7 +11,9 @@ import { projectDirectoryCopy } from "../chapters/uiContent";
 
 export type ProjectCatalogEntry = {
   readonly slug: string;
+  readonly href: string;
   readonly featured: boolean;
+  readonly roomIndex: number | undefined;
   readonly title: Readonly<Record<HeroLocale, string>>;
   readonly summary: Readonly<Record<HeroLocale, string>>;
 };
@@ -43,10 +45,12 @@ export function createProjectCatalog(projects: readonly GeneratedProject[]) {
     HeroProjectSlug,
     (typeof projectCaseStudies)[HeroProjectSlug],
   ][];
+  const roomSections = getHeroChapterContent("builds", "zh").body.sections;
   const curatedUrls = new Set(
-    getHeroChapterContent("builds", "zh").body.sections.map((section) =>
-      section.link?.href.toLowerCase(),
-    ),
+    roomSections.map((section) => section.link?.href.toLowerCase()),
+  );
+  const roomIndexes = new Map(
+    roomSections.map((section, index) => [section.showcase?.href, index]),
   );
   const generated = projects
     .filter((project) => !curatedUrls.has(project.url.toLowerCase()))
@@ -64,7 +68,9 @@ export function createProjectCatalog(projects: readonly GeneratedProject[]) {
   const entries: readonly ProjectCatalogEntry[] = [
     ...generated.map((project) => ({
       slug: project.slug,
+      href: `/projects/${project.slug}`,
       featured: false,
+      roomIndex: undefined,
       title: { zh: project.content.zh.title, en: project.content.en.title },
       summary: {
         zh: project.content.zh.summary,
@@ -73,13 +79,16 @@ export function createProjectCatalog(projects: readonly GeneratedProject[]) {
     })),
     ...curated.map(([slug, content]) => ({
       slug,
+      href: `/projects/${slug}`,
       featured: true,
+      roomIndex: roomIndexes.get(`/projects/${slug}`),
       title: { zh: content.zh.title, en: content.en.title },
       summary: { zh: content.zh.introduction, en: content.en.introduction },
     })),
   ];
   return {
     entries,
+    getEntry: (slug: string) => entries.find((entry) => entry.slug === slug),
     getCase: (slug: string, locale: HeroLocale) => cases.get(slug)?.[locale],
   };
 }

@@ -153,6 +153,18 @@ standalone pages and metadata. `projectCaseStudies` defines the curated slugs;
 shared state above both routes. See the media and extension notes in
 [visual design](./docs/visual-design.md).
 
+`src/projects/catalog.ts` owns each entry's route and optional room position;
+views use that metadata instead of inferring membership from a slug prefix.
+`room.ts` owns room geometry and interaction math, `roomStore.ts` owns semantic
+state and exhibit references, and `roomNavigation.ts` owns DOM return positioning
+and focus. Navigation receives the existing scroll restoration function from its
+caller, so importing room anchors does not initialize the scroll runtime.
+
+Theme and locale keep their own keys, parsers and server defaults in
+`src/preferences/theme.ts` and `locale.ts`. Their common persistence, subscription
+and storage-failure handling lives in `persistedStore.ts`; the site provider still
+creates separate stores per mounted site.
+
 - Consume public Viselora entrypoints only.
 - Keep one runtime and one canvas.
 - CSS owns semantic DOM layout, accessible theme tokens, stacking, overflow,

@@ -1,5 +1,6 @@
 import type { HeroViewport } from "../shared/viewport";
-import { projectRoomConfig as config, type ProjectRoomStore } from "./room";
+import { projectRoomConfig as config } from "./room";
+import type { ProjectRoomStore } from "./roomStore";
 import { projectRoomExhibitProjection } from "./projection";
 
 // Coordinates on the same 1024 × 720 wall used by the room's text atlas.

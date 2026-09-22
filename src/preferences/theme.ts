@@ -1,81 +1,38 @@
 import type { HeroSchemeName } from "../transition/transitionConfig";
+import {
+  createPersistedPreferenceStore,
+  persistPreference,
+  readPreference,
+  type PreferenceStorage,
+  type PreferenceStore,
+} from "./persistedStore";
 
 export const heroThemeStorageKey = "viselora.hero.theme.v1";
+export type HeroThemeStorage = PreferenceStorage;
+export type HeroThemeStore = PreferenceStore<HeroSchemeName>;
 
-export type HeroThemeStorage = Pick<Storage, "getItem" | "setItem">;
-
-export type HeroThemeStore = {
-  getSnapshot(): HeroSchemeName;
-  getServerSnapshot(): HeroSchemeName;
-  subscribe(listener: () => void): () => void;
-  commit(scheme: HeroSchemeName): void;
+const themePreference = {
+  key: heroThemeStorageKey,
+  fallback: "initial" as const,
+  parse: (value: string | null): HeroSchemeName =>
+    value === "inverted" ? "inverted" : "initial",
 };
 
 export function createHeroThemeStore(
-  providedStorage?: HeroThemeStorage,
+  storage?: HeroThemeStorage,
 ): HeroThemeStore {
-  const storage = providedStorage ?? readBrowserStorage();
-  let committed = readPersistedHeroTheme(storage);
-  const listeners = new Set<() => void>();
-
-  return {
-    getSnapshot: () => committed,
-    getServerSnapshot: () => "initial",
-    subscribe(listener) {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    commit(scheme) {
-      if (scheme === committed) {
-        return;
-      }
-      committed = scheme;
-      persistHeroTheme(storage, scheme);
-      for (const listener of listeners) {
-        listener();
-      }
-    },
-  };
+  return createPersistedPreferenceStore(themePreference, storage);
 }
 
 export function readPersistedHeroTheme(
   storage: HeroThemeStorage | undefined,
 ): HeroSchemeName {
-  if (!storage) {
-    return "initial";
-  }
-  try {
-    return parseHeroTheme(storage.getItem(heroThemeStorageKey));
-  } catch {
-    return "initial";
-  }
+  return readPreference(storage, themePreference);
 }
 
 export function persistHeroTheme(
   storage: HeroThemeStorage | undefined,
   scheme: HeroSchemeName,
 ): void {
-  if (!storage) {
-    return;
-  }
-  try {
-    storage.setItem(heroThemeStorageKey, scheme);
-  } catch {
-    return;
-  }
-}
-
-function parseHeroTheme(value: string | null): HeroSchemeName {
-  return value === "inverted" ? "inverted" : "initial";
-}
-
-function readBrowserStorage(): HeroThemeStorage | undefined {
-  if (typeof window === "undefined") {
-    return undefined;
-  }
-  try {
-    return window.localStorage;
-  } catch {
-    return undefined;
-  }
+  persistPreference(storage, heroThemeStorageKey, scheme);
 }

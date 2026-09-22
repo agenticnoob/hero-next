@@ -10,7 +10,11 @@ import {
 } from "../experience/useHeroExperienceState";
 import { projectCatalog } from "./catalog";
 import { projectDirectoryCopy } from "../chapters/uiContent";
-import { projectRoomAnchorId } from "./room";
+import {
+  formatHeroChapterHeading,
+  heroChapterDefinitions,
+} from "../chapters/definitions";
+import { projectRoomAnchorId } from "./roomNavigation";
 
 export function ProjectDirectory({
   onClose,
@@ -25,9 +29,12 @@ export function ProjectDirectory({
     const position = projectRoom.getDirectoryReturn();
     if (!position) return;
     const frame = window.requestAnimationFrame(() => {
-      const entry = article.current?.querySelector<HTMLAnchorElement>(
-        `a[href="/projects/${position.slug}"]`,
-      );
+      const href = projectCatalog.getEntry(position.slug)?.href;
+      const entry = Array.from(
+        article.current?.querySelectorAll<HTMLAnchorElement>(
+          ".project-directory__link",
+        ) ?? [],
+      ).find((link) => link.getAttribute("href") === href);
       if (!entry) return;
       const dialog = article.current?.closest("dialog");
       if (dialog) dialog.scrollTop = position.scrollTop;
@@ -64,7 +71,12 @@ export function ProjectDirectory({
       </header>
       <div className="project-case__inner">
         <header className="project-case__hero">
-          <p className="project-case__eyebrow">03 / PROJECT INDEX</p>
+          <p className="project-case__eyebrow">
+            {formatHeroChapterHeading(
+              heroChapterDefinitions.builds,
+              "PROJECT INDEX",
+            )}
+          </p>
           <h1 id="project-case-title" tabIndex={-1}>
             {ui.title}{" "}
             <span className="project-directory__count">
@@ -78,7 +90,7 @@ export function ProjectDirectory({
             <li key={entry.slug}>
               <Link
                 className="project-directory__link"
-                href={`/projects/${entry.slug}`}
+                href={entry.href}
                 prefetch={false}
                 scroll={false}
                 onClick={(event) => {

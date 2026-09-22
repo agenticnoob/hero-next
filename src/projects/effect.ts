@@ -20,8 +20,8 @@ import {
   roomInteractionWeight,
   stepRoomAngle,
   wrapRoomAngle,
-  type ProjectRoomStore,
 } from "./room";
+import type { ProjectRoomStore } from "./roomStore";
 
 type RoomParams = {
   readonly kind: "hero.projects.room";

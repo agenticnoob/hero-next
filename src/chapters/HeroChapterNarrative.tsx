@@ -17,7 +17,7 @@ import { HeroAxiomsChapterBody } from "../axioms/HeroAxiomsReader";
 import { getAxiomsContent } from "../axioms/content";
 import { HeroProjectsChapterBody } from "../projects/HeroProjectRoom";
 import { HeroSignalsChapterBody } from "../signals/HeroSignalsChapterBody";
-import type { ProjectRoomStore } from "../projects/room";
+import type { ProjectRoomStore } from "../projects/roomStore";
 import { HeroJournalRunway } from "../journal/HeroJournal";
 import type { HeroJournalState } from "../journal/useJournal";
 

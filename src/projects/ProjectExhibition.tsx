@@ -7,50 +7,10 @@ import {
   restoreHeroReadingPosition,
   suspendHeroScroll,
 } from "../experience/smoothScroll";
-import { getHeroChapterContent } from "../chapters/content";
+import { projectCatalog } from "./catalog";
 import { ProjectShowcase } from "./ProjectShowcase";
 import { ProjectDirectory } from "./ProjectDirectory";
-import {
-  projectRoomEntrySelector,
-  readProjectRoomReturnPosition,
-} from "./room";
-
-function captureRoomReturn(trigger: HTMLElement | null, index: number) {
-  const scrollTop = window.scrollY;
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const room = document.querySelector<HTMLElement>(".hero-projects");
-  const roomHeight = room?.offsetHeight;
-  return (dialog: HTMLDialogElement) => {
-    if (dialog.open) return;
-    const changed =
-      width !== window.innerWidth ||
-      height !== window.innerHeight ||
-      roomHeight !== room?.offsetHeight;
-    const reading =
-      document
-        .querySelector(".hero-space")
-        ?.getAttribute("data-reading-layout") === "true";
-    const target = changed
-      ? document.querySelector<HTMLElement>(
-          index < 0
-            ? `[data-project-directory-entry="${reading ? "reading" : "desktop"}"]`
-            : projectRoomEntrySelector(index, reading),
-        )
-      : trigger;
-    if (!target?.isConnected) return;
-    const top = changed
-      ? readProjectRoomReturnPosition(target, reading, window.innerHeight)
-      : scrollTop;
-    if (top !== undefined) restoreHeroReadingPosition(top);
-    target.focus({ preventScroll: true });
-    if (changed)
-      window.requestAnimationFrame(() => {
-        if (!dialog.open && target.isConnected)
-          target.focus({ preventScroll: true });
-      });
-  };
-}
+import { captureRoomReturn } from "./roomNavigation";
 
 export function ProjectExhibition({ project }: { readonly project?: string }) {
   const router = useRouter();
@@ -69,12 +29,16 @@ export function ProjectExhibition({ project }: { readonly project?: string }) {
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
-    const index = getHeroChapterContent("builds", "zh").body.sections.findIndex(
-      (section) => section.showcase?.href === `/projects/${project}`,
-    );
+    const index = project
+      ? (projectCatalog.getEntry(project)?.roomIndex ?? -1)
+      : -1;
     if (index >= 0 && !projectRoom.getDirectoryReturn())
       projectRoom.select(index);
-    const restoreRoom = captureRoomReturn(trigger, index);
+    const restoreRoom = captureRoomReturn(
+      trigger,
+      index,
+      restoreHeroReadingPosition,
+    );
     const html = document.documentElement;
     const previousOverflow = html.style.overflow;
     const previousGutter = html.style.scrollbarGutter;

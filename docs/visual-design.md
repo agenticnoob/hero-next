@@ -96,11 +96,16 @@ Hub 模型使用较小比例及下移位置，为介绍留出完整阅读区域�
 
 `src/projects/catalog.ts` 合并 `data/projects.json` 和现有人工案例；自动化数据不能替代
 精选墙面或覆盖已有演示。更新经内容 PR 留档、自动校验通过后合并发布，数据流程见 [project-publishing.md](./project-publishing.md)。
+目录条目的 `href` 与可选 `roomIndex` 统一提供地址和墙面归属；详情与展台不根据 slug
+前缀推断返回目标，也不各自搜索翻译文案。目录页的章节编号读取 `definitions.ts`。
 
 ### 精选展厅
 
 大屏 fine-pointer 模式保留四个墙面、边缘转向、中央阅读、键盘选择和稳定源码链接。
 退出与入场 atlas 均使用第一面构图，交互选择保存在项目 room store。
+`src/projects/room.ts` 保留几何与转向计算，`roomStore.ts` 管理低频状态和入口引用，
+`roomNavigation.ts` 管理 DOM 返回坐标与焦点。返回函数由调用方传入既有 Lenis 的恢复操作，
+导航模块不初始化滚动运行时；`ProjectExhibition.tsx` 负责 dialog 生命周期。
 
 阅读布局保留四个普通项目与对应链接，改为自然高度的单列内容。标题和卡片间距收紧，
 卡片正文至少 16px，外链保留 44px 触控区域。触屏不需要边缘鼠标手势，也不创建项目空间纹理。

@@ -7,7 +7,7 @@ import {
 import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { HeroProjectsChapterBody } from "../src/projects/HeroProjectRoom";
-import { createProjectRoomStore } from "../src/projects/room";
+import { createProjectRoomStore } from "../src/projects/roomStore";
 import { getHeroChapterContent } from "../src/chapters/content";
 import { heroChapterDefinitions } from "../src/chapters/definitions";
 

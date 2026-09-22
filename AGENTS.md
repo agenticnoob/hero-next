@@ -75,6 +75,17 @@ Do not duplicate constants or live state across these modules. Chapter order,
 signal keys, tetrahedron face vectors, and atlas slots have one structural truth
 in `src/chapters/definitions.ts`.
 
+Within projects, keep geometry and interaction math in `room.ts`, semantic state
+and exhibit references in `roomStore.ts`, and DOM return positioning/focus in
+`roomNavigation.ts`. Inject the existing scroll restoration function into return
+navigation; do not import runtime initialization into navigation helpers. Use
+`catalog.ts` entry metadata for routes and room membership, not slug prefixes or
+component-local searches through translated content.
+
+Theme and locale definitions own their storage keys, parsers and server defaults.
+Use `src/preferences/persistedStore.ts` for shared persistence and subscription
+mechanics; keep store instances local to `HeroSiteStateProvider`.
+
 ## Verification
 
 ```bash

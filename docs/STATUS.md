@@ -1,12 +1,44 @@
 # Current Status
 
-Last verified locally: 2026-09-22 (GitHub project catalog and publishing pipeline).
+Last verified locally: 2026-09-22 (code structure and project navigation refactor).
 Last production readback: 2026-09-22 (project directory HTTP and rendered content).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## Code structure and responsibility boundaries (2026-09-22)
+
+Theme and locale share persistence/subscription mechanics while retaining separate
+keys, parsers, defaults and provider-local instances. Project room geometry,
+semantic state and DOM return navigation now have separate owners. Navigation
+receives the existing scroll restoration function from its caller. Catalog entries
+provide routes and optional wall positions to case views and dialogs, replacing
+slug-prefix inference and repeated searches through translated chapter content.
+The project directory also reads its chapter number from the chapter definitions.
+Visual constants, curated content, dependencies and publishing workflows are unchanged.
+
+`npm run check` passes: 56 files / 463 tests, zero-warning ESLint, formatting,
+both typechecks and the 118-file standalone boundary. `npm run build` and
+`git diff --check` pass. React Doctor 0.9.14's complete full scan remains 57/100
+with the same four reviewed diagnostics; the complete changed-scope scan against
+the starting HEAD is 100/100 with no new diagnostics across 23 files. The existing
+optional subscriptions have real cleanup, and the two selector warnings only
+consume fixed test fixtures. No rules were disabled. See the
+[review and verification record](./archive/2026-09-22-code-structure-review.md).
+
+Ego Lite checked the local production app at 1440×900 and 390×844. Paths covered
+standalone case → home/selected wall, case dialogs and language switching,
+directory → generated case → directory focus restoration, and mobile theme/locale
+persistence across refresh. The mobile case also opened and closed with reduced
+motion explicitly confirmed active. Home-backed dialogs retained one canvas;
+standalone cases had none. Sampled pages had no horizontal overflow. Instrumented
+desktop and mobile dialog interactions reported no page/console errors; mobile
+instrumentation began after navigation and does not cover its initial loads.
+Physical devices, GPU performance and a full visual redesign were not tested.
+This section records local verification; publication status is reported by the
+deployment workflow for the pushed commit.
 
 ## GitHub project catalog and publishing pipeline (2026-09-21)
 
