@@ -1,0 +1,36 @@
+name: Check generated project content
+
+on:
+  pull_request:
+    paths:
+      - data/projects.json
+
+permissions:
+  contents: read
+
+jobs:
+  verify-project-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - run: npm ci
+      - name: Build with an isolated synthetic journal
+        run: |
+          mkdir -p "$RUNNER_TEMP/project-check/journal"
+          node --input-type=module <<'NODE'
+          import { writeFile } from 'node:fs/promises';
+          const root = `${process.env.RUNNER_TEMP}/project-check`;
+          await writeFile(`${root}/journal/2000-01-01.json`, JSON.stringify({date:'2000-01-01',body:{今天用了啥:['CI fixture']}}));
+          await writeFile(`${root}/TIMELINE.json`, JSON.stringify({timeline:[{date:'2000-01-01',event:'Synthetic build-check fixture; never deploy.'}]}));
+          NODE
+          npm run sync:journal -- --source "$RUNNER_TEMP/project-check"
+          npm run check
+          npm run build
+          git diff --check

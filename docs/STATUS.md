@@ -8,6 +8,27 @@ Hero Next is a standalone private Next.js site consuming the public Viselora
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [zzzxc.com](https://zzzxc.com).
 
+## Two-repository project automation migration (2026-09-23)
+
+**Implemented locally:** the website checkout removes the active subscription-auth
+`projects-sync.yml`, Codex files, authentication helper and publisher. It keeps
+scanner/data validation and adds a secret-free content PR check. The separate local
+`hero-next-automation` checkout contains the schedule, trusted prompt/schema,
+isolated runner, App-token boundaries and deployment-run tracking. The dedicated
+content branch is `automation/github-project-introductions`.
+
+**Local verification:** website `npm run check` (54 files / 427 tests),
+`npm run build`, and `git diff --check` passed. Private automation `npm run check`
+(39 tests) and Actionlint 1.7.12 for both repositories' workflows passed.
+The private [automation repository](https://github.com/agenticnoob/hero-next-automation)
+has been created; its schedule is gated by unset `PROJECT_SYNC_ACTIVE`.
+The two dedicated GitHub Apps, Environment secrets and dedicated login are not yet
+configured; the new flow has not had a real cloud run. No claim of private-cloud
+or post-publication verification is made here. The website remains private, and
+its old secrets must stay in place until the new private run succeeds and their
+exact deletion is reported. The historical records below describe the prior
+single-repository workflow.
+
 ## Code structure and responsibility boundaries (2026-09-22)
 
 Theme and locale share persistence/subscription mechanics while retaining separate
