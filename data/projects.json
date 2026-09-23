@@ -296,6 +296,80 @@
           ]
         }
       }
+    },
+    {
+      "id": 1366880001,
+      "slug": "gh-1366880001",
+      "repository": "agenticnoob/hero-next",
+      "url": "https://github.com/agenticnoob/hero-next",
+      "readmeSha": "a59daf5228ceeaa97b53a2f4d2265da08fa3abdc",
+      "sourceCommit": "cf8d4abe4ca23f18aac19fcbdea2d0cec846d875",
+      "sourceDigest": "a02908ec5256361ef3eb78414d1e1d12cff847c649de4c74fbc76e39b65c0171",
+      "updatedAt": "2026-09-23T16:50:33Z",
+      "topics": [],
+      "language": "TypeScript",
+      "content": {
+        "zh": {
+          "title": "Hero Next 个人网站",
+          "summary": "一个基于 Next.js App Router 与公开 Viselora 包构建的中英双语个人网站，结合章节叙事、项目案例、公共渠道目录、每日记录以及适配不同设备的 DOM/WebGL 体验。",
+          "sections": [
+            {
+              "id": "overview",
+              "title": "项目概览",
+              "paragraphs": [
+                "网站以四个章节呈现个人介绍、AI 与哲学观点、公开项目和公共渠道，并在末尾提供每日记录。中英文内容、主题和当前浏览状态由共享状态协调，语言与主题偏好可持久保存。"
+              ]
+            },
+            {
+              "id": "experience",
+              "title": "交互与内容体验",
+              "paragraphs": [
+                "移动端、触控设备和较矮的横屏窗口采用以阅读为主的自然高度布局；配备完整文章索引、紧凑项目列表、分批加载的日志以及键盘可访问的章节菜单。宽屏精细指针设备则提供圆形文章索引、动态纸张、四面项目展室、悬停预览和透视日志等视觉体验。",
+                "项目目录汇集精选双语案例与生成的公开项目条目。案例既可在保留原场景的阅读对话框中打开，也可通过独立页面呈现。"
+              ]
+            },
+            {
+              "id": "implementation",
+              "title": "实现与边界",
+              "paragraphs": [
+                "项目维持单一运行时、Canvas 与滚动来源，由 CSS 负责语义布局、可访问配色和指针路由，由 WebGL 负责四面体、面投影、三角转场、模型与光照。响应式阅读布局会根据真实文本几何生成转场图块，并在尺寸、语言、字体或内容变化时使缓存失效。",
+                "项目仅通过公开入口使用 Viselora 包，并将主题、语言、项目展室、案例路由和日志同步等职责分离。自动化流程可从时间线数据生成日志快照，并通过检查、构建和发布流程更新站点。",
+                "现有说明指出 Canvas 与 DOM 的字形栅格化仍可能略有差异，内容也仍是可继续编辑的基础版本。开发环境对局域网来源采取较宽松的允许策略，因此只应在受信任网络中使用。"
+              ]
+            }
+          ]
+        },
+        "en": {
+          "title": "Hero Next Personal Site",
+          "summary": "A bilingual personal site built with the Next.js App Router and public Viselora packages, combining chapter-based storytelling, project case studies, a public-channel directory, a daily journal, and responsive DOM/WebGL experiences.",
+          "sections": [
+            {
+              "id": "overview",
+              "title": "Project Overview",
+              "paragraphs": [
+                "The site presents a profile, AI and philosophy axioms, public projects, and public channels across four chapters, followed by a daily journal. Shared state coordinates the Chinese and English content, theme, and current viewing context, while locale and theme preferences persist across sessions."
+              ]
+            },
+            {
+              "id": "experience",
+              "title": "Interaction and Content Experience",
+              "paragraphs": [
+                "Mobile, touch, and short landscape windows use a natural-height reading layout with a complete article index, compact project lists, incrementally loaded journal entries, and a keyboard-accessible chapter menu. Wide screens with a fine pointer add a circular article index, moving sheets, a four-wall project room, hover previews, and a perspective journal.",
+                "The project directory combines selected bilingual case studies with generated public-project entries. Cases can open in a reading dialog that preserves the underlying scene or render as standalone pages."
+              ]
+            },
+            {
+              "id": "implementation",
+              "title": "Implementation and Boundaries",
+              "paragraphs": [
+                "The project keeps one runtime, canvas, and scroll source. CSS owns semantic layout, accessible colors, and pointer routing, while WebGL handles the tetrahedron, face projection, triangular transitions, models, and lighting. The responsive reading layout derives transition tiles from real text geometry and invalidates them when dimensions, locale, fonts, or content change.",
+                "It consumes Viselora packages only through public entry points and separates responsibilities for preferences, the project room, case-study routing, and journal synchronization. An automation flow can generate journal snapshots from timeline data and update the site through validation, build, and publishing stages.",
+                "The documentation notes that Canvas and DOM glyph rasterization may still differ slightly and that the content remains a base version for further editorial work. The development environment also permits broad local-network origins, so it is intended only for trusted networks."
+              ]
+            }
+          ]
+        }
+      }
     }
   ]
 }
