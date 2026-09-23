@@ -220,65 +220,77 @@
       "slug": "gh-1265195464",
       "repository": "agenticnoob/webgl-scroll",
       "url": "https://github.com/agenticnoob/webgl-scroll",
-      "readmeSha": "e47096449ee72a6a5018ce21f83d363010da1ce2",
-      "sourceCommit": "3a6066748e2b7cee8c84e687e04895ea49da393a",
-      "sourceDigest": "d771fdffa9d5572656e9a54e4787f8122831a4092d003b2d70930bf0fc481152",
-      "updatedAt": "2026-06-12T09:07:38Z",
+      "readmeSha": "469f6020d5cf44653475bd29464b6fc74b2e899b",
+      "sourceCommit": "c4a4302a6c8690ba04fc33da8d14231c63903e2e",
+      "sourceDigest": "13d6b1fa46810acea49ca7a0e4f39e166ff9e0b22641d36e5637b47aeca291a3",
+      "updatedAt": "2026-09-23T05:38:25Z",
       "topics": [],
       "language": "TypeScript",
       "content": {
         "zh": {
-          "title": "webgl-scroll",
-          "summary": "面向 React、Next.js 和智能体前端工作流的可组合 WebGL 滚动效果库，提供底层运行时、内置效果与 React 触发器，同时让宿主应用保留画布、渲染循环和销毁逻辑的控制权。",
+          "title": "webgl-scroll：可组合的 WebGL 滚动效果",
+          "summary": "面向 React、Next.js 与智能体前端工作流的可组合 WebGL 滚动效果工具包，提供分层核心运行时、内置效果和 React 触发器，并支持按视口距离调度生命周期及由宿主协调资源预取。",
           "sections": [
             {
-              "id": "packages",
-              "title": "模块化包结构",
+              "id": "overview",
+              "title": "解决的问题与方案",
               "paragraphs": [
-                "核心包提供运行时、效果注册表、状态树、共享指针输入、GPU 辅助工具和自定义效果接口；效果包提供资源图层、WebGL 标题淡入、GLB 粒子和像素化转场；React 包将声明式触发配置映射为 DOM 元数据。"
+                "项目旨在减少滚动驱动 WebGL 页面中的重复集成工作。应用可通过声明式触发器组合效果，而底层运行时负责效果注册、状态、共享指针输入和 GPU 辅助能力。"
               ]
             },
             {
-              "id": "lifecycle",
+              "id": "packages-effects",
+              "title": "包结构与内置效果",
+              "paragraphs": [
+                "项目分为核心引擎、内置效果和 React 绑定。内置效果包括图像、视频与 GLB 资源层，WebGL 标题淡入，基于 GLB 表面采样的指针响应粒子，以及像素化全屏转场。React 组件会输出触发器元数据。"
+              ]
+            },
+            {
+              "id": "lifecycle-assets",
               "title": "生命周期与资源加载",
               "paragraphs": [
-                "效果按其与视口的距离进行预载、暂停和卸载，并可限制并发预载数量。宿主既可以使用效果声明中的资源地址，也可以集中预取资源并通过解析器交给运行时；内置工具还能从效果配置生成资源请求清单。"
+                "效果可依据其与视口的距离预加载、暂停和卸载，并限制并发预加载数量。配置既可全局设置，也可在触发器或单个效果层级覆盖。宿主还可提供资源解析器，并从效果声明生成内置资源的预加载清单。"
               ]
             },
             {
-              "id": "boundaries",
-              "title": "集成边界与状态",
+              "id": "boundaries-status",
+              "title": "职责边界与状态",
               "paragraphs": [
-                "库优先提供声明式触发器和已注册效果，宿主应用仍负责 Canvas 初始化、渲染循环与清理。这种边界允许应用先组合常见媒体和粒子效果，再在必要时扩展自定义运行时代码。",
-                "0.1.0 是首个公开发布线。README 所述的生命周期调度、宿主资源解析与相关加载能力位于尚待合并和发布后续版本的开发分支，因此这些更新尚不能视为已发布包能力。"
+                "宿主应用仍需负责画布初始化、渲染循环和清理，也可以统一管理资源下载。README 将 0.1.0 描述为首个公开发行系列；其中提及的生命周期调度和宿主资源预取改动仍位于开发分支，后续发布尚待合并与发版。"
               ]
             }
           ]
         },
         "en": {
-          "title": "webgl-scroll",
-          "summary": "A composable WebGL scroll-effects library for React, Next.js, and agentic frontend workflows. It provides a low-level runtime, built-in effects, and React triggers while leaving canvas setup, the render loop, and teardown under host-app control.",
+          "title": "webgl-scroll: Composable WebGL Scroll Effects",
+          "summary": "A composable WebGL scroll-effects toolkit for React, Next.js, and agentic frontend workflows. It combines a layered core runtime, built-in effects, React triggers, viewport-distance lifecycle scheduling, and hooks for host-managed asset prefetching.",
           "sections": [
             {
-              "id": "packages",
-              "title": "Modular Package Structure",
+              "id": "overview",
+              "title": "Problem and Approach",
               "paragraphs": [
-                "The core package supplies the runtime, effect registry, state tree, shared pointer input, GPU helpers, and custom-effect interfaces. The effects package adds asset layers, WebGL title fades, GLB particles, and pixelated transitions, while the React package maps declarative trigger configuration to DOM metadata."
+                "The project aims to reduce repeated integration work in scroll-driven WebGL pages. Applications can compose effects through declarative triggers, while the lower-level runtime provides effect registration, state, shared pointer input, and GPU helpers."
               ]
             },
             {
-              "id": "lifecycle",
+              "id": "packages-effects",
+              "title": "Packages and Built-in Effects",
+              "paragraphs": [
+                "The project is divided into a core engine, built-in effects, and React bindings. Its effects cover image, video, and GLB asset layers; fading WebGL titles; pointer-responsive particles sampled from GLB surfaces; and pixelated fullscreen transitions. React components emit trigger metadata."
+              ]
+            },
+            {
+              "id": "lifecycle-assets",
               "title": "Lifecycle and Asset Loading",
               "paragraphs": [
-                "Effects are preloaded, suspended, and unloaded according to viewport distance, with a configurable limit on concurrent preload work. Hosts can use asset locations declared by effects or prefetch resources centrally and provide them through an asset resolver; a built-in helper can also derive asset requests from effect declarations."
+                "Effects can preload, suspend, and unload according to their distance from the viewport, with a limit on concurrent preload work. Settings may be overridden globally, per trigger, or per effect. Hosts can also supply an asset resolver and derive a preload manifest from built-in effect declarations."
               ]
             },
             {
-              "id": "boundaries",
-              "title": "Integration Boundaries and Status",
+              "id": "boundaries-status",
+              "title": "Responsibilities and Status",
               "paragraphs": [
-                "The library favors declarative triggers and registered effects, while the host application remains responsible for Canvas initialization, rendering, and cleanup. This boundary lets applications compose common media and particle treatments before adding custom runtime code where necessary.",
-                "Version 0.1.0 is described as the first public release line. The lifecycle scheduling, host asset resolver, and related loading updates are documented on a development branch awaiting merge and a subsequent package release, so they should not be treated as capabilities of the published line yet."
+                "The host application remains responsible for canvas setup, the render loop, and teardown, and may manage downloads centrally. The README identifies 0.1.0 as the first public release line; the described lifecycle scheduling and host-prefetch changes remain on a development branch pending a later merge and package release."
               ]
             }
           ]
