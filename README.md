@@ -1,6 +1,6 @@
 # Hero Next
 
-`@viselora/hero-next` is a standalone private Next.js App Router personal site.
+`@viselora/hero-next` is a standalone public Next.js App Router personal site.
 It consumes published Viselora packages through their public entrypoints.
 Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
 `0.1.0-alpha.2` from npm; see [current verification](./docs/STATUS.md).

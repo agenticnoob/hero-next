@@ -1,9 +1,9 @@
 # Current Status
 
-Last verified locally: 2026-09-23 (automation migration checks and status docs).
-Last production readback: 2026-09-23 (project-content deployment and public snapshot).
+Last verified locally: 2026-09-24 (post-publication status and checks).
+Last production readback: 2026-09-24 (public project-content deployment and snapshot).
 
-Hero Next is a standalone private Next.js site consuming the public Viselora
+Hero Next is a standalone public Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [zzzxc.com](https://zzzxc.com).
@@ -44,9 +44,23 @@ private automation Environment. A pre-publication signature audit found no
 token, private-key or auth-file patterns in the website's available Git history,
 eight project-workflow logs, four historical project artifacts, two production
 pages and their 13 loaded static assets. One cancelled run supplied incomplete
-logs; pattern scanning cannot prove the absence of every secret format. The
-website is still private. Public visibility, the post-publication
-cross-repository run and public-surface audit remain unverified. The historical
+logs; pattern scanning cannot prove the absence of every secret format.
+
+**Public-cloud verification:** the website is public and the automation
+repository remains private. The
+[post-publication run](https://github.com/agenticnoob/hero-next-automation/actions/runs/35892417823)
+detected the newly eligible website README (repository ID `1366880001`), passed
+both credential writebacks and Codex generation, and merged data-only
+[content PR #5](https://github.com/agenticnoob/hero-next/pull/5) after checks.
+The exact-SHA [main push](https://github.com/agenticnoob/hero-next/actions/runs/35893000837)
+completed Vercel Production deployment and public snapshot verification.
+The public `/projects` and `/projects/gh-1366880001` pages returned HTTP 200.
+A post-publication signature scan found no token, private-key or auth-file
+patterns in Git history through that content merge, 12 relevant public Actions
+logs, the four historical website artifacts, the new private automation
+artifacts, those public pages, or their 13 loaded static assets. One cancelled
+historical run still has incomplete logs; this scan checks known credential
+patterns and is not proof against every possible secret format. The historical
 records below describe the prior single-repository workflow.
 
 ## Code structure and responsibility boundaries (2026-09-22)
