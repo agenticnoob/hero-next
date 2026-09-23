@@ -1,7 +1,7 @@
 # Current Status
 
-Last verified locally: 2026-09-22 (code structure and project navigation refactor).
-Last production readback: 2026-09-22 (project directory HTTP and rendered content).
+Last verified locally: 2026-09-23 (automation migration checks and status docs).
+Last production readback: 2026-09-23 (project-content deployment and public snapshot).
 
 Hero Next is a standalone private Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -10,24 +10,44 @@ Production: [zzzxc.com](https://zzzxc.com).
 
 ## Two-repository project automation migration (2026-09-23)
 
-**Implemented locally:** the website checkout removes the active subscription-auth
-`projects-sync.yml`, Codex files, authentication helper and publisher. It keeps
-scanner/data validation and adds a secret-free content PR check. The separate local
-`hero-next-automation` checkout contains the schedule, trusted prompt/schema,
+**Implemented and merged:** the website no longer has an active subscription-auth
+`projects-sync.yml`, Codex runner, authentication helper or publisher. It keeps
+scanner/data validation and a secret-free content PR check. The private
+`hero-next-automation` repository owns the schedule, trusted prompt/schema,
 isolated runner, App-token boundaries and deployment-run tracking. The dedicated
-content branch is `automation/github-project-introductions`.
+content branch is `automation/github-project-introductions`; the private
+repository and both GitHub Apps are configured for their separate scopes.
 
 **Local verification:** website `npm run check` (54 files / 427 tests),
 `npm run build`, and `git diff --check` passed. Private automation `npm run check`
 (39 tests) and Actionlint 1.7.12 for both repositories' workflows passed.
-The private [automation repository](https://github.com/agenticnoob/hero-next-automation)
-has been created; its schedule is gated by unset `PROJECT_SYNC_ACTIVE`.
-The two dedicated GitHub Apps, Environment secrets and dedicated login are not yet
-configured; the new flow has not had a real cloud run. No claim of private-cloud
-or post-publication verification is made here. The website remains private, and
-its old secrets must stay in place until the new private run succeeds and their
-exact deletion is reported. The historical records below describe the prior
-single-repository workflow.
+**Private-cloud verification:** `PROJECT_SYNC_ACTIVE=true`. The
+[changed-source run](https://github.com/agenticnoob/hero-next-automation/actions/runs/35823252151)
+passed source collection, Environment-only login restoration, Session-store App
+preflight writeback, Codex generation, container cleanup, post-generation
+writeback, full candidate checks/build, and exact-head merge of
+[content PR #3](https://github.com/agenticnoob/hero-next/pull/3). That PR changed
+only `data/projects.json`. Its merge produced the exact-SHA
+[normal main push](https://github.com/agenticnoob/hero-next/actions/runs/35823641058);
+`journal-build.yml` completed Vercel Production deployment and public snapshot
+verification. The [unchanged follow-up](https://github.com/agenticnoob/hero-next-automation/actions/runs/35823903063)
+passed collection with `generate` and `review` skipped. This confirms the
+no-change path does not call Codex; it does not test token rotation under forced
+expiry.
+
+**Credential cleanup and public-readiness:** the old `CODEX_AUTH_JSON` and
+`CODEX_AUTH_WRITE_TOKEN` were removed from the website's `project-content`
+Environment after reporting their exact scope. That Environment now has no
+secrets; the website has only its deployment and secret-free content-check
+workflows. The dedicated login and Session-store App secrets remain only in the
+private automation Environment. A pre-publication signature audit found no
+token, private-key or auth-file patterns in the website's available Git history,
+eight project-workflow logs, four historical project artifacts, two production
+pages and their 13 loaded static assets. One cancelled run supplied incomplete
+logs; pattern scanning cannot prove the absence of every secret format. The
+website is still private. Public visibility, the post-publication
+cross-repository run and public-surface audit remain unverified. The historical
+records below describe the prior single-repository workflow.
 
 ## Code structure and responsibility boundaries (2026-09-22)
 
