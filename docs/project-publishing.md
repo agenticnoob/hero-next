@@ -10,10 +10,12 @@ remain independent of generated directory entries.
 
 ## Current state
 
-This is the migration contract. See [STATUS.md](./STATUS.md) for which cloud steps
-have actually passed. Do not make `hero-next` public until the private cloud run,
-no-change run, credential cleanup, and a review of Actions logs, artifacts and Git
-history are complete.
+The private-cloud changed-source run, no-change follow-up, credential cleanup,
+and pre-publication audit have passed. `PROJECT_SYNC_ACTIVE=true`; the old
+website Environment contains no subscription secrets. See [STATUS.md](./STATUS.md)
+for run links and verification limits. The website remains private until its
+owner changes visibility; the post-publication cross-repository run and
+public-surface audit have not yet happened.
 
 ## Trust and permissions
 
