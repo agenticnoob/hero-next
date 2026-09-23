@@ -1,215 +1,122 @@
 # GitHub project publishing
 
-GitHub-hosted Actions performs the daily scan and optional Codex generation. No
-desktop Codex session, laptop, home server, local scheduler or database is needed.
-The website reads the committed `data/projects.json`; visitors never call GitHub
-or a model. The four manually written cases remain separate and retain their media.
+`hero-next` serves committed `data/projects.json` and owns the public-project scanner,
+content validator, curated cases, media, and production workflow. Its active workflows
+never read a Codex subscription login. The private
+[`hero-next-automation`](https://github.com/agenticnoob/hero-next-automation) repository
+owns the daily schedule, trusted prompt, output schema, pinned Docker image, login
+lifecycle, PR publisher, and their tests. The four curated cases and manual ordering
+remain independent of generated directory entries.
 
-## Activate with a Codex subscription
+## Current state
 
-The content generator uses ChatGPT-managed Codex authentication and the subscription's
-usage limits. It does not use an OpenAI API key. GitHub Actions usage is separate and
-remains subject to the GitHub account's minutes and storage limits.
+This is the migration contract. See [STATUS.md](./STATUS.md) for which cloud steps
+have actually passed. Do not make `hero-next` public until the private cloud run,
+no-change run, credential cleanup, and a review of Actions logs, artifacts and Git
+history are complete.
 
-The dedicated `hero-next-codex-auth-writeback` token is restricted to `hero-next`
-with Environments read/write and Metadata read. It expires on **2026-12-21**;
-replace `CODEX_AUTH_WRITE_TOKEN` in `project-content` before that date.
+## Trust and permissions
 
-1. Keep this website repository **private**. The workflow refuses public repositories.
-   Public source repositories are read as data; the authenticated job belongs to this
-   private website repository.
-2. Create a GitHub environment named **project-content** in this repository. Restrict
-   its deployment branches to **main**. Use a GitHub plan that supports environment
-   secrets for private repositories. Required reviewers on this environment would
-   require approval for each generation; leave them unset for unattended operation.
-3. Create a fine-grained GitHub personal access token, restricted to this repository,
-   with **Environments: Read and write** (and implicit Metadata read). Store it in
-   that environment as **CODEX_AUTH_WRITE_TOKEN**. It only manages the saved login;
-   it does not need Contents write or Pull requests write. Set an expiration and
-   replace it before expiry. The normal `GITHUB_TOKEN` cannot update these secrets.
-4. Make a **separate Codex login session** for this workflow and store its `auth.json`
-   as the environment secret **CODEX_AUTH_JSON**, following the bootstrap below.
-   Never reuse the desktop/CLI's live auth file or use this session in another job.
-   Neither secret belongs at repository scope: environment secrets are loaded when
-   the generation job starts, after the workflow concurrency lock, so queued runs
-   receive the newly refreshed login.
-5. In **Settings → Actions → General → Workflow permissions**, enable **Allow
-   GitHub Actions to create and approve pull requests**. This workflow creates and merges its validated data-only PRs
-   using the job-scoped token. It does not approve arbitrary PRs. Organization policy may restrict this setting.
-6. Publish these changes to the default branch; scheduled workflows only run there.
-   With `topic: null`, the scan automatically discovers owned public repositories,
-   including newly created ones. To opt into manual selection instead, set `topic`
-   to `portfolio`; matching topics or full `agenticnoob/name` entries in `include`
-   then select repositories. Forks, archived, disabled and private source repositories
-   remain excluded in either mode.
-7. Run **Publish GitHub project content** from Actions once. Check generation,
-   credential writeback, automatic merging and the dispatched production run. An unchanged
-   or empty source selection tests only scanning, not subscription authentication.
+| App                       | Installed only on                  | Repository permissions                                                                  | Secret location                                                                                                      |
+| ------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `hero-next-publisher`     | `agenticnoob/hero-next`            | Contents read/write; Pull requests read/write; Checks read; Actions read; Metadata read | Automation repository Actions repository secrets: `HERO_APP_ID`, `HERO_APP_PRIVATE_KEY`                              |
+| `hero-next-session-store` | `agenticnoob/hero-next-automation` | Environments read/write; Metadata read                                                  | Automation repository `project-content` Environment secrets: `SESSION_STORE_APP_ID`, `SESSION_STORE_APP_PRIVATE_KEY` |
 
-### One-time login bootstrap
+Actions read is required to identify the `journal-build.yml` run with `event=push`,
+match its merge SHA and wait for its final conclusion. Neither App has Actions write,
+Secrets, Administration, or access to the other App's repository. The Publisher App
+never receives subscription authentication. Its installation token is created separately
+in the `collect` and `review` jobs, restricted to `hero-next`. The Session-store App
+token is created only in `generate`, restricted to `hero-next-automation`, and only
+writes `CODEX_AUTH_JSON` in `project-content`. Neither token enters the Codex container.
 
-Use an up-to-date Codex CLI and an authenticated GitHub CLI. Run from this website
-repository on a trusted computer. The temporary directory isolates this session
-from the desktop login; the computer is only needed for this initial authorization.
+Create the `project-content` Environment in the private automation repository with
+**main only** and no required reviewers. Store `CODEX_AUTH_JSON` there as a third
+Environment secret; do not create repository-level copies of these three values.
+Keep the whole workflow serialized with `cancel-in-progress: false`. Environment
+secrets are read when `generate` actually starts, after queued runs have waited.
+The repository variable `PROJECT_SYNC_ACTIVE` must be `true` to allow collection;
+leave it unset while installing the Apps and moving the old workflow.
 
-```bash
-project_auth_dir=$(mktemp -d "${TMPDIR:-/tmp}/hero-project-auth.XXXXXX")
-CODEX_HOME="$project_auth_dir" codex -c 'cli_auth_credentials_store="file"' login
-node --input-type=module - "$project_auth_dir/auth.json" <<'NODE'
-import { readFile } from 'node:fs/promises';
-import { validateManagedAuth } from './scripts/project-auth.mjs';
-validateManagedAuth(await readFile(process.argv[2], 'utf8'));
-console.log('Dedicated subscription login validated; no credentials printed.');
-NODE
-```
+The dedicated Hero Next login uses `codex -c 'cli_auth_credentials_store="file"'
+login --device-auth` in a new temporary `CODEX_HOME`. Never copy a desktop login,
+another project's `auth.json`, or an API key. Before upload, validate it with the
+private automation repository's `scripts/project-auth.mjs` validator: `auth_mode`
+`chatgpt`, nonempty access/refresh/id tokens and `account_id`, no `OPENAI_API_KEY`,
+and at most 40 KB. Upload directly from the temporary file through `gh secret set
+CODEX_AUTH_JSON --repo agenticnoob/hero-next-automation --env project-content <
+auth.json`; do not print it or send it through chat. Remove that temporary login
+only after upload succeeds. Do not log out the uploaded session.
 
-After successful login and validation, upload directly through stdin. Do not print
-or paste the file into chat. GitHub CLI encrypts the value before sending it.
+A changed-source run restores the Environment secret, creates a Session-store App
+token, and writes the unchanged auth file back before any Codex call. A failed
+preflight stops generation. Codex 0.155.1 runs `gpt-5.6-sol` at medium reasoning
+with read-only sandboxing, disabled shell/web/code mode/subagents, in a disposable
+unprivileged Docker container. It mounts only prompt, schema, a dedicated auth
+directory and model-output directory; it receives neither checkout nor GitHub token.
+After container shutdown, an `always()` step writes the possibly refreshed login
+back. Each write is limited to three attempts. Malformed, oversized, symlinked or
+account-switched files are rejected. Child stderr is reduced to fixed diagnostic
+codes; raw token-bearing errors are not logged. Failed writeback blocks the output
+artifact and PR. The workflow never calls an OAuth refresh endpoint itself.
 
-```bash
-gh secret set CODEX_AUTH_JSON --repo agenticnoob/hero-next --env project-content < "$project_auth_dir/auth.json"
-```
+## Source and publication contract
 
-Only after the upload succeeds, remove that dedicated temporary login directory:
+The scan runs daily at 02:43 UTC (10:43 Asia/Shanghai) and supports manual dispatch.
+It discovers owned public, non-fork, non-archived repositories with nonempty README
+files. The numeric GitHub repository ID is the stable identity. README blob, name,
+description, language and topics form the source digest, so code-only commits do not
+call Codex. Newly eligible sources and changed README files are processed; missing
+or private sources stay published until deliberately removed in a reviewed change.
+The scan handles at most ten changes and 180 KB of README input per run. Source
+README text is untrusted and is never executed. The model returns schema-constrained
+bilingual content; trusted `scripts/sync-projects.mjs` supplies real repository IDs,
+names and URLs. Only `data/projects.json` can be changed by automation.
 
-```bash
-rm -rf -- "$project_auth_dir"
-```
+The stable PR branch is `automation/github-project-introductions`. An existing open
+content PR is loaded as a data blob and revalidated without running Codex or creating
+another PR. The private review job applies generated content in a trusted main
+checkout, runs `npm run check`, `npm run build`, `git diff --check`, and verifies the
+changed-file scope. The website's secret-free `project-content-check.yml` performs
+the same gates on the PR. Publication waits for every check run to pass. The trusted
+publisher checks bot author, branch, base, file mode, exact content, unchanged
+published data, and checked head SHA immediately before squash merge. A failure
+leaves the PR and run logs for diagnosis.
 
-Do not run `codex logout` on the copied session: it is now owned by the cloud job.
-No laptop, desktop application or home server needs to stay running afterward.
+The Publisher App merge creates a normal `hero-next/main` push. The private workflow
+waits for `journal-build.yml` with `event=push` and the exact merge SHA, then requires
+a successful conclusion. That production workflow builds with the real journal,
+deploys prebuilt output to Vercel Production and verifies the public snapshot. A
+started run is never reported as a completed deployment. The synthetic journal used
+for candidate checks is never deployed.
 
-The default `topic: null` needs no tag maintenance for new public projects. A local
-scan on 2026-09-22 found four eligible projects; missing READMEs are skipped. The
-config excludes existing manual cases by immutable repository id:
-`1272434230` (Viselora's `dom-webgl-workspace`) and `1312260600` (SyringeMeter).
-The other manual source repositories were outside that owned-public inventory.
-If another manual case becomes eligible, add its id to `excludeIds` to avoid
-duplicate copy.
+## Activation and public-readiness sequence
 
-## Operation
-
-The schedule is 02:43 UTC daily (10:43 Asia/Shanghai), with manual dispatch available.
-GitHub schedules can be delayed. Each run follows pagination for owned public repos,
-pins the default branch commit and reads that commit's README. A digest covers the
-README blob, repository name, description, topics and language. Code-only commits
-do not call the model again. An id-based `gh-<repository id>` URL survives renames.
-
-At most ten changed projects and 180 KB of README source are generated per run.
-Individual READMEs are limited to 120 KB. Unchanged entries and source
-metadata retain their previous values. Additional changes follow on the next run.
-An open `axmorf/project-content` PR skips scanning and generation; the workflow instead
-loads only its data blob into the current trusted main checkout, revalidates it, then
-merges it if all gates pass. It never checks out or executes code from that PR. This
-also resumes earlier manual-review PRs without spending another model call. A failed
-candidate remains open for diagnosis; closing it permits a fresh proposal. Rejected
-content will be proposed again unless its source is excluded or corrected.
-
-README and description text are untrusted input. A separate generation job restores
-subscription auth only when the scan found changes. Codex CLI 0.155.1 runs with
-`gpt-5.6-sol` and explicit `model_reasoning_effort="medium"`, a fixed prompt,
-structured output and read-only sandboxing in a disposable,
-unprivileged Docker container. Shell, web search, code mode and subagents are disabled.
-The container receives only the prompt, schema, dedicated auth directory and output
-directory; it does not mount the checkout, Docker socket, GitHub token or deployment
-credentials. The Node base image is digest-pinned and the CLI version is fixed.
-The runtime explicitly installs and checks the system CA bundle; the slim Node base
-removes it, while Codex's native HTTPS client requires it to verify server certificates.
-Raw model stdout/stderr are suppressed because they could include newly rotated tokens.
-The runner reports only fixed diagnostic categories (for example TLS, authorization,
-rate-limit, stream-retry or timeout); these are troubleshooting hints, not raw errors.
-It emits only numeric ids and plain bilingual text. A fresh job independently checks
-ids, fields, bounds, locale structure and the input digest before composing trusted
-GitHub URLs. Only `data/projects.json` can enter the automated PR. No README HTML,
-remote scripts, images, arbitrary URLs or source repository code are executed.
-
-The review job runs `npm run check` and `npm run build` before opening the PR, using
-a synthetic journal fixture solely for that build. The fixture is gitignored and
-never deployed. This pipeline does not depend on a follow-up PR check. Before
-merging, it requires an open, non-draft, same-repository PR authored by GitHub Actions
-on the dedicated content branch, changing only the regular `data/projects.json` file.
-It rejects deleted entries, conflicting published-data changes, an advanced main
-revision, or a changed PR head/content. GitHub receives the exact checked head SHA
-with the squash-merge request; repository protection rules are not bypassed.
-
-A bot merge using `GITHUB_TOKEN` does not trigger ordinary push workflows. The review
-job therefore has scoped `actions: write` permission and explicitly dispatches
-`journal-build.yml` on main after a successful merge. The production workflow fetches
-the real journal, repeats checks/build, rejects superseded revisions and verifies the
-public journal after deployment. PRs remain as an audit trail; manual approval is no
-longer required. Automatic checks validate structure and builds, not the factual
-accuracy of every generated sentence.
-
-If merging fails, the next run revalidates the pending PR without generating again.
-If deployment dispatch fails after a merge, the sync run fails visibly: rerun **Deploy
-journal to production** on main; the existing daily production schedule also provides
-a fallback. A dispatched run is not itself proof of a completed deployment: follow
-its result from the link in the sync summary. No additional PAT or Vercel credential
-is exposed to the content workflow.
-
-Missing/empty README sources are skipped with a run log; their old entries survive.
-API errors, oversized README files, invalid model output, stale website revisions
-and failed checks stop before a PR is published. Existing committed content remains
-available. Changes are written atomically after complete validation. Disappearing,
-private, archived or newly excluded repositories are never automatically deleted:
-remove their snapshot entries in a reviewed change when intentional. This means
-making a repository private does not retract text previously published on the site.
+1. Land the private automation code while `PROJECT_SYNC_ACTIVE` is unset; remove the
+   old active `projects-sync.yml` from `hero-next` and land its site PR.
+2. Create the two dedicated Apps and store only the secrets listed above. Initialize
+   a separate Hero Next ChatGPT-managed device login. Set `PROJECT_SYNC_ACTIVE=true`.
+3. Run a changed-source private cloud scan and inspect preflight writeback, Codex,
+   post-generation writeback, content PR, checks, exact-head merge, normal main push,
+   completed production workflow and Vercel Production receipt.
+4. Run a second unchanged scan and confirm `generate` and `review` skip without a
+   model call. A no-change run does not validate subscription authentication.
+5. Report exact legacy targets and evidence before removing `CODEX_AUTH_WRITE_TOKEN`,
+   `CODEX_AUTH_JSON`, and old `project-content` Environment secrets from `hero-next`.
+   Confirm no active website workflow can read the subscription login.
+6. Only then change `hero-next` to public. Manually run the private automation again,
+   verify the cross-repository flow, and audit public Actions, artifacts, logs, Git
+   history and build output for credentials.
 
 ## Local maintenance
 
+The website scanner is still usable directly. From the website checkout:
+
 ```bash
+PROJECT_PROMPT_FILE=../hero-next-automation/codex/projects-prompt.md node scripts/sync-projects.mjs scan /tmp/hero-project-sync
 npm run check:projects
-node scripts/sync-projects.mjs scan /tmp/hero-project-sync
 ```
 
-The scan is read-only and uses optional `GH_TOKEN` for GitHub API rate limits. It
-writes temporary `plan.json` and `prompt.md`, never modifies the snapshot. To test
-composition, provide schema-conforming `generated.json` alongside the plan and run:
-
-```bash
-node scripts/sync-projects.mjs apply /tmp/hero-project-sync
-npm exec -- prettier --write data/projects.json
-```
-
-Review the resulting diff and run the full checks. The final data validator is
-`scripts/project-data.mjs`; its `.d.mts` declaration is shared with the frontend.
-Actions, the container base and Codex CLI are pinned; update them deliberately and
-rerun the checks. Model availability must also be checked when updating the CLI.
-
-## Credential refresh and failure recovery
-
-The workflow is serialized (`cancel-in-progress: false`). Before running Codex,
-`project-auth.mjs` validates the login and verifies writeback by saving the current
-value to the environment secret. The GitHub write token is only exposed to the host
-writeback steps, never to the model container.
-
-Codex handles its own refresh during a normal generation call. After the container
-has stopped, an `always()` step saves the current `auth.json`, even if generation
-failed after rotating tokens. Transient write failures are retried three times.
-A failed save fails the job and blocks the content artifact and PR. Temporary auth,
-model state and logs are never cached or uploaded; the final artifact names only
-`plan.json` and `generated.json`. Local temporary files are removed afterward.
-
-No changes means no Codex startup, login restore, refresh request or model call.
-There is no paid/model heartbeat to keep the session alive. Long inactivity, token
-revocation, forced cancellation, loss of a runner during rotation, or an expired
-GitHub write token may require manual recovery. If the saved login no longer works,
-repeat the dedicated login bootstrap while no workflow is running. Do not repeatedly
-rerun an old seed or copy the desktop's current session. Renew a failed GitHub token
-in the environment before generating again.
-
-The [first successful full cloud run](https://github.com/agenticnoob/hero-next/actions/runs/35648295114)
-verified subscription generation in the container, login persistence, content validation,
-the full quality gate, the build and content PR creation. A repeat scan against the
-generated candidate returned zero changes. Token expiry was not forced; the first run
-does not prove long-term unattended refresh. Current publication and verification
-details live in [STATUS.md](./STATUS.md).
-
-Primary documentation:
-[Codex reasoning configuration](https://learn.chatgpt.com/docs/config-file/config-reference#model_reasoning_effort),
-[Codex subscription auth in CI](https://learn.chatgpt.com/docs/auth/ci-cd-auth),
-[GitHub secret loading times](https://docs.github.com/en/actions/reference/security/secrets#when-github-actions-reads-secrets),
-[environment secret write permissions](https://docs.github.com/en/rest/actions/secrets#create-or-update-an-environment-secret),
-[GitHub schedules](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule),
-[token-triggered workflow limits](https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-when-your-workflow-runs/triggering-a-workflow#triggering-a-workflow-from-a-workflow),
-[workflow permissions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
+The scanner reads only public source data and writes a temporary plan/prompt. The
+private repository holds the prompt, schema, authentication and publication tests.
+No local Codex session is needed for routine scheduled runs.

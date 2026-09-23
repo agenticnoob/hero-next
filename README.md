@@ -16,12 +16,14 @@ room behind a native reading dialog; opening or refreshing its URL renders a
 standalone page. The shared root state keeps one theme, locale and room selection.
 
 Chapter three also links to `/projects`, a bilingual directory containing the four
-selected cases and generated public projects. GitHub-hosted Actions discovers owned
-public repositories daily, uses Codex only for changed README inputs, and proposes a
-content-only PR. Passing updates automatically merge and trigger the existing
-production pipeline; failed checks stop publication.
-See [project publishing](./docs/project-publishing.md) for subscription authentication,
-selection rules, Actions permissions and activation steps. No local computer is required.
+selected cases and generated public projects. The private `hero-next-automation`
+repository discovers owned public repositories daily, uses a dedicated Codex login
+only for changed README inputs, and proposes a
+content-only PR. Passing updates merge through a scoped Publisher App and trigger
+`journal-build.yml` through a normal `main` push; failed checks stop publication.
+See [project publishing](./docs/project-publishing.md) for the two-repository
+permission boundary, selection rules and activation steps. Routine runs need no
+local computer.
 
 The site has four chapters: self, AI/philosophy axioms, public builds and public
 channels, followed by the daily journal. Chinese and English share typed content

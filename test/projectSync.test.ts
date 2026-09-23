@@ -150,6 +150,28 @@ describe("public project synchronization", () => {
     ).toHaveLength(1);
   });
 
+  test("README changes regenerate the existing repository ID", async () => {
+    const snapshot = mergeGenerated(
+      empty,
+      await collectProjects(config, empty, apiFor()),
+      generated,
+    );
+    const api = apiFor([repo], "# Demo\nUpdated README");
+    const original = api.getMockImplementation()!;
+    api.mockImplementation(async (endpoint) => {
+      const response = await original(endpoint);
+      return endpoint.includes("/readme?")
+        ? { ...response, sha: "b".repeat(40) }
+        : response;
+    });
+    const changed = await collectProjects(config, snapshot, api);
+    expect(changed.projects).toHaveLength(1);
+    expect(changed.projects[0].id).toBe(42);
+    expect(mergeGenerated(snapshot, changed, generated).projects).toHaveLength(
+      1,
+    );
+  });
+
   test.each(["private", "fork", "archived", "disabled"])(
     "never imports %s repositories even when explicitly included",
     async (flag) => {

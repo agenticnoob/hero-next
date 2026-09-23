@@ -270,8 +270,11 @@ async function main() {
       githubClient(process.env.GH_TOKEN),
     );
     await writeJson(path.join(workdir, "plan.json"), plan);
+    if (!process.env.PROJECT_PROMPT_FILE) {
+      throw new Error("PROJECT_PROMPT_FILE is required for a scan");
+    }
     const instructions = await readFile(
-      ".github/codex/projects-prompt.md",
+      process.env.PROJECT_PROMPT_FILE,
       "utf8",
     );
     await writeFile(
