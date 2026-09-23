@@ -11,11 +11,12 @@ remain independent of generated directory entries.
 ## Current state
 
 The private-cloud changed-source run, no-change follow-up, credential cleanup,
-and pre-publication audit have passed. `PROJECT_SYNC_ACTIVE=true`; the old
-website Environment contains no subscription secrets. See [STATUS.md](./STATUS.md)
-for run links and verification limits. The website remains private until its
-owner changes visibility; the post-publication cross-repository run and
-public-surface audit have not yet happened.
+and pre-publication audit passed. The website is now public, and the private
+automation's post-publication changed-source run passed generation, content PR
+checks and merge, normal-push Vercel Production deployment, and public snapshot
+verification. A public-surface credential signature audit also passed within its
+documented scope. `PROJECT_SYNC_ACTIVE=true`; the old website Environment has
+no subscription secrets. See [STATUS.md](./STATUS.md) for run links and limits.
 
 ## Trust and permissions
 
