@@ -115,9 +115,9 @@ export const heroChapterContent = {
             body: "许多工具是我在与 AI 讨论、查阅官方资料和尝试开源项目时逐步认识的。我先比较可选路径，再用小任务试验；效果不合适就调整。我并不精通每一种工具，但愿意深入关键环节，持续更新自己的判断。",
           },
           {
-            label: "协作 / 工程习惯",
-            title: "让 Agent 接得上，也让结果经得起检查。",
-            body: "我在独立的 Mac 用户环境与专用 Ubuntu 主机上开展 Agent 工作，通过 Tailscale 远程连接。把反复使用的方法整理为 Skills，维护代码边界、项目文档和验证流程；AI 参与执行，我负责目标、取舍与最终验收。",
+            label: "协作 / 独立判断",
+            title: "让人表达意图，让 Agent 组织执行。",
+            body: "6 月，我已在 Mac → Ubuntu 工作场景中设计并实践统一入口与分层执行：先与本地 Agent 讨论，再由它协调远端团队。后来 Dots 的产品方向与这一判断相呼应。我关心执行系统不断演进时，人的入口仍能保持清晰；目标、边界和最终验收由人掌握。",
           },
         ],
         closing:
@@ -164,9 +164,9 @@ export const heroChapterContent = {
             body: "I discover tools through conversations with AI, official documentation, and open-source experiments. I compare approaches and try small tasks before committing, changing direction when the results call for it. I don’t claim mastery of every tool; I learn the parts that matter and keep revising my judgment.",
           },
           {
-            label: "COLLABORATION / ENGINEERING",
-            title: "Give agents context. Give results a check.",
-            body: "I use a separate Mac user environment and a dedicated Ubuntu machine, connected remotely through Tailscale. I turn recurring methods into Skills and maintain code boundaries, project documentation, and verification steps. AI helps execute; I own the goals, tradeoffs, and final acceptance.",
+            label: "COLLABORATION / INDEPENDENT JUDGMENT",
+            title: "People express intent. Agents organize the work.",
+            body: "In June, I designed and tried a single entry agent coordinating a remote team in my Mac-to-Ubuntu workflow: discuss the goal locally, then let that agent coordinate execution. Dots later echoed this direction. I want a clear human entry point as the execution system evolves, with people retaining control over goals, boundaries, and final acceptance.",
           },
         ],
         closing:

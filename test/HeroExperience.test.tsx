@@ -368,7 +368,7 @@ describe("HeroExperience", () => {
       ).toBe("hidden");
       expect(
         host.querySelector(".hero-axioms__semantic")?.textContent,
-      ).toContain("为 Agent 设计可操作的软件");
+      ).toContain("一个理解人的入口，协调可演进的执行");
     } finally {
       act(() => root.unmount());
       progressStore.source.get.mockImplementation(() => 0);

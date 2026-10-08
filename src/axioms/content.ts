@@ -28,13 +28,13 @@ export const heroAxiomsArticles: readonly AxiomsArticle[] = [
     translations: {
       zh: {
         label: "命题二",
-        title: "为 Agent 设计可操作的软件",
-        body: "在视频生产项目里，我逐渐把输入、任务边界、产物和失败状态说明白。Agent 需要知道能改什么、如何检查、失败后从哪里继续。这是我对 Agent-first 的理解：把可操作的接口和清楚的状态纳入产品设计，同时让人能够观察、判断和接管。",
+        title: "一个理解人的入口，协调可演进的执行",
+        body: "2026 年 6 月，我从自己的 Mac → Ubuntu 协作需求出发，独立设计并实践统一入口与分层执行：先与本地 m-hermes 讨论目标，由它整理任务，再协调远端团队按自己的 Kanban 流程执行。6 月 2 日的原始对话中，我已明确区分入口 Agent 与远端协调者，要求由 Agent 承接交接，减少人工复制上下文和调度。OpenAI 于同年 9 月 29 日推出 Dots，官方说明它能够承接目标、协调后台 Agent、分派 Work / Codex 任务并带回结果；在这些协作设计上，与我此前的判断相呼应。我希望模型、工具和执行团队可以演进，而人仍能通过清晰的入口表达意图、保留边界和决定权。任务范围、验收条件与执行证据，是这套协作保持可靠的依据。",
       },
       en: {
         label: "PROPOSITION TWO",
-        title: "Design software agents can operate",
-        body: "In my video-production project, I have made inputs, task boundaries, artifacts, and failure states increasingly explicit. An agent needs to know what it may change, how to check it, and where to resume after failure. This is what agent-first means in my practice: usable interfaces and clear state, with people able to observe, judge, and take over.",
+        title: "One human entry point, an evolving execution system",
+        body: "In June 2026, I independently designed and tried a layered workflow for my Mac-to-Ubuntu work: discuss goals with the local m-hermes, let it prepare the task, then have it coordinate a remote team through that team's Kanban process. My June 2 conversations already distinguished the entry agent from the remote coordinator and asked agents to handle handoffs, reducing manual context copying and dispatch. OpenAI introduced Dots on September 29 that year. Its documentation describes taking on goals, coordinating background agents, delegating Work or Codex tasks, and returning results. Those collaboration choices echo my earlier judgment. I want models, tools, and execution teams to evolve while people retain a clear entry point, their intent, and decision authority. Task boundaries, acceptance criteria, and execution evidence make this collaboration accountable.",
       },
     },
   },
