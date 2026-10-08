@@ -1,12 +1,40 @@
 # Current Status
 
-Last verified locally: 2026-09-24 (post-publication status and checks).
-Last production readback: 2026-09-24 (public project-content deployment and snapshot).
+Last verified locally: 2026-10-08 (bilingual Agent collaboration profile and axiom copy).
+Last production readback: 2026-10-08 (bilingual Agent collaboration copy and public snapshot).
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## Agent collaboration profile and axiom copy (2026-10-08)
+
+The fourth profile section and the existing `agent-first` axiom now describe the
+June 2026 personal workflow: a local entry agent discusses goals and coordinates
+a remote team using Kanban. The axiom records the June 2 conversation evidence
+and compares this collaboration design with OpenAI's September 29 Dots launch.
+Chinese and English retain the same chronology and scope. The four profile
+sections, eight axiom IDs, layout and runtime ownership remain unchanged.
+
+Local `npm run check` passed on the publication worktree based on current `main`
+(54 files / 427 tests, zero-warning lint, formatting, both typechecks and the
+112-file standalone check), as did `npm run build` and `git diff --check`.
+The preceding local browser checks covered 1440×900 and 390×844, language
+switching and mobile reading with reduced motion. Sampled states retained one
+canvas and had no horizontal overflow or captured page/console errors.
+Screenshots remain outside Git; physical devices and GPU performance were not
+tested.
+
+Application commit `0bdb63fd4e018bcc1b731bb94dce9a94a55096cd` was pushed to
+`main`. Its [production run](https://github.com/agenticnoob/hero-next/actions/runs/37761636335)
+completed both production publication and public snapshot verification.
+Production Ego Lite at 1440×900 and 390×844 verified the exact Chinese/English
+profile title/body and axiom title/body against the committed copy, including
+language switching and mobile reduced motion. The new profile section and the
+complete Chinese mobile article were visually inspected. Sampled states retained
+one canvas, no horizontal overflow and no captured page/console errors.
+The documentation follow-up uses the same production pipeline.
 
 ## Two-repository project automation migration (2026-09-23)
 
