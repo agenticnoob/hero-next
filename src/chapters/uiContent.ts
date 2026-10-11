@@ -1,6 +1,7 @@
 import type { HeroLocale } from "../preferences/locale";
 
 type HeroInterfaceContent = {
+  readonly agentEntry: string;
   readonly projects: {
     readonly title: string;
     readonly hint: string;
@@ -28,6 +29,7 @@ type HeroInterfaceContent = {
 
 export const heroInterfaceContent = {
   zh: {
+    agentEntry: "Agent / 纯文本阅读",
     projects: {
       title: "项目空间",
       hint: "移向左右边缘，转向另一面。回到中央阅读。",
@@ -53,6 +55,7 @@ export const heroInterfaceContent = {
     },
   },
   en: {
+    agentEntry: "Agent / Plain-text reading",
     projects: {
       title: "Project space",
       hint: "Move to either edge to turn. Return to the center to read.",

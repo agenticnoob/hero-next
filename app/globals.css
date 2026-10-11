@@ -36,7 +36,8 @@ a {
 }
 
 .hero-space,
-.project-case {
+.project-case,
+.agent-directory {
   --hero-background: #c8c8c8;
   --hero-foreground: #424242;
   --hero-chapter-background: var(--hero-foreground);
@@ -234,6 +235,22 @@ a {
 
 .hero-controls .hero-locale {
   position: static;
+}
+
+.hero-agent-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.45rem 0.6rem;
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-underline-offset: 0.25em;
+}
+
+.hero-agent-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 .hero-theme-control {

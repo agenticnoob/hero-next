@@ -14,7 +14,7 @@ import {
 import { heroChapterDefinitions } from "../chapters/definitions";
 import { heroInterfaceContent } from "../chapters/uiContent";
 import type { HeroLocale } from "../preferences/locale";
-import { journalTrackConfig as config } from "./config";
+import { journalReadingPageSize, journalTrackConfig as config } from "./config";
 import { readJournalPanelOpacity, type JournalTravelParams } from "./effect";
 import type { HeroTextPaletteParams } from "../transition/textPaletteEffect";
 import {
@@ -200,7 +200,7 @@ export function HeroJournalRunway({
   readonly locale: HeroLocale;
   readonly reading?: boolean;
 }) {
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(journalReadingPageSize);
   const { entries, panels } = journal;
   const ui = heroInterfaceContent[locale].journal;
   const visibleEntries = reading ? entries.slice(0, limit) : entries;
@@ -240,7 +240,9 @@ export function HeroJournalRunway({
             <button
               type="button"
               className="hero-journal-reading__more"
-              onClick={() => setLimit((value) => value + 12)}
+              onClick={() =>
+                setLimit((value) => value + journalReadingPageSize)
+              }
             >
               {locale === "zh" ? "加载更早的记录" : "Load earlier entries"}
             </button>

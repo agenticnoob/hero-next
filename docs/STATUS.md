@@ -1,12 +1,61 @@
 # Current Status
 
-Last verified locally: 2026-10-08 (bilingual Agent collaboration profile and axiom copy).
+Last verified locally: 2026-10-11 (Agent reading entry, static Markdown and discovery).
 Last production readback: 2026-10-08 (bilingual Agent collaboration copy and public snapshot).
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
-Production source is `main`; local `axmorf/standalone` tracks `origin/main`.
+Production source is `main`; reviewed feature branches publish through the existing
+production workflow after integration with the current remote head.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## Agent reading entry and static exports (2026-10-11)
+
+**Implemented locally:** `/agent` and `/agent/en` render the public profile,
+axioms, project directory, public channels and latest 12 journal dates without
+depending on JavaScript. `/agent/zh` is a Chinese alias with `/agent` as its
+canonical. The homepage Agent link follows its selected language; directory
+language links use explicit URLs and do not create a second preference store.
+
+`/llms.txt` indexes bilingual Markdown overviews, every registered project and
+axiom, and complete monthly journal archives. All exports use the current
+content registries and the manifest-selected public journal snapshot, validated
+against both its SHA-256 and schema. Original Chinese journal events and all
+tools are preserved. Normal builds regenerate the static routes. Unknown
+languages, projects, articles and months return 404. Crawl discovery includes
+`/robots.txt`, `/sitemap.xml`, HTML `describedby` links and alternate Markdown
+links on the homepage and project pages. Canonicals use `https://zzzxc.com`.
+
+Localized HTML pages pre-render both supported locales and explicitly call
+`notFound()` for other values. They leave `dynamicParams` at its default to avoid
+Next 16.2.10's [known NoFallbackError logging issue](https://github.com/vercel/next.js/issues/90537);
+Markdown routes retain their build-time parameter allowlist. Unknown-language
+HTTP checks also verify that the server does not log this internal error.
+
+**Local verification:** `npm run check` passed (56 files / 460 tests,
+zero-warning lint, formatting, both typechecks and the 129-file standalone
+boundary), as did `npm run build` and `git diff --check`. React Doctor 0.9.17's
+changed-scope scan was 100/100 with no diagnostics. HTTP-only verification of
+the production build checked all 46 generated Markdown documents, every linked
+export, all 13 sitemap URLs, response content types, discovery metadata,
+production canonicals, unknown-route 404s and exclusion of private source
+metadata from the directory. These checks were repeated after integrating
+remote `main` at `532689f`, retaining its current nine-project catalog. Counts
+describe the local journal snapshot, not the production data revision.
+
+Ego Lite's preceding local checks covered 1440×900 and 390×844: home Agent
+link → directory → English → standalone case, with no open exhibition dialog on
+the standalone case. Mobile reduced motion retained one canvas on home and
+zero in the directory; controls did not overlap and sampled pages had no
+horizontal overflow or captured page/console errors. With page JavaScript
+disabled, native browser input verified home → directory → English → journal
+anchor. The full directory remained readable at 320×740, with eight articles,
+eight projects, 12 recent dates and five monthly archives. Screenshots and the
+HTTP verification script remain outside Git. Physical devices, GPU performance
+and universal agent discovery were not verified. The browser checks used the
+pre-integration eight-project snapshot; the updated catalog passed the full
+automated and HTTP checks above. Production verification is recorded here after
+publication.
 
 ## Agent collaboration profile and axiom copy (2026-10-08)
 

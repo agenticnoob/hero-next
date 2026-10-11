@@ -10,6 +10,12 @@ remain independent of generated directory entries.
 
 ## Current state
 
+The website's project catalog also supplies `/agent`, `/agent/en`, `/llms.txt`
+and `/agent/{zh|en}/projects/{slug}.md`. Generated and curated projects share
+the same stable routes and bilingual content sources in these exports. A normal
+production build refreshes the Agent entry with each merged content snapshot;
+automation does not maintain another project description or publishing path.
+
 The private-cloud changed-source run, no-change follow-up, credential cleanup,
 and pre-publication audit passed. The website is now public, and the private
 automation's post-publication changed-source run passed generation, content PR

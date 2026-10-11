@@ -1,3 +1,5 @@
+export const journalReadingPageSize = 12;
+
 export const journalTrackConfig = {
   progressKey: "hero.journal.travel",
   slotCount: 16,

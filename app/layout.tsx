@@ -4,9 +4,10 @@ import "lenis/dist/lenis.css";
 import "./globals.css";
 import "../src/projects/showcase.css";
 import { HeroSiteStateProvider } from "../src/experience/HeroSiteState";
+import { heroSiteOrigin } from "../src/shared/site";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hero-next-jade.vercel.app"),
+  metadataBase: new URL(heroSiteOrigin),
   title: "noobli — Agent-first builder",
   description: "一个关于自我、AI 公理、开放构建与公共联结的四章节个人站。",
 };
@@ -25,6 +26,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN">
+      <head>
+        <link rel="describedby" href="/llms.txt" type="text/plain" />
+      </head>
       <body>
         <HeroSiteStateProvider>
           {children}

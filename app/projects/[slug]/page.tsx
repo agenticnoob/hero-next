@@ -10,7 +10,6 @@ const syringeMeterMetadata: Metadata = {
   title: "SyringeMeter — 从画面到可信读数 | noobli",
   description:
     "一个本地针筒视觉测量项目的完整案例：真实演示、连续容量测量、实时曲线、CSV 记录与桌面应用交付。",
-  alternates: { canonical: "/projects/syringe-meter" },
   openGraph: {
     title: "SyringeMeter — 从画面到可信读数",
     description: "观看演示，阅读从视觉测量到桌面交付的完整工程案例。",
@@ -30,13 +29,22 @@ export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
   const slug = await readProjectSlug(params);
-  if (slug === "syringe-meter") return syringeMeterMetadata;
+  const alternates = {
+    canonical: `/projects/${slug}`,
+    types: {
+      "text/markdown": [
+        { url: `/agent/zh/projects/${slug}.md`, title: "中文项目正文" },
+        { url: `/agent/en/projects/${slug}.md`, title: "English case study" },
+      ],
+    },
+  };
+  if (slug === "syringe-meter") return { ...syringeMeterMetadata, alternates };
   const copy = projectCatalog.getCase(slug, "zh")!;
   const title = `${copy.title} — ${copy.subtitle}`;
   return {
     title: `${title} | noobli`,
     description: copy.introduction,
-    alternates: { canonical: `/projects/${slug}` },
+    alternates,
     openGraph: { title, description: copy.introduction, type: "article" },
   };
 }

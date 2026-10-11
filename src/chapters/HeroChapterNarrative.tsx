@@ -3,6 +3,7 @@ import { useHeroViewport } from "../shared/useHeroViewport";
 import { HeroChapterNavigation } from "./HeroChapterNavigation";
 
 import { getHeroChapterContent, heroSiteContent } from "./content";
+import { heroInterfaceContent } from "./uiContent";
 import {
   getHeroChapterDefinition,
   heroChapterCount,
@@ -55,6 +56,14 @@ export function HeroChapterNarrative({
   return (
     <>
       <div className="hero-controls">
+        <a
+          className="hero-agent-link"
+          href={locale === "zh" ? "/agent" : "/agent/en"}
+          aria-label={heroInterfaceContent[locale].agentEntry}
+          title={heroInterfaceContent[locale].agentEntry}
+        >
+          Agent
+        </a>
         {reading && (
           <button
             type="button"

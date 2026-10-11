@@ -3,6 +3,19 @@
 本文件描述当前实现。验证范围与发布记录由 [STATUS.md](./STATUS.md) 管理。
 移动端改造前的细节和历史截图证据保存在 [历史设计记录](./archive/2026-09-13-pre-mobile-visual-design.md)。
 
+## Agent 内容入口
+
+首页右上角的 `Agent` 链接按当前语言前往 `/agent` 或 `/agent/en`。入口为服务端渲染的
+自然高度阅读页面，使用普通标题、段落、目录锚点和语言链接；禁用 JavaScript 仍可阅读和导航。
+页面沿用现有两种语义颜色变量，不创建 WebGL runtime、canvas、动画或新的主题/语言状态。
+URL 明确指定阅读语言，独立于首页持久化的语言选择。
+
+目录复用公开个人介绍、理念文章、项目 catalog 和公共渠道，展示最新 12 个日志日期；历史
+日志按月提供完整 Markdown，保留原始中文、全部工具和事件正文。项目 Markdown 保留正文、
+要点、流程与公开链接，演示媒体仍可从项目原页面查看。`/llms.txt` 提供内容索引，首页和
+项目详情声明对应的 Markdown alternate，所有 HTML 页面通过 `describedby` 链接说明索引位置。
+所有入口随既有构建更新，不维护另一套公开文案，也不增加访问者写入或后台任务。
+
 ## 响应式边界
 
 `src/shared/layoutTokens.ts` 的 `heroReadingQuery` 与 CSS 使用同一边界：

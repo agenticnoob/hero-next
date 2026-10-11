@@ -64,6 +64,26 @@ throughout the page; tetrahedron holds are disabled there. Both commit to the sa
 store and persist across refreshes. Changing to a reading layout cancels a pending hold. The optimized
 profile GLB stays below 5 MB; its original asset remains outside the repository.
 
+## Agent reading entry
+
+`/agent` (Chinese) and `/agent/en` (English) provide a server-rendered directory
+of the public profile, axioms, all projects, public channels and the latest 12
+journal dates. Navigation and content remain readable without JavaScript. The
+homepage's Agent link follows the selected language.
+
+`/llms.txt` indexes `/agent/{zh|en}/index.md`, individual
+`/agent/{locale}/projects/{slug}.md` and `/agent/{locale}/axioms/{id}.md`
+documents, and complete `/agent/{locale}/journal/YYYY-MM.md` archives. Journal
+events retain their original Chinese in either language. Markdown responses use
+`text/markdown; charset=utf-8`; unknown languages and documents return 404.
+
+These routes are generated during the normal build from the existing typed
+content, project catalog and validated public journal snapshot. They do not
+maintain separate profile or project copy. Sync the journal before building as
+described below. `/robots.txt`, `/sitemap.xml`, production canonicals and alternate
+Markdown links support discovery; `llms.txt` remains an optional convention, so
+the HTML directory and ordinary homepage link are also available.
+
 ## Run
 
 Use Node.js 22.x (the exact local version is in `.node-version`) and npm 10. From this directory:
@@ -181,6 +201,8 @@ creates separate stores per mounted site.
 
 | Responsibility                                                                     | Path                                                                                                                                                                                                                                            |
 | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agent HTML directory, Markdown serialization and document registry                 | `src/agent/`, `app/agent/`, `app/llms.txt/route.ts`                                                                                                                                                                                             |
+| Production origin, crawl policy and sitemap                                        | `src/shared/site.ts`, `app/robots.ts`, `app/sitemap.ts`                                                                                                                                                                                         |
 | Page/runtime composition and subscriptions                                         | `src/experience/`                                                                                                                                                                                                                               |
 | Chapter identity, signals, face, and atlas mapping                                 | `src/chapters/definitions.ts`                                                                                                                                                                                                                   |
 | Chapter content, semantic composition, and locale control                          | `src/chapters/content.ts`, `src/chapters/contentModel.ts`, `src/chapters/uiContent.ts`, `src/chapters/HeroChapterNarrative.tsx`, `src/chapters/HeroChapter.tsx`, `src/chapters/HeroLocaleControl.tsx`, `src/chapters/HeroChapterNavigation.tsx` |
