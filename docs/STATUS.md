@@ -1,7 +1,7 @@
 # Current Status
 
 Last verified locally: 2026-10-11 (Agent reading entry, static Markdown and discovery).
-Last production readback: 2026-10-08 (bilingual Agent collaboration copy and public snapshot).
+Last production readback: 2026-10-11 (Agent entry, bilingual static exports and public snapshot).
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
 `0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -11,7 +11,7 @@ Production: [zzzxc.com](https://zzzxc.com).
 
 ## Agent reading entry and static exports (2026-10-11)
 
-**Implemented locally:** `/agent` and `/agent/en` render the public profile,
+**Implemented and published:** `/agent` and `/agent/en` render the public profile,
 axioms, project directory, public channels and latest 12 journal dates without
 depending on JavaScript. `/agent/zh` is a Chinese alias with `/agent` as its
 canonical. The homepage Agent link follows its selected language; directory
@@ -54,8 +54,40 @@ eight projects, 12 recent dates and five monthly archives. Screenshots and the
 HTTP verification script remain outside Git. Physical devices, GPU performance
 and universal agent discovery were not verified. The browser checks used the
 pre-integration eight-project snapshot; the updated catalog passed the full
-automated and HTTP checks above. Production verification is recorded here after
-publication.
+automated and HTTP checks above.
+
+**Production verification:** application commit
+`2fe0edee16d5b7fb5b4c535d961c302924bc4421` was pushed to `main`. Its
+[production run](https://github.com/agenticnoob/hero-next/actions/runs/38133000233)
+completed the quality gate, production build, publication, public snapshot
+verification and deployment receipt. Vercel Production deployment
+`dpl_78j54opzCLtRqyLhxRmE8iNKbdVi` is READY, records that exact application SHA
+and aliases `zzzxc.com` to the published build.
+
+HTTP readback of the formal domain verified all 48 Markdown documents and their
+internal links, all 13 sitemap URLs, content types, discovery metadata,
+production canonicals and unknown-route 404s. The production catalog contains
+nine projects and eight axioms. Six monthly archives in both language paths
+match every date, complete event and tool in the 142-entry public snapshot;
+the latest date is `2026-10-10`. Its source revision is
+`f763d2f6a1fc3e6b9e6fd8f010224984cd644c36` and its SHA-256 is
+`018041dfcbeb45e021939bfe510692eec20b288e5830494b26447f54874925e1`.
+The Agent directory does not expose source-revision or project-input metadata.
+
+Production Ego Lite at 1440×900 verified home language selection → Agent →
+English → a generated standalone case; the case has no open exhibition dialog.
+At 390×844, normal and explicitly active reduced-motion checks retained one
+canvas on home and zero in the directory. Sampled states had no horizontal
+overflow or captured page/console errors. With JavaScript disabled at 320×740,
+native browser input verified home → directory → English → journal anchor;
+all nine projects, eight axioms, 12 recent dates and six archives remained
+available. Desktop, mobile and no-JavaScript directory screenshots were visually
+inspected and remain outside Git. Physical devices and GPU performance remain
+unverified. A deployment-scoped Vercel runtime query over the preceding 30 minutes
+returned no error/fatal records; no external Drains are configured for this project.
+
+The documentation follow-up uses the same production pipeline and must complete
+publication and public snapshot verification before release closeout.
 
 ## Agent collaboration profile and axiom copy (2026-10-08)
 
