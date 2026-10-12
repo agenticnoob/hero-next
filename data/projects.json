@@ -302,63 +302,83 @@
       "slug": "gh-1366880001",
       "repository": "agenticnoob/hero-next",
       "url": "https://github.com/agenticnoob/hero-next",
-      "readmeSha": "6969f8d21cb8e05bd5e499c4bf477f15a108bfe1",
-      "sourceCommit": "c2bdc9aa4c8d0d2d3f9a53685c09f6c346791a7f",
-      "sourceDigest": "c8ec3b0a8dffc06af1fba2f5b4a0abba4502cdb0843990693ac84fd9e8b23f33",
-      "updatedAt": "2026-09-23T17:13:24Z",
+      "readmeSha": "c37bfecff6199783416c3d04ae8de5922b1ea727",
+      "sourceCommit": "3d6cc1dbaedc56f4a1a9628814ab62842d3cb2bb",
+      "sourceDigest": "3d73bae9d84d8bf7435537b4aefe53212c2842a9b16cd21c6d6ae2dce3650bf0",
+      "updatedAt": "2026-10-11T10:52:04Z",
       "topics": [],
       "language": "TypeScript",
       "content": {
         "zh": {
           "title": "Hero Next 双语个人网站",
-          "summary": "一个基于 Next.js App Router 的独立双语个人网站，整合个人介绍、理念文章、项目展示、公共渠道与每日记录，并通过公开的 Viselora 包实现 DOM、滚动和 WebGL 体验。",
+          "summary": "基于 Next.js App Router 的独立双语个人网站，通过公开入口使用 Viselora 包，将个人简介、理念文章、项目、公开渠道与日志组织为兼顾沉浸式桌面体验和移动阅读的统一站点。",
           "sections": [
             {
-              "id": "overview",
-              "title": "项目概览",
+              "id": "purpose",
+              "title": "问题与目标",
               "paragraphs": [
-                "网站以四个章节组织个人介绍、AI 与哲学理念、公开项目和公共渠道，末尾衔接每日记录。中英文内容、主题和当前区域状态可持续保存，项目目录还包含四个完整案例及由数据生成的公开项目条目。"
+                "项目旨在把个人资料、理念、作品案例、公开渠道和持续更新的日志整合到同一叙事体验中，同时让中文与英文内容、主题和导航状态保持一致。"
               ]
             },
             {
               "id": "experience",
               "title": "响应式体验",
               "paragraphs": [
-                "移动端、触控设备和较矮的横屏窗口采用以阅读为主的布局；宽屏精细指针设备则呈现环形文章索引、四面项目展厅、悬浮预览和透视日志。项目案例既可在保留展厅背景的原生对话框中打开，也可通过独立页面访问。"
+                "宽屏与精细指针设备采用 WebGL 驱动的章节体验，包括立体文章索引、四面项目空间、悬浮预览和透视日志；移动端、触控设备及较矮的横屏窗口则切换为自然高度的阅读布局。",
+                "项目案例既可在保留原场景的原生对话框中打开，也可作为独立页面访问。日志按日期分批加载，并保持每天的工具记录与事件内容完整。"
               ]
             },
             {
-              "id": "implementation",
-              "title": "实现与边界",
+              "id": "architecture",
+              "title": "实现架构",
               "paragraphs": [
-                "项目使用单一运行时、画布与滚动来源，并结合语义化 DOM、CSS 布局和 WebGL 效果。主题与语言由共享状态持久化，日志数据通过构建前同步生成。实现仅依赖 Viselora 的公开入口，并明确避免私有包导入、重复渲染器和分叉的专用包；字形在 Canvas 与 DOM 中的栅格化仍可能略有差异，现有内容也被视为可继续编辑的基础版本。"
+                "站点使用单一运行时、画布与滚动来源，结合语义化 DOM 和 WebGL 效果。主题、语言与项目空间选择由共享状态管理并持久化；内容、项目目录和日志快照使用带类型的数据生成。",
+                "项目还提供服务端渲染的智能体阅读目录及派生的 Markdown 文档，覆盖资料、理念、项目和月度日志；无 JavaScript 时，核心导航与内容仍可阅读。"
+              ]
+            },
+            {
+              "id": "boundaries",
+              "title": "边界与限制",
+              "paragraphs": [
+                "站点仅通过公开入口使用 Viselora 包，不维护第二套渲染器或重复视觉状态。日志数据需要在开发或构建前同步，生成快照不纳入版本控制。",
+                "README 指出 Canvas 与 DOM 的字形栅格化仍可能略有差异，现有内容也只是后续编辑的基础版本。开发环境的宽松主机允许列表仅适用于受信任的本地网络。"
               ]
             }
           ]
         },
         "en": {
           "title": "Hero Next Bilingual Personal Site",
-          "summary": "A standalone bilingual personal site built with the Next.js App Router. It combines a profile, essays, project showcases, public channels, and a daily journal while using public Viselora packages for DOM, scrolling, and WebGL experiences.",
+          "summary": "A standalone bilingual personal site built with the Next.js App Router and public Viselora package entrypoints. It unifies a profile, essays, projects, public channels, and a journal across an immersive desktop experience and a mobile-friendly reading layout.",
           "sections": [
             {
-              "id": "overview",
-              "title": "Project Overview",
+              "id": "purpose",
+              "title": "Problem and Goal",
               "paragraphs": [
-                "The site organizes a profile, AI and philosophy essays, public projects, and public channels into four chapters followed by a daily journal. Chinese and English content, theme, and room state persist across the experience, while the project directory combines four full case studies with data-generated public project entries."
+                "The project brings profile information, ideas, case studies, public channels, and an evolving journal into one narrative experience while keeping Chinese and English content, theme, and navigation state consistent."
               ]
             },
             {
               "id": "experience",
               "title": "Responsive Experience",
               "paragraphs": [
-                "Mobile, touch, and short landscape windows use a reading-focused layout. Wide screens with a fine pointer instead present a circular article index, a four-wall project room, hover previews, and a perspective journal. Project cases can open in a native dialog that preserves the room behind them or as standalone pages."
+                "Wide screens with fine pointers use a WebGL-led chapter experience with a spatial article index, four-wall project room, hover previews, and perspective journal. Mobile, touch, and short landscape windows switch to a natural-height reading layout.",
+                "Project cases can open in a native dialog that preserves the surrounding scene or as standalone pages. Journal entries load in date-based batches while keeping each day's tools and events together."
               ]
             },
             {
-              "id": "implementation",
-              "title": "Implementation and Boundaries",
+              "id": "architecture",
+              "title": "Implementation Architecture",
               "paragraphs": [
-                "The project uses one runtime, canvas, and scroll source, combining semantic DOM and CSS layout with WebGL effects. Shared state persists theme and locale, while journal data is synchronized before builds. The implementation consumes only public Viselora entrypoints and explicitly avoids private imports, duplicate renderers, and project-specific package forks. Canvas and DOM glyph rasterization may still differ slightly, and the content is described as a base for further editorial refinement."
+                "The site uses one runtime, canvas, and scroll source, combining semantic DOM content with WebGL effects. Shared state manages and persists the theme, locale, and project-room selection, while typed data drives content, the project catalog, and journal snapshots.",
+                "It also provides a server-rendered agent reading directory and derived Markdown documents for the profile, axioms, projects, and monthly journal archives. Core navigation and content remain readable without JavaScript."
+              ]
+            },
+            {
+              "id": "boundaries",
+              "title": "Boundaries and Limitations",
+              "paragraphs": [
+                "The site consumes Viselora packages only through public entrypoints and avoids a second renderer or duplicated visual state. Journal data must be synchronized before development or builds, and generated snapshots are not committed.",
+                "The README notes that Canvas and DOM glyph rasterization may still differ slightly, and that the current content is a base version for later editorial refinement. The permissive development host allowlist is intended only for trusted local networks."
               ]
             }
           ]
