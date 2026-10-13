@@ -1,14 +1,27 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import type { HeroChapterId } from "../src/chapters/definitions";
 import { resolveHeroChapterCameraFrame } from "../src/chapters/geometry";
 import { resolveHeroChapterScrollState } from "../src/chapters/scrollState";
 import {
   heroProfileMaterialColor,
+  createHeroProfileModelResources,
+  connectHeroProfileModelFrame,
   resolveHeroProfileModelFrame,
 } from "../src/profile/modelEffect";
 import { resolveHeroTetrahedronTransformFrame } from "../src/tetrahedron/transform";
-import { Euler, Matrix4, Quaternion, Vector3 } from "three";
+import {
+  BufferGeometry,
+  Euler,
+  Group,
+  Matrix4,
+  Mesh,
+  MeshStandardMaterial,
+  Quaternion,
+  Texture,
+  Vector3,
+} from "three";
+import { createHeroTetrahedronFrameBinding } from "../src/tetrahedron/frameBinding";
 import type { HeroFlightFrame } from "../src/tetrahedron/flight";
 
 const desktopViewport = { width: 1_280, height: 720 } as const;
@@ -298,5 +311,80 @@ describe("hero profile model frame", () => {
         expect(model.visible).toBe(true);
       }
     }
+  });
+});
+
+describe("profile native model lifecycle", () => {
+  test("clones PBR materials once, keeps the 0.12 fill and leaves shared loader geometry and textures alive", () => {
+    const geometry = new BufferGeometry();
+    const texture = new Texture();
+    const source = new MeshStandardMaterial({
+      color: "#123456",
+      map: texture,
+      emissiveMap: texture,
+      roughness: 0.4,
+      metalness: 0.6,
+    });
+    const scene = new Group();
+    scene.add(new Mesh(geometry, source), new Mesh(geometry, [source]));
+    const resources = createHeroProfileModelResources(scene);
+    const first = resources.object.children[0] as Mesh<
+      BufferGeometry,
+      MeshStandardMaterial
+    >;
+    const second = resources.object.children[1] as Mesh<
+      BufferGeometry,
+      MeshStandardMaterial[]
+    >;
+    expect(first.material).not.toBe(source);
+    expect(second.material[0]).toBe(first.material);
+    expect(first.material.color.getHexString()).toBe("c8c8c8");
+    expect(first.material.emissive.getHexString()).toBe("c8c8c8");
+    expect(first.material.emissiveIntensity).toBe(0.12);
+    expect(first.material.metalness).toBe(0);
+    expect(first.material.roughness).toBe(0.72);
+    expect(first.material.emissiveMap).toBe(texture);
+    expect(first.geometry).toBe(geometry);
+    expect(source.color.getHexString()).toBe("123456");
+    expect(source.roughness).toBe(0.4);
+    const materialDispose = vi.spyOn(first.material, "dispose");
+    const sourceDispose = vi.spyOn(source, "dispose");
+    const geometryDispose = vi.spyOn(geometry, "dispose");
+    const textureDispose = vi.spyOn(texture, "dispose");
+    resources.dispose();
+    expect(materialDispose).toHaveBeenCalledOnce();
+    expect(sourceDispose).not.toHaveBeenCalled();
+    expect(geometryDispose).not.toHaveBeenCalled();
+    expect(textureDispose).not.toHaveBeenCalled();
+  });
+
+  test("uses the current reading DOM slot on each shared frame and disconnects on unmount", () => {
+    const slot = document.createElement("div");
+    slot.dataset.profileReadingSlot = "";
+    document.body.append(slot);
+    let top = 500;
+    vi.spyOn(slot, "getBoundingClientRect").mockImplementation(
+      () => ({ top, height: 340 }) as DOMRect,
+    );
+    const root = new Group();
+    const binding = createHeroTetrahedronFrameBinding();
+    const disconnect = connectHeroProfileModelFrame(root, binding);
+    const frame = resolveFrameInput({ viewport: { width: 390, height: 844 } });
+    const input = { ...frame, viewport: { ...frame.viewport, reading: true } };
+    binding.publish(input);
+    const expected = resolveHeroProfileModelFrame({
+      ...input,
+      readingSlot: { centerY: 654, height: 300 },
+    });
+    expect(root.position.toArray()).toEqual(expected.position);
+    top = 200;
+    binding.publish(input);
+    expect(root.position.y).toBeGreaterThan(expected.position[1]);
+    disconnect();
+    const position = root.position.clone();
+    top = 0;
+    binding.publish(input);
+    expect(root.position).toEqual(position);
+    slot.remove();
   });
 });

@@ -102,7 +102,7 @@ a {
   color: var(--hero-chapter-foreground);
 }
 
-.hero-space[data-dom-active="false"] .hero-chapter {
+.hero-space[data-webgl-ready="true"][data-dom-active="false"] .hero-chapter {
   visibility: hidden;
   pointer-events: none;
 }
@@ -143,7 +143,7 @@ a {
   background: transparent;
 }
 
-.hero-axioms__semantic {
+:where(.hero-space[data-webgl-ready="true"]) .hero-axioms__semantic {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1532,4 +1532,41 @@ a {
     width: 48%;
     margin-left: 0;
   }
+}
+
+/* Renderer unavailability restores a complete semantic reading path. */
+.hero-space[data-webgl-ready="false"] {
+  background: var(--hero-background);
+}
+
+.hero-space[data-webgl-ready="false"] .hero-chapter {
+  visibility: visible;
+  pointer-events: auto;
+  background: var(--hero-chapter-background);
+}
+
+.hero-space[data-webgl-ready="false"] .hero-axioms {
+  min-height: 0;
+  padding: 18svh max(24px, 7vw);
+  background: var(--hero-chapter-background);
+}
+
+.hero-space[data-webgl-ready="false"] .hero-axioms__semantic,
+.hero-space[data-webgl-ready="false"] .hero-hub-runway--final .hero-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  white-space: normal;
+  clip: auto;
+}
+
+.hero-space[data-webgl-ready="false"] .hero-axioms article {
+  max-width: 56rem;
+  margin-block: 5rem;
+  line-height: 1.8;
+}
+
+.hero-space[data-webgl-ready="false"] .hero-journal-stage {
+  display: none;
 }

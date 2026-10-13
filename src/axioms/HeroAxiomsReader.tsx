@@ -1,37 +1,17 @@
-import type { WebGLDeclaration } from "@viselora/dom-webgl";
 import { WebGLTarget } from "@viselora/dom-webgl/react";
 import { WebGLScrollTimeline } from "@viselora/scroll-adapters/react";
-import React, { useMemo, type CSSProperties } from "react";
+import React, { type CSSProperties } from "react";
 import type { HeroChapterDefinition } from "../chapters/definitions";
-import type { HeroLocale, HeroLocaleStore } from "../preferences/locale";
+import type { HeroLocale } from "../preferences/locale";
 import { resolveAxiomsScrollHeight } from "./config";
 import type { AxiomsReaderContent } from "./model";
 import { formatAxiomsHeading } from "./reader";
 
-export function HeroAxiomsStage({
-  locale,
-}: {
-  readonly locale: HeroLocaleStore;
-}) {
-  const declaration = useMemo(
-    () =>
-      ({
-        key: "hero.axioms.reader",
-        placement: { mode: "screen-depth", depth: 3, size: "dom" },
-        source: { kind: "dom", type: "element" },
-        renderRole: "model",
-        lifecycle: { hideWhenReady: true, hideMode: "self" },
-        effects: [{ kind: "hero.axioms.reader", locale }],
-      }) satisfies WebGLDeclaration,
-    [locale],
-  );
+export function HeroAxiomsStage() {
   return (
-    <WebGLTarget
-      as="div"
-      className="hero-axioms-surface"
-      aria-hidden="true"
-      webgl={declaration}
-    />
+    <WebGLTarget id="hero.axioms.reader">
+      <div className="hero-axioms-surface" aria-hidden="true" />
+    </WebGLTarget>
   );
 }
 

@@ -1,3 +1,8 @@
+import { CanvasTexture, LinearFilter, Texture } from "three";
+import {
+  createProjectRoomProgram,
+  createProjectRoomPosterTexture,
+} from "../src/projects/program";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
   createProjectRoomTexture,
@@ -24,6 +29,36 @@ afterEach(() =>
 );
 
 describe("project room text and endpoint projection", () => {
+  test("keeps the native room atlas, poster sampler, and exhibition approach together", () => {
+    const canvas = document.createElement("canvas");
+    const program = createProjectRoomProgram(canvas, 2);
+    const atlas = program.uniforms?.inkAtlas.value as CanvasTexture;
+    try {
+      expect(atlas).toBeInstanceOf(CanvasTexture);
+      expect(atlas.image).toBe(canvas);
+      expect(program.uniforms?.poster.value).toBe(atlas);
+      expect(program.uniforms?.posterReady.value).toBe(0);
+      expect(program.uniforms?.showcaseFace.value).toBe(2);
+      expect(program.uniforms?.approach.value).toBe(0);
+      expect(program.fragmentShader).toContain("sy * approach");
+      expect(program.fragmentShader).toContain("texture2D(poster");
+      expect(program.toneMapped).toBe(false);
+    } finally {
+      atlas.dispose();
+    }
+    const image = new Image();
+    const poster = createProjectRoomPosterTexture(image);
+    try {
+      expect(poster).toBeInstanceOf(Texture);
+      expect(poster.image).toBe(image);
+      expect(poster.version).toBeGreaterThan(0);
+      expect(poster.minFilter).toBe(LinearFilter);
+      expect(poster.magFilter).toBe(LinearFilter);
+      expect(poster.generateMipmaps).toBe(false);
+    } finally {
+      poster.dispose();
+    }
+  });
   test("uses the text-only hit area for all three written cases and keeps the poster on SyringeMeter", () => {
     const room = createProjectRoomStore();
     const projects = getHeroChapterContent("builds", "zh").body.sections;

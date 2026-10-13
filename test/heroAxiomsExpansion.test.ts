@@ -59,23 +59,31 @@ describe("data-driven axioms articles", () => {
       const frame = resolveAxiomsFrame(1, artwork.layout);
       expect(frame.selected).toBe(count - 1);
       const program = createAxiomsProgram(artwork, texture, frame);
-      expect(program.uniforms?.stampPitches).toEqual(
-        count
-          ? artwork.layout.papers.map((paper) => {
-              const stamp = resolveAxiomsStamp(paper.width, paper.height);
-              return [stamp.pitchX, stamp.pitchY];
-            })
-          : [[1, 1]],
+      expect(program.uniforms?.stampPitches.value).toEqual(
+        new Float32Array(
+          (count
+            ? artwork.layout.papers.map((paper) => {
+                const stamp = resolveAxiomsStamp(paper.width, paper.height);
+                return [stamp.pitchX, stamp.pitchY];
+              })
+            : [[1, 1]]
+          ).flat(),
+        ),
       );
-      expect(program.uniforms?.stampRadii).toEqual(
-        count
-          ? artwork.layout.papers.map((paper) => [
-              resolveAxiomsStamp(paper.width, paper.height).radius,
-              0,
-            ])
-          : [[0, 0]],
+      expect(program.uniforms?.stampRadii.value).toEqual(
+        new Float32Array(
+          (count
+            ? artwork.layout.papers.map((paper) => [
+                resolveAxiomsStamp(paper.width, paper.height).radius,
+                0,
+              ])
+            : [[0, 0]]
+          ).flat(),
+        ),
       );
-      expect(program.uniforms?.tileOrigins).toEqual(packed.tileOrigins);
+      expect(program.uniforms?.tileOrigins.value).toEqual(
+        new Float32Array(packed.tileOrigins.flat()),
+      );
       expect(program.fragmentShader).not.toContain("mod(float(index)");
       expect(program.fragmentShader).not.toContain("floor(float(index)");
       expect(program.fragmentShader).toContain(`tileSizes[${1 + 2 * count}]`);

@@ -3,7 +3,7 @@
 `@viselora/hero-next` is a standalone public Next.js App Router personal site.
 It consumes published Viselora packages through their public entrypoints.
 Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
-`0.1.0-alpha.2` from npm; see [current verification](./docs/STATUS.md).
+`0.2.0-alpha.0` from npm, with React Three Fiber 9 and Three.js 0.184; see [current verification](./docs/STATUS.md).
 
 Production: [zzzxc.com](https://zzzxc.com).
 
@@ -192,10 +192,12 @@ creates separate stores per mounted site.
 - CSS owns semantic DOM layout, accessible theme tokens, stacking, overflow,
   and pointer routing; it does not own the triangular transition window.
 - WebGL geometry, face projection, triangular reveal, lighting, shader behavior,
-  and motion belong to public package declarations and app-owned effects.
-- Do not add raw Three.js ownership, a second renderer, private package imports,
-  duplicate visual state, or a Hero-specific package branch.
-- Keep runtime/effect declarations referentially stable.
+  and motion belong to app-owned R3F components, native Three.js objects and shaders.
+- R3F owns the single Canvas, renderer and frame loop; Viselora owns DOM targets,
+  progress and fallback readiness. Dispose app-owned textures and cloned materials
+  without disposing shared GLB cache assets.
+- Do not add a second renderer, private package imports, duplicate visual state,
+  or a Hero-specific package branch. Keep Canvas options and stores stable.
 
 ## Source map
 
@@ -206,8 +208,8 @@ creates separate stores per mounted site.
 | Page/runtime composition and subscriptions                                         | `src/experience/`                                                                                                                                                                                                                               |
 | Chapter identity, signals, face, and atlas mapping                                 | `src/chapters/definitions.ts`                                                                                                                                                                                                                   |
 | Chapter content, semantic composition, and locale control                          | `src/chapters/content.ts`, `src/chapters/contentModel.ts`, `src/chapters/uiContent.ts`, `src/chapters/HeroChapterNarrative.tsx`, `src/chapters/HeroChapter.tsx`, `src/chapters/HeroLocaleControl.tsx`, `src/chapters/HeroChapterNavigation.tsx` |
-| Chapter-one profile body, model declaration, and scroll effect                     | `src/profile/`                                                                                                                                                                                                                                  |
-| Chapter-two article index, reading layout, sheets and managed effect               | `src/axioms/`                                                                                                                                                                                                                                   |
+| Chapter-one profile body, native GLB component, and scroll effect                  | `src/profile/`                                                                                                                                                                                                                                  |
+| Chapter-two article index, reading layout, sheets and R3F scene                    | `src/axioms/`                                                                                                                                                                                                                                   |
 | Chapter-three project room, exhibitions, and semantic controls                     | `src/projects/`                                                                                                                                                                                                                                 |
 | Chapter-four public directory, previews, and endpoint artwork                      | `src/signals/`                                                                                                                                                                                                                                  |
 | Final journal data, paginated reading list, native text targets and scroll mapping | `src/journal/`                                                                                                                                                                                                                                  |
@@ -215,9 +217,9 @@ creates separate stores per mounted site.
 | Reversible scroll, geometry, layout, and atlas                                     | `src/chapters/scrollState.ts`, `src/chapters/geometry.ts`, `src/chapters/layout.ts`, `src/chapters/atlas.ts`, `src/chapters/artwork.ts`, `src/chapters/readingArtwork.ts`, `src/chapters/readingLayout.ts`                                      |
 | Theme and locale persistence                                                       | `src/preferences/`                                                                                                                                                                                                                              |
 | Hold/radial/portal state, palette/config, and progress encoding                    | `src/transition/`                                                                                                                                                                                                                               |
-| Tetrahedron effect and managed shader                                              | `src/tetrahedron/`                                                                                                                                                                                                                              |
+| Native tetrahedron component and shader                                            | `src/tetrahedron/`                                                                                                                                                                                                                              |
 | Background, cursor, and pointer-light effects                                      | `src/ghost/`                                                                                                                                                                                                                                    |
-| Shared Canvas text measurement and drawing                                         | `src/shared/canvasText.ts`, `src/shared/canvasTextLayout.ts`                                                                                                                                                                                    |
+| Shared Canvas text measurement and drawing                                         | `src/shared/HeroText.tsx`, `src/shared/canvasText.ts`, `src/shared/canvasTextLayout.ts`, `src/shared/screenPlane.ts`, `src/shared/shaderUniforms.ts`                                                                                            |
 | Profile DOM/Canvas size tokens                                                     | `src/profile/layoutTokens.ts`                                                                                                                                                                                                                   |
 | Shared viewport boundary                                                           | `src/shared/viewport.ts`, `src/shared/viewportStore.ts`, `src/shared/useHeroViewport.ts`                                                                                                                                                        |
 | App constraints                                                                    | `AGENTS.md`                                                                                                                                                                                                                                     |

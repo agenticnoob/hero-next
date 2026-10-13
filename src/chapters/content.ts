@@ -212,7 +212,7 @@ export const heroChapterContent = {
           {
             label: "网页视觉",
             title: "Viselora DOM WebGL",
-            body: "让网页内容连接三维视觉的 DOM-first WebGL 运行时。保留 DOM 布局与交互语义，统一管理渲染、资源与输入。这个站点也是它的实际应用。",
+            body: "连接语义 DOM 与 React Three Fiber 的 WebGL 协调运行时。保留网页布局与交互语义，共享测量、滚动进度与回退状态。这个站点也是它的实际应用。",
             showcase: {
               href: "/projects/viselora",
               label: "进入项目 · 阅读案例",
@@ -292,7 +292,7 @@ export const heroChapterContent = {
           {
             label: "WEB VISUALS",
             title: "Viselora DOM WebGL",
-            body: "A DOM-first WebGL runtime connecting web content with 3D visuals. It preserves DOM layout and interaction semantics while managing rendering, resources and input. This site is one of its applications.",
+            body: "A WebGL coordination runtime connecting semantic DOM with React Three Fiber. It preserves web layout and interaction semantics while sharing measurements, scroll progress and fallback state. This site is one of its applications.",
             showcase: {
               href: "/projects/viselora",
               label: "Explore the project · Read the case",
@@ -1042,11 +1042,11 @@ export const projectCaseStudies = {
   },
   viselora: {
     zh: {
-      eyebrow: "DOM-FIRST WEBGL / 托管运行时",
+      eyebrow: "DOM-FIRST WEBGL / REACT THREE FIBER",
       title: "Viselora DOM WebGL",
       subtitle: "让网页保留自己的结构，也拥有空间与运动。",
       introduction:
-        "面向 React 与浏览器应用的 DOM-first WebGL 运行时。保留网页的布局和交互语义，以公开声明连接文字、媒体和三维对象，统一管理渲染、资源、输入与生命周期。",
+        "面向 React 19 与 Next.js 的 DOM-first WebGL 协调运行时。以公开接口连接语义 DOM 和单一 React Three Fiber 场景，负责测量、共享进度与回退状态；渲染、材质、模型和运动由 R3F 与 Three.js 承担。",
       backLabel: "返回项目空间",
       tocLabel: "阅读目录",
       readLabel: "阅读完整案例",
@@ -1056,23 +1056,23 @@ export const projectCaseStudies = {
           title: "当网页内容进入三维画面",
           paragraphs: [
             "文字、图片、链接和阅读顺序原本由网页组织。当它们进入 WebGL 画面，布局、坐标、鼠标命中、滚动响应和资源释放也需要相互配合。每一种视觉效果单独维护这些关系，会让后续组合与修改越来越困难。",
-            "Viselora 从 DOM 出发：网页保留内容、布局与可访问性的基础，运行时把需要视觉表现的目标连接到 WebGL。应用描述想呈现的对象与效果，底层统一处理渲染和资源生命周期。",
+            "Viselora 从 DOM 出发：网页保留内容、布局与可访问性的基础，运行时把需要视觉表现的目标连接到 WebGL。0.2 版本收拢到 DOM 协调，让应用直接使用 R3F 组件表达场景，减少另一套渲染抽象。",
           ],
         },
         {
           id: "declarations",
           title: "用声明连接内容与视觉",
           paragraphs: [
-            "DOM 文字、图片、视频、序列帧和模型可以成为运行时管理的视觉来源。应用通过目标声明提供来源与效果；需要程序化几何或场景原生模型时，则使用相应的网格与模型声明。",
-            "这让视觉表达有了清楚的入口：网页内容由语义元素承载，效果描述变换、材质或运动意图。更复杂的画面可以声明场景、相机、灯光和渲染通道，并通过受控接口更新对象。应用代码始终使用公开接口，底层对象的创建和销毁由运行时负责。",
+            "语义元素通过 WebGLTarget 注册，应用用 useDOMTarget 读取实时几何、可见性和内容版本。文字测量与纹理工具连接 DOM 排版；图片、视频与模型使用 Three.js、R3F 或 Drei 加载。",
+            "网页内容留在 children，原生 R3F 组件放入同一运行时的 scene。网格、材质、相机和灯光直接使用生态接口，逐帧变化在 useFrame 中完成；应用负责自身资源的创建与释放，不再经过旧版对象或材质 facade。",
           ],
         },
         {
           id: "lifecycle",
           title: "把生命周期放在同一处",
           paragraphs: [
-            "每个运行时拥有一个透明画布和渲染循环，并集中处理 DOM 测量、场景投影、资源加载与缓存、离屏策略和清理。效果离开页面或组件卸载时，对应资源也有明确的释放路径。",
-            "对于依附 DOM 的目标，加载、错误和离屏状态还要与原内容的显示策略配合。这个设计的价值，在于让文字、图片、视频和三维效果能够组合在同一页面中，并保持可理解的资源与状态关系。",
+            "每个运行时承载一个 R3F Canvas，由 R3F 独占渲染与帧循环。Viselora 集中处理 DOM 测量、共享输入、离屏可见性和观察器清理；应用负责纹理、模型实例与材质等资源，共享加载缓存有单独的释放边界。",
+            "替代 DOM 绘制的视觉对象需要明确报告 readiness，并携带加载时捕获的目标身份，避免旧加载结果影响新节点。WebGL 不可用时恢复语义内容；离屏策略控制原内容的可见性，应用决定是否保留或卸载视觉资源。",
           ],
         },
         {
@@ -1080,7 +1080,7 @@ export const projectCaseStudies = {
           title: "让滚动和交互成为共同输入",
           paragraphs: [
             "Viselora 提供进度信号、时间线与滚动适配能力，可以连接原生滚动，也可以接入 Lenis、GSAP 和 ScrollTrigger。多个视觉对象能够使用一致的进度来源，表达靠近、旋转、展开、阅读和退回等阶段。",
-            "指针输入同样进入运行时管理。应用通过目标或场景对象的指针状态设计反馈，无需自行维护另一套底层拾取工具。逐帧视觉变化在效果逻辑中完成，让组件继续承担声明与界面组织。",
+            "三维命中和指针事件交给 R3F，普通链接与键盘操作仍使用 DOM 事件。应用负责交互优先级、触屏替代和减少动态效果；逐帧变化直接更新原生对象，不把每帧进度传入 React state。",
           ],
         },
         {
@@ -1088,14 +1088,14 @@ export const projectCaseStudies = {
           title: "从运行时走到一个实际网站",
           paragraphs: [
             "这个个人网站是 Viselora 的实际应用之一。四面体随滚动靠近，面上的内容逐渐与屏幕对齐，再交给可阅读、可交互的正文；人物模型、文章纸卡和项目空间继续使用同一套公开运行时能力。",
-            "网页布局、链接与移动端阅读由站点负责，三维投影、材质和运动通过运行时表达。站点作为独立项目安装已发布的 npm 包，也让公共接口接受真实使用场景的检验。",
+            "网页布局、链接与移动端阅读由站点负责，三维投影、材质和运动由同一场景中的原生 R3F 组件表达。站点作为独立项目安装已发布的 0.2 npm 包，让精简后的公共接口接受真实使用场景的检验。",
           ],
         },
         {
           id: "examples",
           title: "将具体效果整理成可复用示例",
           paragraphs: [
-            "示例项目进一步把纸卡阅读、项目空间、模型叙事、面投影转场、指针预览和透视时间线整理为可复用模块。它们使用中立内容和公开接口，开发者可以阅读模块说明、替换数据，再组合进自己的应用。",
+            "示例项目展示原生 R3F 场景与 DOM 目标、文字纹理、模型和滚动进度的组合。开发者可以阅读公开接口示例与迁移指引，再使用熟悉的 Three.js/R3F 生态组织自己的视觉组件。",
             "这些模块属于应用层示例，视觉与内容由调用方组织；运行时包继续承担通用能力。接口文档、能力状态说明和面向 Agent 的使用指引，帮助使用者区分公开入口、实际证据与应用自己的责任。",
           ],
         },
@@ -1103,8 +1103,8 @@ export const projectCaseStudies = {
           id: "boundaries",
           title: "当前阶段与适用范围",
           paragraphs: [
-            "项目处于预发布阶段，核心运行时与滚动适配器分别通过 npm 提供。当前实现覆盖 DOM 与媒体目标、托管场景、网格、模型、交互、灯光、受控材质扩展和后期处理，具体能力的验证成熟度并不完全相同。",
-            "使用这一结构需要接受运行时对渲染和资源生命周期的管理。场景原生模型与网格需要应用自行安排语义说明和回退内容，物理能力也只覆盖有限范围。真实设备表现、复杂场景性能和最终视觉效果，仍需要在具体产品中验证。",
+            "项目处于 0.2.0-alpha.0 预发布阶段，核心运行时与滚动适配器分别通过 npm 提供。公开范围集中在单一 Canvas host、DOM 注册与测量、回退可见性、共享进度和文字纹理工具；场景、加载器、拾取、物理与后期处理使用 R3F/Three.js 生态。",
+            "当前版本要求 React 19、R3F 9 与 Three.js 0.184，不再支持框架无关调用或旧版托管 API。应用需要安排语义说明、回退内容和资源生命周期；真实设备表现、复杂场景性能和最终视觉效果仍需在具体产品中验证。",
           ],
         },
       ],
@@ -1116,7 +1116,7 @@ export const projectCaseStudies = {
         },
         {
           title: "声明视觉目标",
-          detail: "通过公开声明提供文字、媒体、网格或模型。",
+          detail: "注册需要视觉替代的语义 DOM 目标。",
         },
         {
           title: "测量与投影",
@@ -1128,11 +1128,11 @@ export const projectCaseStudies = {
         },
         {
           title: "渲染画面",
-          detail: "在托管效果与通道中表达材质、灯光和运动。",
+          detail: "在原生 R3F 组件中表达材质、灯光和运动。",
         },
         {
           title: "管理生命周期",
-          detail: "协调可见性、加载、缓存与资源清理。",
+          detail: "报告视觉就绪，并按资源归属处理缓存与清理。",
         },
       ],
       linksTitle: "继续查看项目",
@@ -1144,12 +1144,12 @@ export const projectCaseStudies = {
       ],
     },
     en: {
-      eyebrow: "DOM-FIRST WEBGL / MANAGED RUNTIME",
+      eyebrow: "DOM-FIRST WEBGL / REACT THREE FIBER",
       title: "Viselora DOM WebGL",
       subtitle:
         "Giving web pages depth and motion while preserving their structure.",
       introduction:
-        "A DOM-first WebGL runtime for React and browser applications. It preserves web layout and interaction semantics, connects text, media and 3D objects through public declarations, and manages rendering, resources, input and lifecycle in one place.",
+        "A DOM-first WebGL coordination runtime for React 19 and Next.js. Public APIs connect semantic DOM with one React Three Fiber scene, sharing measurements, progress and fallback state. R3F and Three.js own rendering, materials, models and motion.",
       backLabel: "Back to the project room",
       tocLabel: "In this case study",
       readLabel: "Read the full case study",
@@ -1159,23 +1159,23 @@ export const projectCaseStudies = {
           title: "When web content enters a 3D scene",
           paragraphs: [
             "Text, images, links and reading order are already organized by the web page. When they enter a WebGL scene, layout, coordinates, pointer hits, scroll responses and resource disposal must work together too. Maintaining those relationships separately for every visual effect makes later composition and changes increasingly difficult.",
-            "Viselora starts from the DOM. The page keeps the foundation for content, layout and accessibility, while the runtime connects targets that need visual treatment to WebGL. The application describes the objects and effects it wants to present; the runtime coordinates rendering and resource lifecycles underneath.",
+            "Viselora starts from the DOM. The page keeps the foundation for content, layout and accessibility, while the runtime connects targets that need visual treatment to WebGL. Version 0.2 focuses on DOM coordination and lets applications express scenes directly with R3F components, reducing a separate layer of rendering abstractions.",
           ],
         },
         {
           id: "declarations",
           title: "Connecting content and visuals through declarations",
           paragraphs: [
-            "DOM text, images, video, frame sequences and models can become visual sources managed by the runtime. Target declarations provide their sources and effects. Procedural geometry and scene-native models use the corresponding mesh and model declarations.",
-            "This gives visual expression a clear entry point: semantic elements carry web content, while effects describe transformations, materials or intended motion. More complex visuals can declare scenes, cameras, lights and render passes, then update objects through controlled interfaces. Application code uses public APIs throughout; the runtime creates and destroys the underlying objects.",
+            "Semantic elements register through WebGLTarget. Applications read live geometry, visibility and content revisions with useDOMTarget, and use text measurement and texture utilities to connect DOM typography. Images, video and models use Three.js, R3F or Drei loaders.",
+            "Web content stays in children and native R3F components go in the same host’s scene. Meshes, materials, cameras and lights use ecosystem APIs directly, with frame updates in useFrame. Applications create and dispose their own resources without the previous object and material facades.",
           ],
         },
         {
           id: "lifecycle",
           title: "Keeping lifecycle management in one place",
           paragraphs: [
-            "Each runtime owns one transparent canvas and render loop, coordinating DOM measurement, scene projection, resource loading and caching, off-screen policy and cleanup. When an effect leaves the page or a component unmounts, its resources have an explicit disposal path.",
-            "For targets attached to the DOM, loading, error and off-screen states must also work with the visibility policy for the original content. This design allows text, images, video and 3D effects to coexist on a page while keeping the relationships between resources and states understandable.",
+            "Each runtime hosts one R3F Canvas; R3F owns rendering and the frame loop. Viselora coordinates DOM measurement, shared inputs, offscreen visibility and observer cleanup. Applications own textures, model instances and materials, with a separate disposal boundary for shared loader caches.",
+            "Visuals replacing DOM paint explicitly report readiness with the target identity captured at load time, preventing stale results from affecting a new node. Unavailable WebGL restores semantic content. Offscreen policy controls fallback visibility; applications decide whether to retain or unmount visual resources.",
           ],
         },
         {
@@ -1183,7 +1183,7 @@ export const projectCaseStudies = {
           title: "Using shared inputs for scrolling and interaction",
           paragraphs: [
             "Viselora provides progress signals, timelines and scroll adapters. It can follow native scrolling or integrate with Lenis, GSAP and ScrollTrigger. Multiple visual objects can use the same progress source to express stages such as approaching, rotating, unfolding, reading and retreating.",
-            "Pointer input is also managed by the runtime. Applications design feedback from pointer state on targets or scene objects, without maintaining another low-level picking system. Visual changes from frame to frame stay in effect logic, leaving components responsible for declarations and interface organization.",
+            "R3F handles mesh picking and pointer events; ordinary links and keyboard controls keep DOM events. Applications handle interaction priority, touch alternatives and reduced motion. Frame updates modify native objects directly without passing per-frame progress through React state.",
           ],
         },
         {
@@ -1191,14 +1191,14 @@ export const projectCaseStudies = {
           title: "Bringing the runtime into a real website",
           paragraphs: [
             "This personal website is one application of Viselora. A tetrahedron approaches as the page scrolls; content on its faces gradually aligns with the screen, then hands off to readable, interactive prose. The profile model, article sheets and project room continue to use the same public runtime capabilities.",
-            "The site owns web layout, links and mobile reading, while the runtime expresses 3D projection, materials and motion. The site is an independent project that installs published npm packages, putting the public interfaces to work in an actual application.",
+            "The site owns web layout, links and mobile reading, while native R3F components express 3D projection, materials and motion inside the shared scene. As an independent project installing the published 0.2 npm packages, it tests the smaller public interface in an actual application.",
           ],
         },
         {
           id: "examples",
           title: "Turning specific effects into reusable examples",
           paragraphs: [
-            "The example application packages paper-card reading, a project room, model storytelling, face-projection transitions, pointer previews and a perspective timeline as reusable modules. They use neutral content and public APIs. Developers can read the module guides, replace the data and combine them in their own applications.",
+            "The example application combines native R3F scenes with DOM targets, text textures, models and scroll progress. Developers can read public API examples and migration guidance, then organize their own visuals with the familiar Three.js/R3F ecosystem.",
             "These modules are application-level examples whose visuals and content are organized by the caller. Runtime packages continue to provide general capabilities. API documentation, capability status records and agent-facing guidance help users distinguish public entry points, available evidence and their own application responsibilities.",
           ],
         },
@@ -1206,8 +1206,8 @@ export const projectCaseStudies = {
           id: "boundaries",
           title: "Current stage and scope",
           paragraphs: [
-            "The project is in prerelease, with the core runtime and scroll adapters distributed separately through npm. The current implementation covers DOM and media targets, managed scenes, meshes, models, interaction, lighting, controlled material extensions and postprocessing. The maturity of verification varies across these capabilities.",
-            "Using this structure means letting the runtime manage rendering and resource lifecycles. Applications must supply semantic descriptions and fallback content for scene-native models and meshes, and physics support is limited in scope. Real-device behavior, complex-scene performance and final visual quality still need verification in each product.",
+            "The project is at 0.2.0-alpha.0, with the core runtime and scroll adapters distributed separately through npm. Its public scope focuses on one Canvas host, DOM registration and measurement, fallback visibility, shared progress and text texture utilities. Scenes, loaders, picking, physics and postprocessing use the R3F/Three.js ecosystem.",
+            "The current version requires React 19, R3F 9 and Three.js 0.184, and no longer supports framework-independent consumers or the previous managed APIs. Applications provide semantic descriptions, fallback content and resource lifecycles. Real-device behavior, complex-scene performance and final visual quality still need verification in each product.",
           ],
         },
       ],
@@ -1221,7 +1221,7 @@ export const projectCaseStudies = {
         {
           title: "Declare visual targets",
           detail:
-            "Provide public declarations for text, media, meshes or models.",
+            "Register semantic DOM targets that need a visual replacement.",
         },
         {
           title: "Measure & project",
@@ -1236,12 +1236,12 @@ export const projectCaseStudies = {
         {
           title: "Render the scene",
           detail:
-            "Apply materials, lighting and motion through managed effects and passes.",
+            "Apply materials, lighting and motion in native R3F components.",
         },
         {
           title: "Handle lifecycle",
           detail:
-            "Coordinate visibility, loading, caching and resource cleanup.",
+            "Report visual readiness and handle caches and cleanup by resource ownership.",
         },
       ],
       linksTitle: "Explore the project",

@@ -42,12 +42,14 @@ describe("axioms text atlas resolution", () => {
         { ...packed, canvas },
         resolveAxiomsFrame(1, artwork.layout),
       );
-      const atlasSize = program.uniforms?.atlasSize as readonly number[];
+      const atlasSize = program.uniforms?.atlasSize.value as readonly number[];
       expect(canvas.width / atlasSize[0]).toBeGreaterThanOrEqual(1.5);
       expect(canvas.height / atlasSize[1]).toBeGreaterThanOrEqual(1.5);
       expect(canvas.width).toBeLessThanOrEqual(4096);
       expect(canvas.height).toBeLessThanOrEqual(4096);
-      expect(program.uniforms?.tileOrigins).toEqual(packed.tileOrigins);
+      expect(program.uniforms?.tileOrigins.value).toEqual(
+        new Float32Array(packed.tileOrigins.flat()),
+      );
       for (const [i, tile] of packed.tiles.entries()) {
         const [x, y] = packed.tileOrigins[i];
         expect(x).toBeGreaterThanOrEqual(packed.gutter);

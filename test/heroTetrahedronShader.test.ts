@@ -1,4 +1,8 @@
-import type { WebGLEffectMaterialShaderDraft } from "@viselora/dom-webgl";
+import {
+  ShaderLib,
+  type WebGLProgramParametersWithUniforms,
+  type WebGLRenderer,
+} from "three";
 import { describe, expect, test } from "vitest";
 
 import {
@@ -12,7 +16,7 @@ import { heroTransitionConfig } from "../src/transition/transitionConfig";
 import { heroChapterOrder } from "../src/chapters/definitions";
 import {
   compileHeroTetrahedronRadialShader,
-  createHeroTetrahedronRadialShader,
+  createHeroTetrahedronMaterial,
   createHeroTetrahedronRadialUniforms,
 } from "../src/tetrahedron/shader";
 
@@ -110,13 +114,11 @@ describe("hero tetrahedron radial shader", () => {
     );
   });
 
-  test("supports Physical lit shaders but rejects Basic and missing chunks", () => {
+  test("compiles native Standard and Physical shaders and rejects missing chunks", () => {
     expect(() =>
       compileHeroTetrahedronRadialShader(createDraft("physical")),
     ).not.toThrow();
-    expect(() =>
-      compileHeroTetrahedronRadialShader(createDraft("basic")),
-    ).toThrow("requires a Standard or Physical managed material");
+
     const missing = createDraft("standard");
     missing.fragmentShader = "#include <lights_fragment_begin>";
     expect(() => compileHeroTetrahedronRadialShader(missing)).toThrow(
@@ -124,13 +126,29 @@ describe("hero tetrahedron radial shader", () => {
     );
   });
 
-  test("declares the runtime-owned chapter atlas before setup can update it", () => {
+  test("owns one mipmapped atlas texture and retains uniform objects through native compilation", () => {
     const canvas = document.createElement("canvas");
-    const shader = createHeroTetrahedronRadialShader(canvas);
-
-    expect(shader.uniforms).toMatchObject({
-      heroChapterAtlas: { kind: "canvas-texture", source: canvas },
-    });
+    const { material, texture, uniforms } =
+      createHeroTetrahedronMaterial(canvas);
+    const draft = {
+      ...ShaderLib.standard,
+      uniforms: { ...ShaderLib.standard.uniforms },
+    };
+    material.onBeforeCompile(
+      draft as WebGLProgramParametersWithUniforms,
+      {} as WebGLRenderer,
+    );
+    expect(texture.image).toBe(canvas);
+    expect(texture.generateMipmaps).toBe(true);
+    expect(draft.uniforms.heroChapterAtlas).toBe(uniforms.heroChapterAtlas);
+    expect(draft.uniforms.heroChapterAtlas!.value).toBe(texture);
+    expect(draft.fragmentShader).toContain("uniform float domWebGLPixelRatio;");
+    expect(draft.fragmentShader).toContain(
+      "uniform vec2 domWebGLViewportSize;",
+    );
+    expect(material.customProgramCacheKey()).toBe("hero.tetrahedron.radial");
+    material.dispose();
+    texture.dispose();
   });
 
   test.each([
@@ -284,17 +302,11 @@ function firstChapterFlightEntry(flightProgress: number): number {
   return introHandoffEnd + (1 - introHandoffEnd) * flightProgress;
 }
 
-function createDraft(
-  materialKind: WebGLEffectMaterialShaderDraft["materialKind"],
-): WebGLEffectMaterialShaderDraft {
+function createDraft(materialKind: "standard" | "physical") {
   return {
-    materialKind,
-    vertexShader: "#include <begin_vertex>",
-    fragmentShader:
-      "#include <emissivemap_fragment>\n#include <lights_fragment_begin>\nvec3 outgoingLight = vec3(0.0);\n#include <opaque_fragment>",
-    uniforms: {},
-    defines: {},
-  } satisfies WebGLEffectMaterialShaderDraft;
+    ...ShaderLib[materialKind],
+    uniforms: { ...ShaderLib[materialKind].uniforms },
+  };
 }
 
 function transition(

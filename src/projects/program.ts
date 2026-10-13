@@ -1,4 +1,13 @@
-import type { WebGLEffectMaterialProgram } from "@viselora/dom-webgl";
+import {
+  CanvasTexture,
+  LinearFilter,
+  Texture,
+  type ShaderMaterialParameters,
+} from "three";
+import {
+  createHeroUniforms,
+  heroPlaneVertexShader,
+} from "../shared/shaderUniforms";
 import { projectRoomConfig as config } from "./room";
 import { projectRoomAtlas, projectRoomWallIndex } from "./model";
 import { heroTransitionConfig } from "../transition/transitionConfig";
@@ -8,21 +17,25 @@ export function createProjectRoomProgram(
   texture: HTMLCanvasElement,
   showcaseFace = -1,
   poster?: HTMLImageElement,
-): WebGLEffectMaterialProgram {
+): ShaderMaterialParameters {
+  const atlas = new CanvasTexture(texture);
+  atlas.minFilter = LinearFilter;
+  atlas.magFilter = LinearFilter;
+  atlas.generateMipmaps = false;
   return {
-    blend: "normal",
-    uniforms: {
-      inkAtlas: { kind: "canvas-texture", source: texture },
-      poster: poster
-        ? { kind: "image-texture", source: poster }
-        : { kind: "canvas-texture", source: texture },
+    vertexShader: heroPlaneVertexShader,
+    toneMapped: false,
+    depthWrite: true,
+    uniforms: createHeroUniforms({
+      inkAtlas: atlas,
+      poster: poster ? createProjectRoomPosterTexture(poster) : atlas,
       posterReady: poster ? 1 : 0,
       showcaseFace,
       viewport: [1440, 900],
       view: [0, 0, 0, 0],
       approach: 0,
       ...projectRoomColors(false),
-    },
+    }),
     fragmentShader: `
       uniform sampler2D inkAtlas;
       uniform sampler2D poster;
@@ -110,4 +123,15 @@ export function projectRoomColors(inverted: boolean) {
         : heroTransitionConfig.colors.light,
     ),
   };
+}
+
+export function createProjectRoomPosterTexture(
+  image: HTMLImageElement,
+): Texture {
+  const texture = new Texture(image);
+  texture.minFilter = LinearFilter;
+  texture.magFilter = LinearFilter;
+  texture.generateMipmaps = false;
+  texture.needsUpdate = true;
+  return texture;
 }

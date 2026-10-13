@@ -1,13 +1,68 @@
 # Current Status
 
-Last verified locally: 2026-10-11 (Agent reading entry, static Markdown and discovery).
+Last verified locally: 2026-10-14 (Viselora 0.2 React Three Fiber migration).
 Last production readback: 2026-10-11 (Agent entry, bilingual static exports and public snapshot).
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
-`0.1.0-alpha.2` packages. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
+`0.2.0-alpha.0` packages locally. The production readback below predates this
+unpublished migration. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; reviewed feature branches publish through the existing
 production workflow after integration with the current remote head.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## Viselora 0.2 migration (2026-10-14, local only)
+
+Both published packages are pinned to `0.2.0-alpha.0`, alongside R3F 9.8.1,
+Three.js 0.184.0 and Drei 10.7.9. The original workspace's release source
+[7b9c361](https://github.com/agenticnoob/dom-webgl-workspace/commit/7b9c361361d5bbfd07dcf4c124030e76204c00b3),
+architecture and public migration guide were inspected before porting the
+standalone consumer. The npm `alpha` tag resolves to this release; `latest`
+still resolves to the retired API. Dependencies resolve inside this repository,
+with no source aliases, linked packages or vendored runtime implementation.
+
+Native R3F components replace managed effect/scene/material declarations.
+Viselora still owns DOM registration, shared progress and fallback readiness;
+R3F owns one Canvas and frame loop. The app retains its own chapter geometry,
+paired journal travel, profile frame binding, reading layouts, persisted state,
+project exhibition and return navigation. Owned textures and cloned model
+materials are disposed without destroying the shared GLB cache. Semantic
+fallback restores articles and journal text when the renderer is unavailable.
+A review caught and fixed a CSS specificity regression affecting reading-mode
+and printed axioms; both were checked in the final production build. The bilingual
+Viselora wall introduction, full case study and shared Agent exports describe the
+0.2 DOM/R3F ownership instead of the retired managed scene and loader APIs.
+The latest generated project content from `origin/main` is retained.
+
+**Automated verification:** `npm run check` passed: 56 files / 463 tests,
+zero-warning ESLint, formatting, application and test typechecks, project-data
+validation and the 137-file standalone boundary. `npm run build` and
+`git diff --check` passed. Tests exercise native shader uniforms, real-hit hold
+inputs, external theme commits, profile binding/material ownership, journal
+window/reduced-motion changes and subscription cleanup. Vitest reports an
+ESM/CJS Three.js duplication warning in two suites; `npm ls` resolves one
+Three.js version, and the production browser did not report that warning.
+
+**Production-build browser verification:** Ego Lite Chromium at 1440×900
+covered a real mesh hold, profile model, article sheets, project selection,
+SyringeMeter exhibition open → Escape return (selected wall and focus retained),
+16-panel journal, reverse return to the Hub, and real WebGL context loss/recovery.
+At 390×844 with reduced motion active, theme and locale controls, all eight
+reading-mode articles, printing and journal pagination from 12 to 24 days passed.
+Sampled states retained exactly one Canvas, no horizontal overflow and no
+captured page/console errors. Screenshots were inspected and remain outside Git.
+Physical devices, GPU performance and pixel-identical cross-browser parity were
+not verified.
+
+React Doctor 0.9.18's changed-scope scan reported 84/100 with five warnings:
+two mixed component/helper exports, two diagnostics on the intentional low-rate
+journal-data bridge between semantic DOM and Canvas, and a test-only material
+opacity warning. The bridge has one fetch/retry owner, passes stable panel/layout
+references and never carries frame progress. No rules were disabled. The npm
+audit reports the same 15 dependency findings as the pre-migration lockfile,
+with no additional findings; framework/test-tool upgrades are outside this change.
+
+**Delivery boundary:** implemented and verified locally; not committed, pushed,
+deployed or published. The upstream package repository was not changed.
 
 ## Agent reading entry and static exports (2026-10-11)
 

@@ -29,6 +29,7 @@ describe("hero palette and transition boundary", () => {
       ],
       "src/experience/HeroExperience.tsx": ["#F2F2F2", "#B8B8B8"],
       "src/ghost/pointerLight.ts": ["#F0F0F0"],
+      "src/shared/HeroText.tsx": ["#FFFFFF"],
       "src/transition/transitionConfig.ts": ["#C8C8C8", "#424242"],
     });
     const sources = files.map((file) => readFileSync(file, "utf8")).join("\n");
@@ -63,13 +64,13 @@ describe("hero palette and transition boundary", () => {
     }
     expect(sources).toContain("heroChapterDefinitions");
     expect(sources).toContain("useScrollEffectProgressStore");
-    expect(sources).toContain('hitTest: "mesh"');
-    expect(sources).toContain("press: true");
+    expect(sources).toContain("onPointerDown={down}");
+    expect(sources).toContain("event.button !== 0");
     expect(tetrahedronEffect).toContain("publishHeroTransitionSignals");
     expect(backgroundEffect).toContain("readHeroTransitionSignals");
-    expect(experience).toContain("signals: signalWriter");
-    expect(experience).toContain("theme: theme.store");
-    expect(experience).toContain("locale: locale.store");
+    expect(experience).toContain("<HeroTetrahedron");
+    expect(experience).toContain("theme={theme.store}");
+    expect(experience).toContain("locale={locale.store}");
     expect(`${tetrahedronEffect}\n${backgroundEffect}`).not.toMatch(
       /eventBus|dispatchEvent|addEventListener\(["']hero/i,
     );

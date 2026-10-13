@@ -1,12 +1,8 @@
-import type {
-  WebGLDeclaration,
-  WebGLProgressSignalSource,
-} from "@viselora/dom-webgl";
+import type { WebGLProgressSignalSource } from "@viselora/dom-webgl";
 import { WebGLTarget } from "@viselora/dom-webgl/react";
 import { WebGLScrollTimeline } from "@viselora/scroll-adapters/react";
 import {
   useCallback,
-  useMemo,
   useState,
   useSyncExternalStore,
   type CSSProperties,
@@ -15,8 +11,6 @@ import { heroChapterDefinitions } from "../chapters/definitions";
 import { heroInterfaceContent } from "../chapters/uiContent";
 import type { HeroLocale } from "../preferences/locale";
 import { journalReadingPageSize, journalTrackConfig as config } from "./config";
-import { readJournalPanelOpacity, type JournalTravelParams } from "./effect";
-import type { HeroTextPaletteParams } from "../transition/textPaletteEffect";
 import {
   journalPanelGeometry,
   journalTravel,
@@ -33,24 +27,7 @@ export function HeroJournalStage({
   readonly progress: WebGLProgressSignalSource;
 }) {
   const { panels, viewport } = journal;
-  const reduced = useSyncExternalStore(
-    subscribeReducedMotion,
-    readReducedMotion,
-    () => false,
-  );
-  const subscribe = useCallback(
-    (listener: () => void) =>
-      progress.subscribe?.(listener) ?? (() => undefined),
-    [progress],
-  );
-  const readWindow = useCallback(
-    () =>
-      progress.get(heroChapterDefinitions.signals.signals.exit) > 0
-        ? journalWindowStart(progress.get(config.progressKey), panels, reduced)
-        : -1,
-    [progress, panels, reduced],
-  );
-  const windowStart = useSyncExternalStore(subscribe, readWindow, () => -1);
+  const { windowStart } = useHeroJournalWindow(progress, panels);
   const geometry = journalPanelGeometry(viewport);
   const style = {
     "--journal-width": `${geometry.width}px`,
@@ -72,13 +49,35 @@ export function HeroJournalStage({
           <JournalPair
             key={`${panel.id}:${viewport.width}:${viewport.height}`}
             panel={panel}
-            panels={panels}
-            widthFraction={geometry.width / viewport.width}
-            aspect={viewport.width / viewport.height}
           />
         ))}
     </div>
   );
+}
+
+export function useHeroJournalWindow(
+  progress: WebGLProgressSignalSource,
+  panels: readonly JournalPanel[],
+) {
+  const reduced = useSyncExternalStore(
+    subscribeReducedMotion,
+    readReducedMotion,
+    () => false,
+  );
+  const subscribe = useCallback(
+    (listener: () => void) =>
+      progress.subscribe?.(listener) ?? (() => undefined),
+    [progress],
+  );
+  const readWindow = useCallback(
+    () =>
+      progress.get(heroChapterDefinitions.signals.signals.exit) > 0
+        ? journalWindowStart(progress.get(config.progressKey), panels, reduced)
+        : -1,
+    [progress, panels, reduced],
+  );
+  const windowStart = useSyncExternalStore(subscribe, readWindow, () => -1);
+  return { windowStart, reducedMotion: reduced };
 }
 
 function subscribeReducedMotion(listener: () => void) {
@@ -90,103 +89,38 @@ function readReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function JournalPair({
-  panel,
-  panels,
-  widthFraction,
-  aspect,
-}: {
-  readonly panel: JournalPanel;
-  readonly panels: readonly JournalPanel[];
-  readonly widthFraction: number;
-  readonly aspect: number;
-}) {
-  const declarations = useMemo(() => {
-    const palette = {
-      kind: "hero.text.palette",
-      readOpacity: (progress, reducedMotion) =>
-        readJournalPanelOpacity(progress, panel, panels, reducedMotion),
-    } satisfies HeroTextPaletteParams;
-    const create = (slot: string): WebGLDeclaration => ({
-      key: `hero.journal.${panel.id}.${slot}`,
-      placement: {
-        mode: "screen-depth",
-        depth: config.readingDepth,
-        size: "dom",
-      },
-      source: { kind: "dom", type: "text" },
-      renderRole: "model",
-      effects: [palette],
-      lifecycle: {
-        hideWhenReady: true,
-        hideMode: "self",
-        offscreen: { strategy: "restore-dom" },
-      },
-    });
-    const group = (side: "left" | "right"): WebGLDeclaration => ({
-      ...create(side),
-      source: { kind: "dom", type: "element" },
-      transformScope: "subtree",
-      effects: [
-        {
-          kind: "hero.journal.travel",
-          panel,
-          panels,
-          side,
-          widthFraction,
-          aspect,
-        } satisfies JournalTravelParams,
-      ],
-    });
-    return {
-      left: group("left"),
-      right: group("right"),
-      date: create("date"),
-      tools: create("tools"),
-      body: create("body"),
-    };
-  }, [panel, panels, widthFraction, aspect]);
+function JournalPair({ panel }: { readonly panel: JournalPanel }) {
   return (
     <div
       className="hero-journal-pair"
       data-journal-panel={panel.id}
       style={{ "--journal-height": `${panel.height}px` } as CSSProperties}
     >
-      <WebGLTarget
-        as="div"
-        webgl={declarations.left}
-        className="hero-journal-lane"
-        data-journal-left={panel.date}
-      >
+      <div className="hero-journal-lane" data-journal-left={panel.date}>
         <WebGLTarget
-          as="p"
-          className="hero-journal-date"
-          webgl={declarations.date}
+          id={`hero.journal.${panel.id}.date`}
+          hideWhenReady
+          offscreen="park"
         >
-          {panel.date.replaceAll("-", ".")}
+          <p className="hero-journal-date">{panel.date.replaceAll("-", ".")}</p>
         </WebGLTarget>
         <WebGLTarget
-          as="p"
-          className="hero-journal-meta"
-          webgl={declarations.tools}
+          id={`hero.journal.${panel.id}.tools`}
+          hideWhenReady
+          offscreen="park"
         >
-          {panel.tools}
+          <p className="hero-journal-meta">{panel.tools}</p>
         </WebGLTarget>
-      </WebGLTarget>
-      <WebGLTarget
-        as="div"
-        webgl={declarations.right}
-        className="hero-journal-lane"
-        data-journal-right={panel.date}
-      >
+      </div>
+      <div className="hero-journal-lane" data-journal-right={panel.date}>
         <WebGLTarget
-          as="p"
-          className="hero-journal-body"
-          webgl={declarations.body}
+          id={`hero.journal.${panel.id}.body`}
+          hideWhenReady
+          offscreen="park"
         >
-          {panel.text}
+          <p className="hero-journal-body">{panel.text}</p>
         </WebGLTarget>
-      </WebGLTarget>
+      </div>
     </div>
   );
 }

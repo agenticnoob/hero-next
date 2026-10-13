@@ -52,9 +52,9 @@ Hub 模型使用较小比例及下移位置，为介绍留出完整阅读区域�
 
 空间布局保留左右列、逐行避让模型与漫画气泡的排版，模型随正文完成一周确定性旋转。
 阅读布局按原文顺序使用完整宽度：标题与简介、独立人物区域、四段叙述、结语。
-模型区域拥有自然文档位置，应用 effect 将其实际屏幕位置映射到已有模型；人物随该区域滚出，
+模型区域拥有自然文档位置，应用 R3F component 将其实际屏幕位置映射到已有模型；人物随该区域滚出，
 不会固定在正文中间遮挡文字。手机不运行逐行排斥测量或固定打字气泡。
-模型仍使用同一个 GLB、managed scene 和 material，首面浮雕、入场与回贴关系保留。
+模型仍使用同一个 GLB、R3F scene 和 material，首面浮雕、入场与回贴关系保留。
 
 仓库内 GLB 为 1,824,760 bytes，449,954 triangles，Draco 几何与 1024px WebP 纹理。
 材质使用几何法线、0.12 emissive fill、0.72 roughness 和零 metalness；基色在两种主题下
@@ -62,7 +62,7 @@ Hub 模型使用较小比例及下移位置，为介绍留出完整阅读区域�
 
 ## 第二章：扇面目录与文章纸卡
 
-空间布局保留同一 managed surface 的扇面标题与不同尺寸邮票纸卡，滚动驱动连续入栈，
+空间布局保留同一原生 ShaderMaterial surface 的扇面标题与不同尺寸邮票纸卡，滚动驱动连续入栈，
 正文溢出时分配对应的卡内阅读距离，减少动态效果时保留完整内容与选择语义。
 
 阅读布局不挂载空间阅读 surface；顶部为可点击的文章目录，下方逐篇展示完整标题与正文。
@@ -146,7 +146,7 @@ SyringeMeter 墙面坐标，不按 selected/settled 隐藏，转向两侧时随�
 墙面图文与命中区域共享 `src/projects/exhibit.ts` 的布局，纯投影位于 `projection.ts`。
 手机在普通项目条目中显示同一入口。点击后以既有 room
 shader 的 approach uniform 沿当前墙面推进，原生 dialog 接管可滚动的语义正文。未新增
-canvas、场景或运行时；高频推进量仍在 room effect 中插值。减少动态效果时直接打开。
+canvas、场景或运行时；高频推进量仍在 room useFrame callback 中插值。减少动态效果时直接打开。
 
 展示地址为 `/projects/axmorf-studio`、`/projects/viselora`、`/projects/syringe-meter`
 和 `/projects/vibe-journal-pipeline`。Next 拦截路由保留主页和 room store，直接访问或
@@ -203,7 +203,7 @@ SyringeMeter 保留 `syringeMeterCaseStudy` 与 `syringeMeterShowcaseUi`；媒�
 新增条目追加到已有 DOM 之后，保留已读节点和滚动位置，并通过状态文案提示显示数量。
 手机日志使用普通单栏文档；不挂载透视文字组、不要求读者在运动中追踪文字。
 
-空间布局继续使用最多十六天的原生 DOM-text/subtree 窗口：日期与工具在左、同日事件在右，
+空间布局继续使用最多十六天的 DOM target / 原生文字 mesh 窗口：日期与工具在左、同日事件在右，
 由同一进度沿透视路径经过。四面体保留阻尼推进、自旋和 Fresnel 提亮。
 减少动态效果时移除推进、额外旋转与视差；大屏每次呈现完整的静止日期，手机仍为自然列表。
 
@@ -215,7 +215,7 @@ Hub 与正文以 committed theme 交换前景和背景。灯光颜色仍是独�
 阅读布局在右上角语言控件旁显示半圆配色图标按钮，Hub 和各章正文均可点击，支持键盘操作，
 双语可访问名称为“反转配色 / Invert colors”，`aria-pressed` 表示是否使用反转方案。
 阅读布局禁用四面体长按；切入该布局时取消尚未完成的桌面长按，不拦截浏览器的原生上下文菜单。
-按钮与桌面交互提交同一个 theme store，effect 将外部提交同步到材质和转场信号；不增加主题状态源。
+按钮与桌面交互提交同一个 theme store，四面体 useFrame 将外部提交同步到材质和转场信号；不增加主题状态源。
 按钮直接提交配色，无长按扩散动画；刷新保留已提交方案。开场提示随布局使用对应操作说明。
 
 四面体的八个首尾端点保持 2 列 × 4 行图集，目标为 2 倍逻辑像素，整张纹理单边
@@ -233,6 +233,21 @@ Hub 与正文以 committed theme 交换前景和背景。灯光颜色仍是独�
 - 一个 WebGLScrollRuntime、一个 canvas、一个 scroll truth、一个 committed theme。
 - CSS 负责语义排版、颜色、可访问性、层叠和触控区域；WebGL 负责四面体、人物、投影与三角转场。
 - 不增加第二 renderer、scene/pass、CSS mask/clip 转场、重复模型或页面级假 mesh press。
-- 运行时 effect 和声明保持稳定；逐帧模型、shader 与过渡进度不进入 React state。
+- Canvas options、shader 和 store 保持稳定；逐帧模型、shader 与过渡进度不进入 React state。
 - 仅使用公开 Viselora entrypoints；不修改 npm 包，不引入邻接 checkout 或 runtime internals。
 - 浏览器模拟与真机、多浏览器、主观视觉验收分别记录，不以无溢出替代可用性结论。
+
+## Viselora 0.2 的渲染 ownership
+
+单一 `WebGLScrollRuntime` 承载 R3F Canvas；应用的原生 mesh、材质、灯光和 GLB
+组件位于 `scene`，章节和文字 target 保留在语义 DOM 中。R3F 独占 renderer 和帧循环，
+Viselora 负责 target 测量、共享滚动进度及 WebGL 可用性。逐帧 delta 转为原运动公式
+使用的毫秒；四面体发布最终 frameBinding，人物直接消费该帧，避免分别积分漂移。
+
+Portal 与日志使用公开 DOM text texture 工具生成字形 alpha，原生材质应用已提交主题，
+主题变化不重建 DOM target 或纹理。内容、字体和布局改变时才重建纹理，并按 captured
+target identity 报告 readiness。GLB 共享缓存保持完整；只清理应用克隆的材质和生成的纹理。
+WebGL 不可用时恢复章节、文章与日志的语义正文，恢复后重新启用同一 Canvas。
+Viselora 的中英文项目简介、完整案例及 Agent 导出同步描述 0.2 的上述边界；
+案例的章节 ID、六步流程、地址与展厅归属保持稳定。
+验证结果与仍未验收的边界见 [STATUS.md](./STATUS.md)。

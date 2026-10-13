@@ -1,16 +1,14 @@
-import type { WebGLEffectLightsFacade } from "@viselora/dom-webgl";
-import { describe, expect, test, vi } from "vitest";
+import { Color, Mesh, PerspectiveCamera, PointLight } from "three";
+import { placeHeroScreenPlane } from "../src/shared/screenPlane";
+import { describe, expect, test } from "vitest";
 
 import {
-  heroGhostBackgroundEffect,
   resolveHeroGhostCursorIntensityScale,
   resolveHeroGhostProgramState,
-  resolveHeroGhostOverscanScale,
   resolveHeroPointerLightIntensityScale,
 } from "../src/ghost/backgroundEffect";
 import {
   createHeroPointerLightState,
-  disposeHeroPointerLight,
   heroPointerLightKey,
   resolveHeroPointerLightTarget,
   updateHeroPointerLight,
@@ -23,26 +21,18 @@ import {
 } from "../src/transition/signals";
 
 describe("hero Ghost Cursor effects", () => {
-  test("registers only the frame-scheduled background effect", () => {
-    expect(heroGhostBackgroundEffect).toMatchObject({
-      kind: "hero.ghost.background",
-      source: "dom/element",
-      schedule: "frame",
-      dispose: expect.any(Function),
-    });
-  });
-
   test("resolves responsive world scale with six-percent overscan", () => {
-    expect(
-      resolveHeroGhostOverscanScale({
-        width: 2048,
-        height: 403,
-        viewportHeight: 403,
-        depth: 5,
-        fov: 38,
-        overscan: 1.06,
-      }),
-    ).toEqual([
+    const mesh = new Mesh();
+    const camera = new PerspectiveCamera(38, 2048 / 403);
+    placeHeroScreenPlane(
+      mesh,
+      camera,
+      { width: 2048, height: 403 },
+      5,
+      undefined,
+      1.06,
+    );
+    expect(mesh.scale.toArray()).toEqual([
       expect.closeTo(18.548236455, 9),
       expect.closeTo(3.649872701, 9),
       1,
@@ -180,10 +170,10 @@ describe("hero Ghost Cursor effects", () => {
   });
 
   test("damps pointer-light position and updates one stable light key", () => {
-    const { lights } = createLightsFacade();
+    const light = new PointLight();
     const state = createHeroPointerLightState(false);
 
-    updateHeroPointerLight(lights, state, {
+    updateHeroPointerLight(light, state, {
       active: true,
       localX: 1000,
       localY: 0,
@@ -191,7 +181,7 @@ describe("hero Ghost Cursor effects", () => {
       height: 500,
       delta: 16,
     });
-    updateHeroPointerLight(lights, state, {
+    updateHeroPointerLight(light, state, {
       active: true,
       localX: 1000,
       localY: 0,
@@ -204,27 +194,20 @@ describe("hero Ghost Cursor effects", () => {
     expect(state.x).toBeLessThan(1.05);
     expect(state.y).toBeGreaterThan(0.365);
     expect(state.y).toBeLessThan(1.085);
-    expect(lights.point).toHaveBeenCalledTimes(2);
-    expect(lights.point.mock.calls.map(([key]) => key)).toEqual([
-      heroPointerLightKey,
-      heroPointerLightKey,
-    ]);
-    expect(lights.point).toHaveBeenLastCalledWith(heroPointerLightKey, {
-      color: "#f0f0f0",
-      intensity: state.intensity,
-      distance: 1.8,
-      decay: 3,
-      position: [state.x, state.y, state.z],
-      follow: "none",
-    });
+    expect(light.name).toBe(heroPointerLightKey);
+    expect(light.color).toEqual(new Color("#f0f0f0"));
+    expect(light.intensity).toBe(state.intensity);
+    expect(light.distance).toBe(1.8);
+    expect(light.decay).toBe(3);
+    expect(light.position.toArray()).toEqual([state.x, state.y, state.z]);
   });
 
   test("raises the focused pointer light toward intensity ten", () => {
-    const { lights } = createLightsFacade();
+    const light = new PointLight();
     const state = createHeroPointerLightState(false);
 
     for (let frame = 0; frame < 20; frame += 1) {
-      updateHeroPointerLight(lights, state, {
+      updateHeroPointerLight(light, state, {
         active: true,
         localX: 500,
         localY: 250,
@@ -238,11 +221,11 @@ describe("hero Ghost Cursor effects", () => {
   });
 
   test("caps the focused pointer light at a restrained chapter intensity", () => {
-    const { lights } = createLightsFacade();
+    const light = new PointLight();
     const state = createHeroPointerLightState(false);
 
     for (let frame = 0; frame < 20; frame += 1) {
-      updateHeroPointerLight(lights, state, {
+      updateHeroPointerLight(light, state, {
         active: true,
         localX: 500,
         localY: 250,
@@ -257,10 +240,10 @@ describe("hero Ghost Cursor effects", () => {
   });
 
   test("immediately caps residual Hub light when jumping into the profile", () => {
-    const { lights } = createLightsFacade();
+    const light = new PointLight();
     const state = createHeroPointerLightState(false);
     state.intensity = 10;
-    updateHeroPointerLight(lights, state, {
+    updateHeroPointerLight(light, state, {
       active: true,
       localX: 500,
       localY: 250,
@@ -273,10 +256,10 @@ describe("hero Ghost Cursor effects", () => {
   });
 
   test("fades pointer-light intensity after the pointer leaves", () => {
-    const { lights } = createLightsFacade();
+    const light = new PointLight();
     const state = createHeroPointerLightState(false);
 
-    updateHeroPointerLight(lights, state, {
+    updateHeroPointerLight(light, state, {
       active: true,
       localX: 500,
       localY: 250,
@@ -285,7 +268,7 @@ describe("hero Ghost Cursor effects", () => {
       delta: 64,
     });
     const activeIntensity = state.intensity;
-    updateHeroPointerLight(lights, state, {
+    updateHeroPointerLight(light, state, {
       active: false,
       localX: 0,
       localY: 0,
@@ -300,10 +283,10 @@ describe("hero Ghost Cursor effects", () => {
   });
 
   test("keeps a static low-intensity light under reduced motion", () => {
-    const { lights } = createLightsFacade();
+    const light = new PointLight();
     const state = createHeroPointerLightState(true);
 
-    updateHeroPointerLight(lights, state, {
+    updateHeroPointerLight(light, state, {
       active: true,
       localX: 1000,
       localY: 0,
@@ -311,7 +294,7 @@ describe("hero Ghost Cursor effects", () => {
       height: 500,
       delta: 16,
     });
-    updateHeroPointerLight(lights, state, {
+    updateHeroPointerLight(light, state, {
       active: true,
       localX: 0,
       localY: 500,
@@ -326,12 +309,11 @@ describe("hero Ghost Cursor effects", () => {
       z: 0.8,
       intensity: 0.45,
     });
-    expect(lights.point.mock.calls[0]?.[1]).toEqual(
-      lights.point.mock.calls[1]?.[1],
-    );
+    expect(light.position.toArray()).toEqual([0, 0.365, 0.8]);
+    expect(light.intensity).toBe(0.45);
   });
 
-  test("safely no-ops without a lights facade", () => {
+  test("safely no-ops before the R3F light ref is attached", () => {
     const state = createHeroPointerLightState(false);
 
     expect(() =>
@@ -345,32 +327,4 @@ describe("hero Ghost Cursor effects", () => {
       }),
     ).not.toThrow();
   });
-
-  test("removes the stable pointer light through the managed facade", () => {
-    const { lights } = createLightsFacade();
-
-    disposeHeroPointerLight(lights);
-    disposeHeroPointerLight(undefined);
-
-    expect(lights.remove).toHaveBeenCalledOnce();
-    expect(lights.remove).toHaveBeenCalledWith(heroPointerLightKey);
-  });
 });
-
-function createLightsFacade() {
-  const lightHandle = {
-    setVisible: vi.fn(),
-    remove: vi.fn(),
-    dispose: vi.fn(),
-  };
-  const lights = {
-    ambient: vi.fn<WebGLEffectLightsFacade["ambient"]>(() => lightHandle),
-    directional: vi.fn<WebGLEffectLightsFacade["directional"]>(
-      () => lightHandle,
-    ),
-    point: vi.fn<WebGLEffectLightsFacade["point"]>(() => lightHandle),
-    remove: vi.fn<WebGLEffectLightsFacade["remove"]>(),
-  } satisfies WebGLEffectLightsFacade;
-
-  return { lights };
-}

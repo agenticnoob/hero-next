@@ -1,8 +1,5 @@
-import type {
-  WebGLDeclaration,
-  WebGLProgressSignalSource,
-} from "@viselora/dom-webgl";
-import { WebGLTarget, type WebGLTargetProps } from "@viselora/dom-webgl/react";
+import type { WebGLProgressSignalSource } from "@viselora/dom-webgl";
+import { WebGLTarget } from "@viselora/dom-webgl/react";
 import React, {
   useCallback,
   useSyncExternalStore,
@@ -18,7 +15,6 @@ import {
 } from "../chapters/definitions";
 import type { HeroLocale } from "../preferences/locale";
 import type { HeroPortalMotionParams } from "./portalEffect";
-import { heroTextPaletteDeclaration } from "./textPaletteEffect";
 import {
   resolveHeroPortalRenderKey,
   heroPortalTerminalContentId,
@@ -28,13 +24,18 @@ import {
   type HeroPortalSide,
 } from "./portalState";
 
-const portalDepth = 3.65;
+export const portalDepth = 3.65;
 const portalTravelViewportFraction = 0.16;
 const portalMaxTravelPx = 240;
 
+export type HeroPortalTarget = {
+  readonly id: string;
+  readonly motion: HeroPortalMotionParams;
+};
+
 type HeroPortalPair = {
-  readonly left: readonly [WebGLDeclaration, WebGLDeclaration];
-  readonly right: readonly [WebGLDeclaration, WebGLDeclaration];
+  readonly left: readonly [HeroPortalTarget, HeroPortalTarget];
+  readonly right: readonly [HeroPortalTarget, HeroPortalTarget];
 };
 
 const heroPortalContentOrder = [
@@ -171,7 +172,7 @@ function PortalColumn({
   readonly secondary: ReactNode;
   readonly secondaryClassName?: string;
   readonly side: HeroPortalSide;
-  readonly webgl: readonly [WebGLDeclaration, WebGLDeclaration];
+  readonly webgl: readonly [HeroPortalTarget, HeroPortalTarget];
 }) {
   return (
     <section className={`hero-portal-copy hero-portal-copy--${side}`}>
@@ -190,18 +191,18 @@ function PortalText({
 }: {
   readonly children: ReactNode;
   readonly className?: string;
-  readonly webgl: WebGLDeclaration;
+  readonly webgl: HeroPortalTarget;
 }) {
   const classes = ["hero-portal-line", className].filter(Boolean).join(" ");
 
   return (
-    <WebGLTarget as="p" className={classes} webgl={webgl}>
-      {children}
+    <WebGLTarget id={webgl.id} hideWhenReady>
+      <p className={classes}>{children}</p>
     </WebGLTarget>
   );
 }
 
-function useHeroPortalRenderKey(
+export function useHeroPortalRenderKey(
   progress: WebGLProgressSignalSource,
 ): HeroPortalRenderKey {
   const subscribe = useCallback(
@@ -234,7 +235,7 @@ function createPortalDeclaration(
   contentId: HeroPortalContentId,
   side: HeroPortalSide,
   slot: "primary" | "secondary",
-): WebGLDeclaration {
+): HeroPortalTarget {
   const effect = {
     kind: "hero.portal.motion",
     contentId,
@@ -248,14 +249,7 @@ function createPortalDeclaration(
       : {}),
   } satisfies HeroPortalMotionParams;
 
-  return {
-    key: `hero.portal.${contentId}.${side}.${slot}`,
-    placement: { mode: "screen-depth", depth: portalDepth, size: "dom" },
-    source: { kind: "dom", type: "text" },
-    renderRole: "model",
-    lifecycle: { hideWhenReady: true, hideMode: "self" },
-    effects: [effect, heroTextPaletteDeclaration],
-  } satisfies WebGLTargetProps<"p">["webgl"];
+  return { id: `hero.portal.${contentId}.${side}.${slot}`, motion: effect };
 }
 
 type PortalCopy = {
@@ -303,7 +297,7 @@ function resolvePortalCopy(
   };
 }
 
-function readPortalDeclarations(
+export function readPortalDeclarations(
   contentId: HeroPortalContentId,
 ): HeroPortalPair {
   const declarations = portalDeclarations.get(contentId);

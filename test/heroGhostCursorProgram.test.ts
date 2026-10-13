@@ -40,7 +40,9 @@ describe("hero Ghost Cursor material programs", () => {
       HERO_FOREGROUND: 0,
       MAX_TRAIL_LENGTH: 36,
     });
-    expect(program.blend).toBe("normal");
+    expect(program.transparent).toBe(true);
+    expect(program.depthWrite).toBe(false);
+    expect(program.toneMapped).toBe(false);
     expect(program.fragmentShader).toContain("float fbm(vec2 p)");
     expect(program.fragmentShader).toContain("vec4 blob(");
     expect(program.fragmentShader).toContain(

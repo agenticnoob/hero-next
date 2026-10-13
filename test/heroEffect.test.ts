@@ -1,18 +1,20 @@
+import { describe, expect, test, vi } from "vitest";
+import { BufferGeometry, Group, Mesh, MeshStandardMaterial } from "three";
+
 import { createHeroTetrahedronFrameBinding } from "../src/tetrahedron/frameBinding";
 import {
-  heroProfileModelEffect,
+  connectHeroProfileModelFrame,
   resolveHeroProfileModelFrame,
 } from "../src/profile/modelEffect";
-import type { WebGLSceneObjectEffectContext } from "@viselora/dom-webgl";
-import { describe, expect, test, vi } from "vitest";
-
 import {
   applyHeroFrame,
   createHeroEffectState,
   createHeroMotionState,
-  heroTetrahedronEffect,
   stepHeroMotionState,
+  updateHeroTetrahedronFrame,
+  type HeroTetrahedronFrameInput,
 } from "../src/tetrahedron/effect";
+import { createHeroTetrahedronMaterial } from "../src/tetrahedron/shader";
 import { resolveHeroChapterGeometryFrame } from "../src/chapters/geometry";
 import { resolveHeroChapterScrollState } from "../src/chapters/scrollState";
 import {
@@ -21,190 +23,69 @@ import {
 } from "../src/transition/holdTransition";
 import { heroTransitionConfig } from "../src/transition/transitionConfig";
 import { getHeroChapterDefinition } from "../src/chapters/definitions";
-import type { HeroTransitionSignalWriter } from "../src/transition/signals";
-import { heroReadingQuery } from "../src/shared/layoutTokens";
 import { createHeroThemeStore } from "../src/preferences/theme";
-import { heroTetrahedronRadialShaderKey } from "../src/tetrahedron/shader";
+import { createHeroLocaleStore } from "../src/preferences/locale";
 
 const desktop = { width: 1200, height: 835 } as const;
 const mobile = { width: 390, height: 844 } as const;
 
-function createThemeStore(scheme: "initial" | "inverted" = "initial") {
-  return {
-    getSnapshot: () => scheme,
-    getServerSnapshot: () => "initial" as const,
-    subscribe: () => () => undefined,
-    commit: vi.fn((next: "initial" | "inverted") => {
-      scheme = next;
-    }),
-  };
+function createTarget(
+  material = new MeshStandardMaterial({
+    opacity: 0.92,
+    metalness: 0.62,
+    roughness: 0.28,
+  }),
+) {
+  const target = new Mesh(new BufferGeometry(), material);
+  vi.spyOn(target.position, "set");
+  vi.spyOn(target.rotation, "set");
+  vi.spyOn(target.scale, "set");
+  vi.spyOn(target.scale, "setScalar");
+  return target;
 }
 
-function createLocaleStore(locale: "zh" | "en" = "zh") {
-  return {
-    getSnapshot: () => locale,
-    getServerSnapshot: () => "zh" as const,
-    subscribe: () => () => undefined,
-    commit: vi.fn(),
+function createFrameFixture(reducedMotion = false) {
+  const resources = {
+    ...createHeroTetrahedronMaterial(document.createElement("canvas")),
+    state: createHeroEffectState(reducedMotion),
   };
-}
-
-function createCanvasContext() {
-  return {
-    textBaseline: "alphabetic",
-    fillStyle: "#000000",
-    font: "",
-    letterSpacing: "0px",
-    globalAlpha: 1,
-    strokeStyle: "#ffffff",
-    lineWidth: 1,
-    lineJoin: "miter",
-    beginPath: vi.fn(),
-    arc: vi.fn(),
-    bezierCurveTo: vi.fn(),
-    clip: vi.fn(),
-    closePath: vi.fn(),
-    fill: vi.fn(),
-    save: vi.fn(),
-    translate: vi.fn(),
-    scale: vi.fn(),
-    rotate: vi.fn(),
-    fillRect: vi.fn(),
-    fillText: vi.fn(),
-    lineTo: vi.fn(),
-    moveTo: vi.fn(),
-    rect: vi.fn(),
-    measureText: vi.fn((value: string) => ({
-      width: value.length * 10,
-      actualBoundingBoxAscent: 8,
-      actualBoundingBoxDescent: 2,
-      fontBoundingBoxAscent: 8,
-      fontBoundingBoxDescent: 2,
-    })),
-    restore: vi.fn(),
-    stroke: vi.fn(),
+  const target = createTarget(resources.material);
+  const params = {
+    frameBinding: createHeroTetrahedronFrameBinding(),
+    signals: { set: vi.fn() },
+    theme: createHeroThemeStore({ getItem: () => null, setItem: vi.fn() }),
+    locale: createHeroLocaleStore({ getItem: () => null, setItem: vi.fn() }),
   };
-}
-
-function createTarget() {
-  const layer = {
-    setProgram: vi.fn(),
-    setUniforms: vi.fn(),
-    clear: vi.fn(),
-    dispose: vi.fn(),
-  };
-  return {
-    sourceKind: "mesh" as const,
-    position: { x: 0, y: 0, z: 0, set: vi.fn() },
-    rotation: { x: 0, y: 0, z: 0, set: vi.fn() },
-    scale: { x: 1, y: 1, z: 1, set: vi.fn(), setScalar: vi.fn() },
-    visible: true,
-    opacity: 1,
-    material: {
-      color: { value: "#424242", set: vi.fn() },
-      emissive: {
-        value: "#424242",
-        intensity: heroTransitionConfig.motion.emissiveIntensity,
-        set: vi.fn(),
-      },
-      opacity: 0.92,
-      metalness: 0.62,
-      roughness: 0.28,
-      shader: {
-        onBeforeCompile: vi.fn(),
-        setUniforms: vi.fn(),
-        remove: vi.fn(),
-      },
-      createLayer: vi.fn(() => layer),
-      restore: vi.fn(),
+  const input: HeroTetrahedronFrameInput = {
+    time: 16,
+    deltaMs: 16,
+    scrollY: 0,
+    viewport: desktop,
+    pixelRatio: 2,
+    progress: { get: () => 0 },
+    pointer: {
+      inside: true,
+      x: 0.4,
+      y: -0.2,
+      primaryDown: true,
+      meshPressed: true,
+      hit: true,
     },
   };
-}
-
-function createContext(
-  target: ReturnType<typeof createTarget>,
-  overrides: {
-    readonly pointer?: Partial<WebGLSceneObjectEffectContext["pointer"]>;
-    readonly objectPointer?: Partial<
-      WebGLSceneObjectEffectContext["objectPointer"]
-    >;
-    readonly time?: number;
-    readonly delta?: number;
-    readonly progress?: WebGLSceneObjectEffectContext["progress"];
-    readonly scrollDelta?: number;
-  } = {},
-): WebGLSceneObjectEffectContext {
-  const pointer = {
-    x: 840,
-    y: 334,
-    normalizedX: 0.4,
-    normalizedY: -0.2,
-    isInside: true,
-    isDown: true,
-    downTime: 0,
-    pressDuration: 16,
-    isDragging: false,
-    dragStartX: 0,
-    dragStartY: 0,
-    dragDeltaX: 0,
-    dragDeltaY: 0,
-    clickCount: 0,
-    button: "primary",
-    buttons: ["primary"],
-    modifiers: { shift: false, alt: false, ctrl: false, meta: false },
-    ...overrides.pointer,
-  } satisfies WebGLSceneObjectEffectContext["pointer"];
-  const objectPointer = {
-    isHovered: true,
-    isPressed: true,
-    isDragging: false,
-    wasClicked: false,
-    pointerId: 1,
-    dragStartX: 0,
-    dragStartY: 0,
-    dragDeltaX: 0,
-    dragDeltaY: 0,
-    hit: { point: [0, 0, 0], distance: 2 },
-    ...overrides.objectPointer,
-  } satisfies WebGLSceneObjectEffectContext["objectPointer"];
-  const time = overrides.time ?? 16;
-  const delta = overrides.delta ?? 16;
-
   return {
-    objectId: "hero.tetrahedron.mesh",
-    sourceKind: "mesh",
-    input: {
-      time,
-      delta,
-      scroll: {
-        mode: "page",
-        pageProgress: 0,
-        direction: 0,
-        velocity: overrides.scrollDelta ?? 0,
-      },
-      pointer,
+    target,
+    resources,
+    params,
+    input,
+    update(overrides: Partial<HeroTetrahedronFrameInput> = {}) {
+      updateHeroTetrahedronFrame(
+        target,
+        resources,
+        { ...input, ...overrides },
+        params,
+      );
     },
-    pointer,
-    objectPointer,
-    progress: overrides.progress ?? { get: () => 0 },
-    runtime: {
-      progress: { get: () => 0 },
-      postprocess: {
-        request: () => ({ update() {}, dispose() {} }),
-      },
-    },
-    scene: { id: "hero.tetrahedron.scene", projection: "perspective-stage" },
-    time,
-    delta,
-    object: target,
-    resources: {
-      addDisposable() {},
-      createObject3D(factory) {
-        return factory();
-      },
-      dispose() {},
-    },
-  } satisfies WebGLSceneObjectEffectContext;
+  };
 }
 
 function transition(
@@ -213,513 +94,224 @@ function transition(
   return { ...createHeroHoldTransitionState(), ...values };
 }
 
-describe("hero tetrahedron effect", () => {
-  test("configures native GLB materials once without a shader facade and restores them on disposal", () => {
-    const frameBinding = createHeroTetrahedronFrameBinding();
-    const target = createTarget();
-    const context = createContext(target);
-    const material = { ...createTarget().material, shader: undefined };
-    const mesh = {
-      index: 0,
-      material,
-      createMaterialLayer: material.createLayer,
-      restoreMaterial: vi.fn(),
-    };
-    context.object.model = {
-      src: "/models/noobli-profile.glb",
-      meshes: { all: () => [mesh], forEach: (visitor) => visitor(mesh) },
-      sampling: { vertices: () => new Float32Array() },
-      points: { create: vi.fn() },
-    };
-    const params = { kind: "hero.profile.model" as const, frameBinding };
-    const state = heroProfileModelEffect.setup!(context, params);
-    for (let i = 0; i < 100; i++)
-      heroProfileModelEffect.update(context, state, params);
-    expect(material.color.set).toHaveBeenCalledTimes(1);
-    expect(material.emissive.set).toHaveBeenCalledWith("#C8C8C8", 0.12);
-    expect(material.metalness).toBe(0);
-    expect(material.roughness).toBe(0.72);
-    heroProfileModelEffect.dispose!(context, state, params);
-    expect(material.color.set).toHaveBeenLastCalledWith("#424242");
-    expect(material.emissive.set).toHaveBeenLastCalledWith(
-      "#424242",
-      heroTransitionConfig.motion.emissiveIntensity,
-    );
-    expect(material.metalness).toBe(0.62);
-    expect(material.roughness).toBe(0.28);
-  });
-
+describe("hero tetrahedron native frames", () => {
   test.each(["model-first", "mesh-first"])(
-    "publishes one final frame to the model with %s updates",
+    "shares the exact final frame with the profile for %s connection",
     (order) => {
-      const target = createTarget();
-      const model = createTarget();
-      const frameBinding = createHeroTetrahedronFrameBinding();
-      const publish = vi.spyOn(frameBinding, "publish");
-      const params = {
-        kind: "hero.tetrahedron.motion" as const,
-        frameBinding,
-        signals: { set: vi.fn() },
-        theme: createThemeStore(),
-        locale: createLocaleStore(),
-      };
-      const modelParams = { kind: "hero.profile.model" as const, frameBinding };
-      const modelContext = createContext(model);
-      const modelState = heroProfileModelEffect.setup!(
-        modelContext,
-        modelParams,
+      const fixture = createFrameFixture();
+      const model = new Group();
+      const publish = vi.spyOn(fixture.params.frameBinding, "publish");
+      if (order === "mesh-first") fixture.update();
+      const disconnect = connectHeroProfileModelFrame(
+        model,
+        fixture.params.frameBinding,
       );
-      const state = createHeroEffectState(false);
-      const signals = getHeroChapterDefinition("signals").signals;
-      for (let i = 0; i < 120; i++) {
-        const exit = i < 100 ? 1 : 0;
-        const context = createContext(target, {
-          time: i * 16,
-          scrollDelta: i < 50 ? 30 : -30,
-          pointer: { isDown: i >= 80 && i < 90, buttons: [] },
-          objectPointer: { isPressed: false },
+      const chapterSignals = getHeroChapterDefinition("signals").signals;
+      for (let index = 0; index < 120; index++) {
+        fixture.update({
+          time: index * 16,
+          scrollY: index < 60 ? index * 30 : (120 - index) * 30,
+          pointer: {
+            ...fixture.input.pointer,
+            primaryDown: false,
+            meshPressed: false,
+          },
           progress: {
             get: (key) =>
-              key === signals.entry ? 1 : key === signals.exit ? exit : 0,
+              key === chapterSignals.entry
+                ? 1
+                : key === chapterSignals.exit && index < 100
+                  ? 1
+                  : 0,
           },
         });
-        const updateModel = () => {
-          model.visible = true; // The native model controller reapplies its declaration first.
-          heroProfileModelEffect.update(modelContext, modelState, modelParams);
-        };
-        if (order === "model-first") updateModel();
-        heroTetrahedronEffect.update(context, state, params);
-        if (order === "mesh-first") updateModel();
         const frame = publish.mock.lastCall![0];
         const expected = resolveHeroProfileModelFrame(frame);
-        expect(target.position.set).toHaveBeenLastCalledWith(
-          ...frame.tetrahedron.position,
+        expect(fixture.target.position.toArray()).toEqual(
+          frame.tetrahedron.position,
         );
-        expect(target.rotation.set).toHaveBeenLastCalledWith(
-          ...frame.tetrahedron.rotation,
-        );
-        expect(model.position.set).toHaveBeenLastCalledWith(
-          ...expected.position,
-        );
-        expect(model.rotation.set).toHaveBeenLastCalledWith(
-          ...expected.rotation,
-        );
-        expect(model.scale.set).toHaveBeenLastCalledWith(...expected.scale);
+        expect(model.position.toArray()).toEqual(expected.position);
+        expect(model.rotation.toArray().slice(0, 3)).toEqual(expected.rotation);
+        expect(model.scale.toArray()).toEqual(expected.scale);
         expect(model.visible).toBe(expected.visible);
       }
-      heroProfileModelEffect.dispose!(modelContext, modelState, modelParams);
-      model.position.set.mockClear();
-      frameBinding.refresh();
-      expect(model.position.set).not.toHaveBeenCalled();
-      heroTetrahedronEffect.dispose!(createContext(target), state, params);
-      const nextModel = vi.fn();
-      frameBinding.connect(nextModel);
-      expect(nextModel).not.toHaveBeenCalled();
+      disconnect();
+      const last = model.position.clone();
+      fixture.update();
+      expect(model.position).toEqual(last);
+      fixture.params.frameBinding.clear();
+      const next = vi.fn();
+      fixture.params.frameBinding.connect(next);
+      expect(next).not.toHaveBeenCalled();
     },
   );
 
-  test("uses shared runtime scroll for flight and resets when returning to chapter four", () => {
-    const target = createTarget();
-    const state = createHeroEffectState(false);
+  test("derives flight from shared scroll displacement, avoids a mount impulse and resets on chapter return", () => {
+    const fixture = createFrameFixture();
     const signals = getHeroChapterDefinition("signals").signals;
     let exit = 1;
     const progress = {
       get: (key: string) =>
         key === signals.entry ? 1 : key === signals.exit ? exit : 0,
     };
-    const params = {
-      kind: "hero.tetrahedron.motion" as const,
-      signals: { set: vi.fn() },
-      frameBinding: createHeroTetrahedronFrameBinding(),
-      theme: createThemeStore(),
-      locale: createLocaleStore(),
+    const pointer = {
+      ...fixture.input.pointer,
+      primaryDown: false,
+      meshPressed: false,
     };
-    const options = {
-      progress,
-      scrollDelta: 30,
-      pointer: { isDown: false, buttons: [] },
-      objectPointer: { isPressed: false },
-    };
-    for (let i = 0; i < 60; i++)
-      heroTetrahedronEffect.update(
-        createContext(target, { ...options, time: i * 16 }),
-        state,
-        params,
-      );
-    expect(state.flight.thrust).toBeGreaterThan(0.5);
-    expect(target.material.shader.setUniforms).toHaveBeenLastCalledWith(
-      heroTetrahedronRadialShaderKey,
-      expect.objectContaining({ heroFlightBoost: state.flight.thrust }),
+    fixture.update({ scrollY: 20_000, progress, pointer });
+    expect(fixture.resources.state.flight.thrust).toBe(0);
+    for (let index = 1; index < 60; index++)
+      fixture.update({
+        scrollY: 20_000 + index * 30,
+        time: index * 16,
+        progress,
+        pointer,
+      });
+    expect(fixture.resources.state.flight.thrust).toBeGreaterThan(0.5);
+    expect(fixture.resources.uniforms.heroFlightBoost!.value).toBe(
+      fixture.resources.state.flight.thrust,
     );
     exit = 0.5;
-    heroTetrahedronEffect.update(createContext(target, options), state, params);
-    expect(state.flight).toEqual({ thrust: 0, steering: 0, spin: 0 });
-    expect(target.material.shader.setUniforms).toHaveBeenLastCalledWith(
-      heroTetrahedronRadialShaderKey,
-      expect.objectContaining({ heroFlightBoost: 0 }),
-    );
-  });
-  test("registers the stable managed radial shader once during setup", () => {
-    const target = createTarget();
-    const descriptor = Object.getOwnPropertyDescriptor(window, "matchMedia");
-    Object.defineProperty(window, "matchMedia", {
-      configurable: true,
-      value: vi.fn(() => ({ matches: false })),
+    fixture.update({ progress, pointer });
+    expect(fixture.resources.state.flight).toEqual({
+      thrust: 0,
+      steering: 0,
+      spin: 0,
     });
-    const getContext = vi
-      .spyOn(HTMLCanvasElement.prototype, "getContext")
-      .mockReturnValue(createCanvasContext() as never);
-
-    try {
-      const setup = heroTetrahedronEffect.setup;
-      if (!setup) {
-        throw new Error("Expected Hero effect setup.");
-      }
-      const state = setup(createContext(target), {
-        kind: "hero.tetrahedron.motion",
-        signals: { set: vi.fn() },
-        frameBinding: createHeroTetrahedronFrameBinding(),
-        theme: createThemeStore(),
-        locale: createLocaleStore(),
-      });
-
-      expect(state.transition.phase).toBe("idle");
-      expect(target.material.shader.onBeforeCompile).toHaveBeenCalledTimes(1);
-      expect(target.material.shader.onBeforeCompile).toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: heroTetrahedronRadialShaderKey,
-          uniforms: expect.objectContaining({
-            heroChapterAtlas: expect.objectContaining({
-              kind: "canvas-texture",
-            }),
-          }),
-        }),
-      );
-      expect(target.material.shader.setUniforms).not.toHaveBeenCalledWith(
-        heroTetrahedronRadialShaderKey,
-        expect.objectContaining({
-          heroChapterAtlas: expect.objectContaining({ kind: "canvas-texture" }),
-        }),
-      );
-      expect("material" in target.material.shader).toBe(false);
-      expect("renderer" in target.material.shader).toBe(false);
-    } finally {
-      getContext.mockRestore();
-      if (descriptor) {
-        Object.defineProperty(window, "matchMedia", descriptor);
-      } else {
-        Reflect.deleteProperty(window, "matchMedia");
-      }
-    }
+    expect(fixture.resources.uniforms.heroFlightBoost!.value).toBe(0);
   });
 
-  test("selects packed tail tiles without re-uploading the atlas", () => {
-    const target = createTarget();
-    const descriptor = Object.getOwnPropertyDescriptor(window, "matchMedia");
-    Object.defineProperty(window, "matchMedia", {
-      configurable: true,
-      value: vi.fn(() => ({ matches: false })),
-    });
-    const getContext = vi
-      .spyOn(HTMLCanvasElement.prototype, "getContext")
-      .mockReturnValue(createCanvasContext() as never);
-    const values = new Map<string, number>();
-    const progress = { get: (key: string) => values.get(key) ?? 0 };
-    const self = getHeroChapterDefinition("self").signals;
-    const axioms = getHeroChapterDefinition("axioms").signals;
-    const params = {
-      kind: "hero.tetrahedron.motion" as const,
-      signals: { set: vi.fn() },
-      frameBinding: createHeroTetrahedronFrameBinding(),
-      theme: createThemeStore(),
-      locale: createLocaleStore(),
-    };
-
-    try {
-      const setup = heroTetrahedronEffect.setup;
-      if (!setup) {
-        throw new Error("Expected Hero effect setup.");
-      }
-      const state = setup(createContext(target), params);
-      const atlasCanvas = state.chapterAtlas?.canvas;
-      const idlePointer = {
-        pointer: { isDown: false, buttons: [] },
-        objectPointer: { isPressed: false, hit: undefined },
-        progress,
-      };
-
-      values.set(self.entry, 1);
-      values.set(self.exit, 1);
-      heroTetrahedronEffect.update(
-        createContext(target, idlePointer),
-        state,
-        params,
-      );
-      expect(state.chapterAtlas?.canvas).toBe(atlasCanvas);
-      expect(target.material.shader.setUniforms).toHaveBeenCalledWith(
-        heroTetrahedronRadialShaderKey,
-        expect.objectContaining({
-          heroTailFaces: [1, 0, 0, 0],
-        }),
-      );
-      expect(target.material.shader.setUniforms).not.toHaveBeenCalledWith(
-        heroTetrahedronRadialShaderKey,
-        expect.objectContaining({
-          heroChapterAtlas: expect.objectContaining({
-            kind: "canvas-texture",
-          }),
-        }),
-      );
-
-      target.material.shader.setUniforms.mockClear();
-      values.set(axioms.entry, 0.01);
-      heroTetrahedronEffect.update(
-        createContext(target, idlePointer),
-        state,
-        params,
-      );
-
-      expect(state.chapterAtlas?.canvas).toBe(atlasCanvas);
-      expect(target.material.shader.setUniforms).toHaveBeenCalledWith(
-        heroTetrahedronRadialShaderKey,
-        expect.objectContaining({ heroTailFaces: [1, 0, 0, 0] }),
-      );
-      expect(target.material.shader.setUniforms).not.toHaveBeenCalledWith(
-        heroTetrahedronRadialShaderKey,
-        expect.objectContaining({
-          heroChapterAtlas: expect.objectContaining({
-            kind: "canvas-texture",
-          }),
-        }),
-      );
-
-      target.material.shader.setUniforms.mockClear();
-      values.set(axioms.exit, 0.001);
-      heroTetrahedronEffect.update(
-        createContext(target, idlePointer),
-        state,
-        params,
-      );
-      expect(target.material.shader.setUniforms).toHaveBeenCalledWith(
-        heroTetrahedronRadialShaderKey,
-        expect.objectContaining({ heroTailFaces: [1, 1, 0, 0] }),
-      );
-
-      target.material.shader.setUniforms.mockClear();
-      values.set(axioms.exit, 0);
-      heroTetrahedronEffect.update(
-        createContext(target, idlePointer),
-        state,
-        params,
-      );
-      expect(target.material.shader.setUniforms).toHaveBeenCalledWith(
-        heroTetrahedronRadialShaderKey,
-        expect.objectContaining({ heroTailFaces: [1, 0, 0, 0] }),
-      );
-    } finally {
-      getContext.mockRestore();
-      if (descriptor) {
-        Object.defineProperty(window, "matchMedia", descriptor);
-      } else {
-        Reflect.deleteProperty(window, "matchMedia");
-      }
-    }
-  });
-
-  test("starts only from a confirmed primary mesh hit and publishes signals", () => {
-    const set = vi.fn();
-    const signals = { set } satisfies HeroTransitionSignalWriter;
-    const target = createTarget();
-    const state = createHeroEffectState(false);
-
-    heroTetrahedronEffect.update(createContext(target), state, {
-      kind: "hero.tetrahedron.motion",
-      signals,
-      frameBinding: createHeroTetrahedronFrameBinding(),
-      theme: createThemeStore(),
-      locale: createLocaleStore(),
-    });
-
-    expect(state.transition).toMatchObject({
+  test("uses millisecond hold timing and requires a primary mesh press and confirmed hit", () => {
+    const fixture = createFrameFixture();
+    fixture.update();
+    expect(fixture.resources.state.transition).toMatchObject({
       phase: "expanding",
       origin: { x: 0.7, y: 0.4 },
-      targetScheme: "inverted",
+      coverage: 0.016,
     });
-    expect(set).toHaveBeenCalledTimes(6);
-    expect(set).toHaveBeenCalledWith(
-      heroTransitionConfig.signalKeys.coverage,
-      0.016,
-    );
-
-    for (const context of [
-      createContext(createTarget(), {
-        pointer: { button: "secondary", buttons: ["secondary"] },
-      }),
-      createContext(createTarget(), { objectPointer: { hit: undefined } }),
-      createContext(createTarget(), { objectPointer: { isPressed: false } }),
-    ]) {
-      const idle = createHeroEffectState(false);
-      heroTetrahedronEffect.update(context, idle, {
-        kind: "hero.tetrahedron.motion",
-        signals,
-        frameBinding: createHeroTetrahedronFrameBinding(),
-        theme: createThemeStore(),
-        locale: createLocaleStore(),
-      });
-      expect(idle.transition.phase).toBe("idle");
+    expect(fixture.params.signals.set).toHaveBeenCalledTimes(6);
+    for (const key of ["primaryDown", "meshPressed", "hit"] as const) {
+      const idle = createFrameFixture();
+      idle.update({ pointer: { ...idle.input.pointer, [key]: false } });
+      expect(idle.resources.state.transition.phase).toBe("idle");
     }
   });
 
-  test("gates theme commits to a complete Hub and persists exactly on commit", () => {
-    const target = createTarget();
-    const signals = { set: vi.fn() };
-    const theme = createThemeStore();
-    const params = {
-      kind: "hero.tetrahedron.motion" as const,
-      signals,
-      frameBinding: createHeroTetrahedronFrameBinding(),
-      theme,
-      locale: createLocaleStore(),
-    };
-    const domState = createHeroEffectState(false);
-    const domProgress = {
-      get: (key: string) =>
-        key === getHeroChapterDefinition("self").signals.entry ? 1 : 0,
-    };
-
-    heroTetrahedronEffect.update(
-      createContext(target, { progress: domProgress }),
-      domState,
-      params,
-    );
-    expect(domState.transition.phase).toBe("idle");
-    expect(theme.commit).not.toHaveBeenCalled();
-
-    const hubState = createHeroEffectState(false);
-    for (let frame = 0; frame < 63; frame += 1) {
-      heroTetrahedronEffect.update(createContext(target), hubState, params);
-    }
-    expect(hubState.transition).toMatchObject({
+  test("commits only at a complete Hub and persists once after a full hold", () => {
+    const fixture = createFrameFixture();
+    const commit = vi.spyOn(fixture.params.theme, "commit");
+    const self = getHeroChapterDefinition("self").signals;
+    fixture.update({
+      progress: { get: (key) => (key === self.entry ? 1 : 0) },
+    });
+    expect(fixture.resources.state.transition.phase).toBe("idle");
+    expect(commit).not.toHaveBeenCalled();
+    for (let index = 0; index < 63; index++) fixture.update();
+    expect(fixture.resources.state.transition).toMatchObject({
       phase: "awaiting-release",
       committedScheme: "inverted",
     });
-    expect(theme.commit).toHaveBeenCalledTimes(1);
-    expect(theme.commit).toHaveBeenCalledWith("inverted");
+    expect(commit).toHaveBeenCalledExactlyOnceWith("inverted");
   });
 
-  test("disables holds in reading layout, cancels pending holds and follows button commits", () => {
-    const media = window.matchMedia;
-    let reading = false;
-    const query = vi
-      .spyOn(window, "matchMedia")
-      .mockImplementation((value) => ({
-        ...media(value),
-        matches: value === heroReadingQuery && reading,
-      }));
-    const target = createTarget();
-    const theme = createHeroThemeStore({
-      getItem: () => null,
-      setItem: vi.fn(),
+  test("cancels desktop holds on reading layout and follows external button commits", () => {
+    const fixture = createFrameFixture();
+    fixture.update();
+    expect(fixture.resources.state.transition.phase).toBe("expanding");
+    const viewport = { ...mobile, reading: true };
+    for (let index = 0; index < 100; index++) fixture.update({ viewport });
+    expect(fixture.resources.state.transition).toMatchObject({
+      phase: "idle",
+      coverage: 0,
+      committedScheme: "initial",
     });
-    const params = {
-      kind: "hero.tetrahedron.motion" as const,
-      signals: { set: vi.fn() },
-      frameBinding: createHeroTetrahedronFrameBinding(),
-      theme,
-      locale: createLocaleStore(),
-    };
-    const state = createHeroEffectState(false);
-    try {
-      heroTetrahedronEffect.update(createContext(target), state, params);
-      expect(state.transition.phase).toBe("expanding");
-      reading = true;
-      for (let frame = 0; frame < 100; frame++) {
-        heroTetrahedronEffect.update(createContext(target), state, params);
-      }
-      expect(state.transition).toMatchObject({
+    for (const scheme of ["inverted", "initial"] as const) {
+      fixture.params.theme.commit(scheme);
+      fixture.update({ viewport });
+      expect(fixture.resources.state.transition).toMatchObject({
         phase: "idle",
+        committedScheme: scheme,
+        targetScheme: scheme,
         coverage: 0,
-        committedScheme: "initial",
       });
-      expect(theme.getSnapshot()).toBe("initial");
-      for (const scheme of ["inverted", "initial"] as const) {
-        theme.commit(scheme);
-        heroTetrahedronEffect.update(createContext(target), state, params);
-        expect(state.transition).toMatchObject({
-          phase: "idle",
-          committedScheme: scheme,
-          targetScheme: scheme,
-          coverage: 0,
-        });
-        expect(params.signals.set).toHaveBeenCalledWith(
-          heroTransitionConfig.signalKeys.committedScheme,
-          heroTransitionConfig.signalCodes.scheme[scheme],
-        );
-        expect(target.material.color.set).toHaveBeenLastCalledWith(
-          scheme === "initial" ? "#424242" : "#C8C8C8",
-        );
-      }
-      reading = false;
-      for (let frame = 0; frame < 100; frame++)
-        heroTetrahedronEffect.update(createContext(target), state, params);
-      expect(theme.getSnapshot()).toBe("inverted");
-    } finally {
-      query.mockRestore();
+      expect(fixture.target.material.color.getHexString()).toBe(
+        scheme === "initial" ? "424242" : "c8c8c8",
+      );
+      expect(fixture.params.signals.set).toHaveBeenCalledWith(
+        heroTransitionConfig.signalKeys.committedScheme,
+        heroTransitionConfig.signalCodes.scheme[scheme],
+      );
     }
   });
 
-  test("keeps the base material committed and drives shared radial shader uniforms", () => {
-    const target = createTarget();
-    const motion = createHeroMotionState(false);
-    const idleInitial = createHeroHoldTransitionState("initial");
-    const idleInverted = createHeroHoldTransitionState("inverted");
-    const expanding = transition({
-      targetScheme: "inverted",
-      coverage: 0.5,
-      phase: "expanding",
-      shakeActive: true,
-    });
-    const retracting = transition({
-      targetScheme: "inverted",
-      coverage: 0.25,
-      phase: "retracting",
-      shakeActive: false,
-    });
+  test("selects packed tail tiles and updates native uniforms without replacing the atlas texture", () => {
+    const fixture = createFrameFixture();
+    const values = new Map<string, number>();
+    const progress = { get: (key: string) => values.get(key) ?? 0 };
+    const pointer = {
+      ...fixture.input.pointer,
+      primaryDown: false,
+      meshPressed: false,
+    };
+    const texture = fixture.resources.texture;
+    const version = texture.version;
+    const self = getHeroChapterDefinition("self").signals;
+    const axioms = getHeroChapterDefinition("axioms").signals;
+    values.set(self.entry, 1);
+    values.set(self.exit, 1);
+    fixture.update({ progress, pointer });
+    expect(fixture.resources.uniforms.heroTailFaces!.value).toEqual([
+      1, 0, 0, 0,
+    ]);
+    values.set(axioms.entry, 0.01);
+    values.set(axioms.exit, 0.001);
+    fixture.update({ progress, pointer });
+    expect(fixture.resources.uniforms.heroTailFaces!.value).toEqual([
+      1, 1, 0, 0,
+    ]);
+    values.set(axioms.exit, 0);
+    fixture.update({ progress, pointer });
+    expect(fixture.resources.uniforms.heroTailFaces!.value).toEqual([
+      1, 0, 0, 0,
+    ]);
+    expect(fixture.resources.uniforms.heroChapterAtlas!.value).toBe(texture);
+    expect(texture.version).toBe(version);
+    expect(fixture.resources.uniforms.domWebGLPixelRatio!.value).toBe(2);
+    expect(fixture.resources.uniforms.domWebGLViewportSize!.value).toEqual([
+      desktop.width,
+      desktop.height,
+    ]);
+  });
 
-    applyHeroFrame(target, motion, 0, idleInitial, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
-    applyHeroFrame(target, motion, 0, idleInverted, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#C8C8C8");
-    target.material.color.set.mockClear();
-    target.material.emissive.set.mockClear();
-    target.material.shader.setUniforms.mockClear();
-
-    applyHeroFrame(target, motion, 0, expanding, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
-    expect(target.material.emissive.set).toHaveBeenLastCalledWith(
-      "#424242",
-      0.035,
+  test("keeps committed PBR colors while radial uniforms expand and retract", () => {
+    const fixture = createFrameFixture();
+    for (let index = 0; index < 30; index++) fixture.update();
+    expect(fixture.target.material.color.getHexString()).toBe("424242");
+    expect(fixture.target.material.emissive.getHexString()).toBe("424242");
+    expect(fixture.target.material.emissiveIntensity).toBe(0.035);
+    expect(
+      fixture.resources.uniforms.heroTargetColor!.value.getHexString(),
+    ).toBe("c8c8c8");
+    const expanding = fixture.resources.uniforms.heroRadialRadiusPx!.value;
+    fixture.update({
+      pointer: {
+        ...fixture.input.pointer,
+        primaryDown: false,
+        meshPressed: false,
+      },
+    });
+    expect(fixture.resources.state.transition.phase).toBe("retracting");
+    fixture.update({
+      pointer: {
+        ...fixture.input.pointer,
+        primaryDown: false,
+        meshPressed: false,
+      },
+    });
+    expect(fixture.resources.uniforms.heroRadialRadiusPx!.value).toBeLessThan(
+      expanding,
     );
-    expect(target.material.shader.setUniforms).toHaveBeenLastCalledWith(
-      "hero.tetrahedron.radial",
-      expect.objectContaining({
-        heroCommittedColor: "#424242",
-        heroTargetColor: "#C8C8C8",
-        heroRadialOrigin: [0.5, 0.5],
-        heroRadialEdgePx: 1.5,
-      }),
-    );
-    const expandingRadius =
-      target.material.shader.setUniforms.mock.calls.at(-1)?.[1]
-        ?.heroRadialRadiusPx;
-    applyHeroFrame(target, motion, 0, retracting, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
-    const retractingRadius =
-      target.material.shader.setUniforms.mock.calls.at(-1)?.[1]
-        ?.heroRadialRadiusPx;
-    expect(retractingRadius).toBeLessThan(expandingRadius);
-    applyHeroFrame(target, motion, 0, idleInitial, desktop, false);
-    expect(target.material.color.set).toHaveBeenLastCalledWith("#424242");
   });
 
   test("fades ambient motion with coverage and restores it immediately at commit", () => {
@@ -986,13 +578,13 @@ describe("hero tetrahedron effect", () => {
       false,
     );
 
-    expect(first.position.set.mock.calls).toEqual(
-      second.position.set.mock.calls,
+    expect(vi.mocked(first.position.set).mock.calls).toEqual(
+      vi.mocked(second.position.set).mock.calls,
     );
-    expect(first.rotation.set.mock.calls).toEqual(
-      second.rotation.set.mock.calls,
+    expect(vi.mocked(first.rotation.set).mock.calls).toEqual(
+      vi.mocked(second.rotation.set).mock.calls,
     );
-    expect(first.position.set.mock.calls[0]?.[0]).not.toBe(0);
+    expect(vi.mocked(first.position.set).mock.calls[0]?.[0]).not.toBe(0);
 
     const reduced = createTarget();
     applyHeroFrame(
@@ -1005,15 +597,6 @@ describe("hero tetrahedron effect", () => {
     );
     expect(reduced.position.set).toHaveBeenCalledWith(0, 0.365, 0);
     expect(reduced.rotation.set).toHaveBeenCalledWith(-0.6, 0.85, 0.08);
-    expect(reduced.material.shader.setUniforms).toHaveBeenLastCalledWith(
-      "hero.tetrahedron.radial",
-      expect.objectContaining({
-        heroCommittedColor: "#424242",
-        heroTargetColor: "#C8C8C8",
-        heroRadialRadiusPx: expect.any(Number),
-        heroRadialEdgePx: 1.5,
-      }),
-    );
   });
 
   test("preserves breathing, float, pointer tilt, responsive pose, opacity, and PBR", () => {
@@ -1050,7 +633,6 @@ describe("hero tetrahedron effect", () => {
       0.08,
     );
     expect(desktopTarget.visible).toBe(true);
-    expect(desktopTarget.opacity).toBe(0.92);
     expect(desktopTarget.material.opacity).toBe(0.92);
     expect(desktopTarget.material.metalness).toBe(0.62);
     expect(desktopTarget.material.roughness).toBe(0.28);
@@ -1103,14 +685,6 @@ describe("hero tetrahedron effect", () => {
     });
     expect(state.targetTiltX).toBe(0);
     expect(state.targetTiltY).toBe(0);
-  });
-
-  test("declares managed mesh frame scheduling", () => {
-    expect(heroTetrahedronEffect).toMatchObject({
-      kind: "hero.tetrahedron.motion",
-      source: "mesh",
-      schedule: "frame",
-    });
   });
 });
 

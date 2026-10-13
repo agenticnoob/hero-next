@@ -1,7 +1,6 @@
-import type { WebGLDeclaration } from "@viselora/dom-webgl";
 import { WebGLTarget } from "@viselora/dom-webgl/react";
 import { WebGLScrollTimeline } from "@viselora/scroll-adapters/react";
-import React, { useEffect, useMemo, useSyncExternalStore } from "react";
+import React, { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { syringeMeterMedia, projectHasPoster } from "./media";
@@ -12,39 +11,18 @@ import {
   formatHeroChapterHeading,
 } from "../chapters/definitions";
 import { heroInterfaceContent } from "../chapters/uiContent";
-import type { HeroLocale, HeroLocaleStore } from "../preferences/locale";
+import type { HeroLocale } from "../preferences/locale";
 import { assertProjectRoomSections } from "./model";
 import { projectRoomAnchorId } from "./roomNavigation";
 import type { ProjectRoomStore } from "./roomStore";
 import { projectExhibitLayout } from "./exhibit";
 import { projectDirectoryCopy } from "../chapters/uiContent";
 
-export function HeroProjectRoomStage({
-  locale,
-  room,
-}: {
-  readonly locale: HeroLocaleStore;
-  readonly room: ProjectRoomStore;
-}) {
-  const declaration = useMemo(
-    () =>
-      ({
-        key: "hero.projects.room",
-        placement: { mode: "screen-depth", depth: 3, size: "dom" },
-        source: { kind: "dom", type: "element" },
-        renderRole: "model",
-        lifecycle: { hideWhenReady: true, hideMode: "self" },
-        effects: [{ kind: "hero.projects.room", locale, room }],
-      }) satisfies WebGLDeclaration,
-    [locale, room],
-  );
+export function HeroProjectRoomStage() {
   return (
-    <WebGLTarget
-      as="div"
-      className="hero-projects-surface"
-      aria-hidden="true"
-      webgl={declaration}
-    />
+    <WebGLTarget id="hero.projects.room">
+      <div className="hero-projects-surface" aria-hidden="true" />
+    </WebGLTarget>
   );
 }
 
