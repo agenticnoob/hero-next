@@ -1,16 +1,15 @@
 # Current Status
 
 Last verified locally: 2026-10-14 (Viselora 0.2 React Three Fiber migration).
-Last production readback: 2026-10-11 (Agent entry, bilingual static exports and public snapshot).
+Last production readback: 2026-10-14 (Viselora 0.2 migration, bilingual case study and public snapshot).
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
-`0.2.0-alpha.0` packages locally. The production readback below predates this
-unpublished migration. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
+`0.2.0-alpha.0` packages in production. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; reviewed feature branches publish through the existing
 production workflow after integration with the current remote head.
 Production: [zzzxc.com](https://zzzxc.com).
 
-## Viselora 0.2 migration (2026-10-14, local only)
+## Viselora 0.2 migration (2026-10-14, published)
 
 Both published packages are pinned to `0.2.0-alpha.0`, alongside R3F 9.8.1,
 Three.js 0.184.0 and Drei 10.7.9. The original workspace's release source
@@ -61,8 +60,37 @@ references and never carries frame progress. No rules were disabled. The npm
 audit reports the same 15 dependency findings as the pre-migration lockfile,
 with no additional findings; framework/test-tool upgrades are outside this change.
 
-**Delivery boundary:** implemented and verified locally; not committed, pushed,
-deployed or published. The upstream package repository was not changed.
+**Production publication:** application commit
+[43e91c0](https://github.com/agenticnoob/hero-next/commit/43e91c0f5da3d44c0d87f64b6559b4fe046011ec)
+was committed and pushed to `main` and `axmorf/agent-reading-entry`, retaining
+`fb644a7`'s generated project refresh. The exact-commit
+[production run](https://github.com/agenticnoob/hero-next/actions/runs/38455918732)
+completed its quality gate, production build, both head rechecks, publication and
+public snapshot verification. Deployment:
+[hero-next-4d1d7vln0-agent-first.vercel.app](https://hero-next-4d1d7vln0-agent-first.vercel.app).
+
+Public HTTP readback passed on both `https://zzzxc.com` and
+`https://hero-next-jade.vercel.app`: all 48 registered Markdown documents across
+both languages, 10 HTML/discovery routes, production Agent canonicals, current
+Viselora case HTML/Markdown and three unknown-route 404s. The matching journal
+contains 145 entries through 2026-10-13 from source
+`655d522639f30258abaf2fb520723ff294ae1d27`; snapshot SHA-256 is
+`594dc24618d79975d06bd453520f0e89faaffbcd541ff9ccb6d15d81044e19d3`.
+
+Public-browser smoke checks covered the desktop Hub, Viselora wall selection,
+case dialog, English switching and Escape return with wall selection and focus
+retained. At 390×844, the reading layout, theme button, current seven-section
+case dialog and Agent entry passed with no horizontal overflow. Reduced motion
+was explicitly confirmed active for the mobile case. The homepage and its dialog
+retained one Canvas; the Agent entry had none. Captured page/console errors were
+empty. Screenshots were inspected outside Git. These release checks supplement
+the full local interaction coverage above; physical devices and pixel-identical
+parity remain unverified.
+
+**Delivery boundary:** implemented, verified, committed, pushed and published.
+This status record is a documentation follow-up to the application release; its
+push uses the same production pipeline. The upstream package repository was not
+changed.
 
 ## Agent reading entry and static exports (2026-10-11)
 
