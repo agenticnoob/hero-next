@@ -155,7 +155,7 @@ describe("agent public content exports", () => {
 
   test("llms.txt links to both language indexes and existing monthly archives", () => {
     const markdown = renderLlmsIndex(snapshot);
-    expect(markdown).toMatch(/^# noobli\n/);
+    expect(markdown).toMatch(/^# AXMORF\n/);
     expect(markdown).toContain("https://zzzxc.com/agent/zh/index.md");
     expect(markdown).toContain("https://zzzxc.com/agent/en/index.md");
     expect(markdown).toContain("journal/2026-09.md");

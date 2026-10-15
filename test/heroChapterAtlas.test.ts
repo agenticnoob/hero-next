@@ -185,10 +185,10 @@ describe("hero chapter atlas", () => {
       ["抖音 · AXMORF", 229.5],
       ["小红书 · AXMORF", 310.5],
       ["哔哩哔哩 · AXMORF", 391.5],
-      ["博客 · 长期思考", 472.5],
-      ["GitHub · 开源实践", 553.5],
-      ["力扣 · 算法练习", 634.5],
-      ["简历 · 个人履历", 715.5],
+      ["博客 · AXMORF · 长期思考", 472.5],
+      ["GitHub · AXMORF", 553.5],
+      ["力扣 · AXMORF", 634.5],
+      ["简历 · AXMORF", 715.5],
     ] as const) {
       const rows = fillText.mock.calls.filter(
         ([text, x, top]) =>

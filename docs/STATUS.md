@@ -1,6 +1,6 @@
 # Current Status
 
-Last verified locally: 2026-10-14 (Viselora 0.2 React Three Fiber migration).
+Last verified locally: 2026-10-15 (AXMORF brand candidate, not merged).
 Last production readback: 2026-10-14 (Viselora 0.2 migration, bilingual case study and public snapshot).
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
@@ -896,12 +896,23 @@ placeholder for every axiom. Proposition two remains unchanged in both languages
 The favicon is a tetrahedron candidate awaiting subjective approval. Public
 journal projection normalizes identity text without editing source records.
 
-Local build, lint, test typecheck, application typecheck, project-data validation
-and standalone boundary checks pass. Tests: 459 pass, 4 fail across 3 files;
-the remaining fixtures assert the retired heading, model path and directory
-copy. Verification scripts and dependency versions are unchanged. Screenshot
-capture is blocked by the browser runtime; DOM, language and responsive checks
-are recorded separately. No claim of complete visual acceptance is made.
+The candidate includes main `298194b5be5501d4dc5c641c4e96fec1360e9f1e` and
+preserves its generated project data exactly. `npm run check`, `npm run build`
+and `git diff --check` pass: 56 test files / 463 tests. The four stale assertions
+now use the AXMORF llms heading, renamed profile GLB and current directory copy;
+asset limits, geometry checks and all other gates remain unchanged. Dependency
+versions and verification commands are unchanged.
+
+Production-build Ego/Chromium checks at 1440×900 covered the Hub, English →
+Chinese switching and the Agent reading entry. At 390×844 with reduced motion,
+the settled WebGL readiness flag, visible tetrahedron and theme toggle/restore
+passed. Sampled homepage states had one Canvas and no horizontal overflow; the
+Agent entry had none. Screenshots were captured and inspected outside Git.
+No page exceptions were captured. Three.js Clock deprecation warnings and a
+Chromium texture-copy warning during viewport emulation were observed; these
+were not suppressed or addressed through unrelated runtime/dependency changes.
+These checks do not constitute physical-device, full four-chapter or final
+subjective brand acceptance.
 
 This branch is a review candidate. Production URLs still serve the existing
 production revisions until the user approves merging and publication. Drafts,

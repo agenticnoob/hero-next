@@ -6,7 +6,7 @@ const appRoot = process.cwd();
 
 describe("hero assets and visual surface", () => {
   test("ships the optimized profile GLB and its local Draco decoder", () => {
-    const modelPath = resolve(appRoot, "public/models/noobli-profile.glb");
+    const modelPath = resolve(appRoot, "public/models/axmorf-profile.glb");
 
     expect(existsSync(modelPath)).toBe(true);
     expect(statSync(modelPath).size).toBeLessThan(5_000_000);
@@ -30,7 +30,7 @@ describe("hero assets and visual surface", () => {
 
   test("uses native texture-preserving PBR fill and geometry normals in the shipped GLB", () => {
     const bytes = readFileSync(
-      resolve(appRoot, "public/models/noobli-profile.glb"),
+      resolve(appRoot, "public/models/axmorf-profile.glb"),
     );
     expect(bytes.readUInt32LE(8)).toBe(bytes.length);
     const jsonLength = bytes.readUInt32LE(12);

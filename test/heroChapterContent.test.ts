@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { redactJournalIdentity } from "../scripts/public-identity.mjs";
 
 import {
   getHeroChapterContent,
@@ -90,9 +91,11 @@ describe("hero chapter content", () => {
       const copy = JSON.stringify(profile);
 
       expect(profile.body.eyebrow).toContain("SELF");
+      expect(profile.body.title).toContain("AXMORF");
       expect(profile.body.sections).toHaveLength(4);
+      expect(redactJournalIdentity(copy)).toBe(copy);
       expect(copy).not.toMatch(
-        /徐力|Xu Li|\b(?:19|20)\d{2}\b|出生|年生|岁|born|eighteen|军营|军旅|入伍|当兵|号声|barracks|military|reveille|杭州|温州|上海|Hangzhou|Wenzhou|Shanghai|校园|毕业|自由职业|campus|graduation|freelancer/i,
+        /\b(?:19|20)\d{2}\b|出生|年生|岁|born|eighteen|军营|军旅|入伍|当兵|号声|barracks|military|reveille|杭州|温州|上海|Hangzhou|Wenzhou|Shanghai|校园|毕业|自由职业|campus|graduation|freelancer/i,
       );
       expect(copy).toContain("AI");
       expect(profile.body.closing).toBeTruthy();
