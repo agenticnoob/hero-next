@@ -106,12 +106,15 @@ export function HeroChapterNarrative({
           <header className="hero-opening-copy">
             <p>{site.intro.eyebrow}</p>
             <h1>{site.intro.title}</h1>
+            <p>{site.intro.tagline}</p>
+            {site.intro.translation && <p>{site.intro.translation}</p>}
             <p>{site.intro.summary}</p>
             <p className="hero-opening-copy__hint">{site.intro.readingHint}</p>
           </header>
         ) : (
           <p className="hero-sr-only">
-            {site.intro.title} {site.intro.summary} {site.intro.hint}
+            {site.intro.eyebrow} {site.intro.title} {site.intro.tagline}{" "}
+            {site.intro.translation} {site.intro.summary} {site.intro.hint}
           </p>
         )}
       </section>

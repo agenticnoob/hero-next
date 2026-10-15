@@ -1,6 +1,7 @@
 import type { HeroViewport } from "../shared/viewport";
 import type { AxiomsReaderContent } from "./model";
 import { axiomsReaderConfig } from "./config";
+import { axiomStatusLabel } from "./status";
 import { resolveAxiomsLayout, type AxiomsLayout } from "./layout";
 import {
   appendText,
@@ -121,6 +122,19 @@ export function createAxiomsArtwork(
     y = appendText(
       context,
       lines,
+      axiomStatusLabel(
+        section.status,
+        /[\u4e00-\u9fff]/.test(section.label) ? "zh" : "en",
+      ) || "—",
+      pad,
+      y + 8,
+      inner,
+      layout.labelSize,
+      400,
+    );
+    y = appendText(
+      context,
+      lines,
       section.title,
       pad,
       y + pad,
@@ -139,6 +153,19 @@ export function createAxiomsArtwork(
       400,
       1.65,
     );
+    if (i === content.sections.length - 1 && content.closing) {
+      y = appendText(
+        context,
+        lines,
+        content.closing,
+        pad,
+        y + pad,
+        inner,
+        layout.bodySize,
+        400,
+        1.65,
+      );
+    }
     return {
       width,
       height: Math.max(layout.papers[i].height, y + pad * 1.5),

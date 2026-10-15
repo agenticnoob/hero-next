@@ -5,11 +5,26 @@ import "./globals.css";
 import "../src/projects/showcase.css";
 import { HeroSiteStateProvider } from "../src/experience/HeroSiteState";
 import { heroSiteOrigin } from "../src/shared/site";
+import { axmorfBrand } from "../src/shared/brand";
 
 export const metadata: Metadata = {
   metadataBase: new URL(heroSiteOrigin),
-  title: "noobli — Agent-first builder",
-  description: "一个关于自我、AI 公理、开放构建与公共联结的四章节个人站。",
+  title: `${axmorfBrand.name} — ${axmorfBrand.tagline}`,
+  description: `${axmorfBrand.introductionZh} ${axmorfBrand.tagline} ${axmorfBrand.taglineZh}`,
+  openGraph: {
+    type: "website",
+    url: heroSiteOrigin,
+    siteName: axmorfBrand.name,
+    title: `${axmorfBrand.name} — ${axmorfBrand.tagline}`,
+    description: `${axmorfBrand.introductionZh} ${axmorfBrand.tagline} ${axmorfBrand.taglineZh}`,
+    locale: "zh_CN",
+    alternateLocale: ["en_US"],
+  },
+  twitter: {
+    card: "summary",
+    title: `${axmorfBrand.name} — ${axmorfBrand.tagline}`,
+    description: `${axmorfBrand.introductionEn} ${axmorfBrand.tagline}`,
+  },
 };
 export const viewport: Viewport = {
   width: "device-width",

@@ -3,6 +3,7 @@ import { mkdir, readFile, readdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { redactJournalIdentity } from "./public-identity.mjs";
 
 function record(value, label) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -13,7 +14,7 @@ function record(value, label) {
 
 function string(value, label) {
   if (typeof value !== "string") throw new Error(`${label}: expected text`);
-  return value.trim();
+  return redactJournalIdentity(value.trim());
 }
 
 function strings(value, label) {

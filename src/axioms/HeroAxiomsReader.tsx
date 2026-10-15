@@ -6,6 +6,7 @@ import type { HeroLocale } from "../preferences/locale";
 import { resolveAxiomsScrollHeight } from "./config";
 import type { AxiomsReaderContent } from "./model";
 import { formatAxiomsHeading } from "./reader";
+import { AxiomStatus } from "./AxiomStatus";
 
 export function HeroAxiomsStage() {
   return (
@@ -67,10 +68,14 @@ export function HeroAxiomsChapterBody({
             data-axioms-article={section.id}
           >
             <p>{section.label}</p>
+            <AxiomStatus status={section.status} locale={locale} />
             <h3>{section.title}</h3>
             <p>{section.body}</p>
           </article>
         ))}
+        {content.body.closing && (
+          <p className="hero-axioms__closing">{content.body.closing}</p>
+        )}
       </div>
     </WebGLScrollTimeline>
   );

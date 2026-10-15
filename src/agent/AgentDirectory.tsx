@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { HeroLocale } from "../preferences/locale";
 import type { JournalSnapshot } from "../journal/model";
 import { agentCopy, agentMarkdownPath, getAgentContent } from "./content";
+import { AxiomStatus } from "../axioms/AxiomStatus";
+import { axmorfBrand } from "../shared/brand";
 
 export function AgentDirectory({
   locale,
@@ -39,9 +41,11 @@ export function AgentDirectory({
               </Link>
             </nav>
           </div>
-          <p className="agent-directory__eyebrow">NOOBLI / AGENT</p>
+          <p className="agent-directory__eyebrow">AXMORF / AGENT</p>
           <h1>{copy.title}</h1>
           <p className="agent-directory__intro">{copy.intro}</p>
+          <p>{axmorfBrand.tagline}</p>
+          {locale === "zh" && <p>{axmorfBrand.taglineZh}</p>}
           <div className="agent-directory__links">
             <a href={agentMarkdownPath(locale)}>{copy.markdown} ↗</a>
             <a href="/llms.txt">llms.txt ↗</a>
@@ -81,6 +85,7 @@ export function AgentDirectory({
             {content.axioms.map((article) => (
               <li key={article.id}>
                 <h3>{article.title}</h3>
+                <AxiomStatus status={article.status} locale={locale} />
                 <p>{article.body}</p>
                 <a href={agentMarkdownPath(locale, `axioms/${article.id}.md`)}>
                   {copy.markdown} ↗
@@ -88,6 +93,8 @@ export function AgentDirectory({
               </li>
             ))}
           </ol>
+          <p>{axmorfBrand.tagline}</p>
+          {locale === "zh" && <p>{axmorfBrand.taglineZh}</p>}
         </section>
 
         <section id="projects" aria-labelledby="agent-projects-title">

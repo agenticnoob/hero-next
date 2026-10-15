@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { axmorfBrand } from "../../../src/shared/brand";
 import { ProjectShowcase } from "../../../src/projects/ProjectShowcase";
 import { projectCatalog } from "../../../src/projects/catalog";
 import {
@@ -7,12 +8,12 @@ import {
 } from "../../../src/projects/caseRoute";
 
 const syringeMeterMetadata: Metadata = {
-  title: "SyringeMeter — 从画面到可信读数 | noobli",
-  description:
-    "一个本地针筒视觉测量项目的完整案例：真实演示、连续容量测量、实时曲线、CSV 记录与桌面应用交付。",
+  title: `SyringeMeter — 从画面到可信读数 | AXMORF — ${axmorfBrand.tagline}`,
+  description: `AXMORF 的本地针筒视觉测量项目完整案例：真实演示、连续容量测量、实时曲线、CSV 记录与桌面应用交付。 ${axmorfBrand.tagline}`,
   openGraph: {
-    title: "SyringeMeter — 从画面到可信读数",
-    description: "观看演示，阅读从视觉测量到桌面交付的完整工程案例。",
+    title: `SyringeMeter — 从画面到可信读数 | AXMORF — ${axmorfBrand.tagline}`,
+    description: `AXMORF · 观看演示，阅读从视觉测量到桌面交付的完整工程案例。 ${axmorfBrand.tagline}`,
+    siteName: axmorfBrand.name,
     images: [
       {
         url: "/projects/syringe-meter/og.png",
@@ -42,10 +43,15 @@ export async function generateMetadata({
   const copy = projectCatalog.getCase(slug, "zh")!;
   const title = `${copy.title} — ${copy.subtitle}`;
   return {
-    title: `${title} | noobli`,
-    description: copy.introduction,
+    title: `${title} | AXMORF — ${axmorfBrand.tagline}`,
+    description: `AXMORF · ${copy.introduction} ${axmorfBrand.tagline}`,
     alternates,
-    openGraph: { title, description: copy.introduction, type: "article" },
+    openGraph: {
+      title: `${title} | AXMORF — ${axmorfBrand.tagline}`,
+      description: `AXMORF · ${copy.introduction} ${axmorfBrand.tagline}`,
+      siteName: axmorfBrand.name,
+      type: "article",
+    },
   };
 }
 

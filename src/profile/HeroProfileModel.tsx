@@ -34,7 +34,7 @@ function ProfileModel({
 }: {
   readonly frameBinding: HeroTetrahedronFrameBinding;
 }) {
-  const gltf = useGLTF("/models/noobli-profile.glb", "/draco/gltf/");
+  const gltf = useGLTF("/models/axmorf-profile.glb", "/draco/gltf/");
   const root = useRef<Group>(null);
   const resources = useMemo(
     () => createHeroProfileModelResources(gltf.scene),

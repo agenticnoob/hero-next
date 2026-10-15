@@ -6,6 +6,7 @@ import type { JournalSnapshot } from "../journal/model";
 import { heroLocales, type HeroLocale } from "../preferences/locale";
 import { projectCatalog } from "../projects/catalog";
 import { heroSiteUrl } from "../shared/site";
+import { axmorfBrand } from "../shared/brand";
 
 export const agentCopy = {
   zh: {
@@ -73,8 +74,8 @@ export function getAgentContent(locale: HeroLocale, snapshot: JournalSnapshot) {
 export function getAgentMetadata(locale: HeroLocale): Metadata {
   const copy = agentCopy[locale];
   return {
-    title: `${copy.title} | noobli`,
-    description: copy.intro,
+    title: `${copy.title} | AXMORF — ${axmorfBrand.tagline}`,
+    description: `AXMORF — ${copy.intro} ${axmorfBrand.tagline}`,
     alternates: {
       canonical: locale === "zh" ? "/agent" : "/agent/en",
       languages: { "zh-CN": "/agent", en: "/agent/en" },

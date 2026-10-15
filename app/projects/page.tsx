@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { axmorfBrand } from "../../src/shared/brand";
 import { ProjectDirectory } from "../../src/projects/ProjectDirectory";
 
 export const metadata: Metadata = {
-  title: "全部项目 | noobli",
-  description: "noobli 的精选作品与持续构建的公开项目。",
+  title: `全部项目 | AXMORF — ${axmorfBrand.tagline}`,
+  description: `AXMORF 的精选作品与持续构建的公开项目。 ${axmorfBrand.tagline}`,
   alternates: { canonical: "/projects" },
 };
 

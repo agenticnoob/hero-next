@@ -1,7 +1,11 @@
 # Current Status
 
-Last verified locally: 2026-10-14 (Viselora 0.2 React Three Fiber migration).
-Last production readback: 2026-10-14 (Viselora 0.2 migration, bilingual case study and public snapshot).
+Last verified locally: 2026-10-15 (AXMORF release preparation; 56 files / 465 tests).
+Last production readback before the brand merge: 2026-10-15 (website `298194b`, exact source `c082eeb`, 147 entries through 2026-10-15).
+Owner authorization now covers normal merging and production publication of the
+three existing brand PRs. This document records the pre-merge verification;
+the resulting Actions run, deployment state and independent public readback
+record the exact released revision.
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
 `0.2.0-alpha.0` packages in production. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
@@ -870,9 +874,9 @@ See [publishing instructions](./journal-publishing.md) for the authorization and
 
 ## Data and limitations
 
-The local snapshot contains 108 public Timeline dates through 2026-09-11 from source
-`af76a47795743034d8dbcfe15ac0655b539bf6e2`, SHA-256
-`ccacd99e9d0274bdf44b59bbfc3a34551a777da8259dc13d8ef1f213c97dcee0`.
+The current branded local snapshot contains 147 public Timeline dates through
+2026-10-15 from source `c082eebc1785107509de80bb835a6e6b71468fe1`, SHA-256
+`5bbd04f7243e69da8a9cff668424b16df33be55902241a7eb448da7a8cef5fa5`.
 Each cloud release records its exact source revision and hash independently.
 Exports contain only date, compact tool names and Timeline events; conversations,
 private logs, credentials, local manifests and generated snapshots remain outside Git.
@@ -887,3 +891,50 @@ ESLint 9.39.5 matches the pinned Next.js peers but remains an existing EOL limit
 
 Previous production setup, verification and privacy-release evidence are preserved in
 [the preceding status](./archive/2026-09-13-pre-mobile-status.md).
+
+## AXMORF brand release preparation (2026-10-15, publication authorized)
+
+The isolated brand branch updates the public identity, bilingual introduction,
+Tagline, metadata, Agent exports, channel directory and an unassigned status
+placeholder for every axiom. Proposition two and its related profile paragraph now state the core collaboration method without dates, priority claims or product comparisons.
+The favicon is a tetrahedron candidate awaiting subjective approval. Public
+journal projection normalizes identity text without editing source records.
+
+The candidate includes main `298194b5be5501d4dc5c641c4e96fec1360e9f1e` and
+preserves its generated project data exactly. `npm run check`, `npm run build`
+and `git diff --check` pass: 56 test files / 465 tests. The four stale assertions
+now use the AXMORF llms heading, renamed profile GLB and current directory copy;
+asset limits, geometry checks and all other gates remain unchanged. Dependency
+versions and verification commands are unchanged.
+
+Production-build Ego/Chromium checks at 1440×900 covered the Hub, English →
+Chinese switching and the Agent reading entry. At 390×844 with reduced motion,
+the settled WebGL readiness flag, visible tetrahedron and theme toggle/restore
+passed. Sampled homepage states had one Canvas and no horizontal overflow; the
+Agent entry had none. Screenshots were captured and inspected outside Git.
+No page exceptions were captured. Three.js Clock deprecation warnings and a
+Chromium texture-copy warning during viewport emulation were observed; these
+were not suppressed or addressed through unrelated runtime/dependency changes.
+These checks do not constitute physical-device, full four-chapter or final
+subjective brand acceptance.
+
+The owner approved document alignment, final verification, normal merging and
+production publication of the three existing PRs. D4 is complete: the public
+resume application is `agenticnoob/axmorf-resume`, with the same numeric repository
+ID, fork relationship, PR and Vercel project. Project-introduction scan
+`38765325974`, two-site notification `38765229887` and resume receiver
+`38765271917` succeeded. Private repositories, credentials and permissions were
+not renamed or expanded. D5 is complete in both locales and Agent exports.
+Privacy tests now use explicitly synthetic fixtures rather than private identity
+literals. These changes do not rewrite source journals or Git history.
+
+The preceding main receiver run `38765271086` published a READY deployment but
+failed its immediate HTML snapshot readback. A delayed read-only invocation of
+the original production commit's verifier passed the same source SHA, 147 entries,
+latest date and SHA-256. The original run remains failed. For this release, wait
+for the new deployment's READY state before the independent readback; do not
+repeat a successful publication merely to replace a failed readback result.
+
+Brand decisions, the completed migration and optional manual follow-up are in
+`docs/archive/2026-10-15-axmorf-brand/`. Account profiles, social settings, optional
+domains and search-platform submissions remain outside this publication.

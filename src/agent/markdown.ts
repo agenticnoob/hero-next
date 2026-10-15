@@ -5,6 +5,8 @@ import type { JournalEntry, JournalSnapshot } from "../journal/model";
 import { heroLocales, type HeroLocale } from "../preferences/locale";
 import { projectCatalog } from "../projects/catalog";
 import { heroSiteUrl } from "../shared/site";
+import { axmorfBrand } from "../shared/brand";
+import { axiomStatusLabel } from "../axioms/status";
 import {
   agentCopy,
   agentMarkdownPath,
@@ -45,7 +47,9 @@ function overview(locale: HeroLocale, snapshot: JournalSnapshot): string {
   const content = getAgentContent(locale, snapshot);
   const copy = agentCopy[locale];
   return documentText([
-    `# noobli — ${text(content.site.intro.title)}`,
+    `# AXMORF — ${text(content.site.intro.title)}`,
+    axmorfBrand.tagline,
+    locale === "zh" ? axmorfBrand.taglineZh : "",
     text(content.site.intro.summary),
     link(copy.source, "/"),
     `## ${copy.profile}`,
@@ -74,6 +78,8 @@ function overview(locale: HeroLocale, snapshot: JournalSnapshot): string {
           `- ${link(article.title, agentMarkdownPath(locale, `axioms/${article.id}.md`))}`,
       )
       .join("\n"),
+    text(axmorfBrand.tagline),
+    locale === "zh" ? text(axmorfBrand.taglineZh) : "",
     `## ${copy.signals}`,
     text(content.signals.intro),
     ...content.signals.sections.map((section) =>
@@ -148,7 +154,10 @@ export function renderAgentDocument(
     const copy = article.translations[locale];
     return documentText([
       `# ${text(copy.title)}`,
+      axiomStatusLabel(article.status, locale),
       text(copy.body),
+      text(axmorfBrand.tagline),
+      locale === "zh" ? text(axmorfBrand.taglineZh) : "",
       link(
         agentCopy[locale].source,
         `/#chapter-${heroChapterDefinitions.axioms.ordinal}`,
@@ -186,7 +195,8 @@ export function getAgentDocumentParams(snapshot: JournalSnapshot) {
 export function renderLlmsIndex(snapshot: JournalSnapshot): string {
   const content = getAgentContent("en", snapshot);
   return documentText([
-    "# noobli",
+    "# AXMORF",
+    axmorfBrand.tagline,
     `> ${text(content.site.intro.summary)}`,
     "This personal website publishes a public profile, projects, axioms, public channels and a development journal. Chinese and English documents share the same content sources as the visual website. Read an overview first, then follow its links to individual Markdown documents. Journal entries retain their original Chinese.",
     "## Overview",
