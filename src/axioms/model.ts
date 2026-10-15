@@ -1,4 +1,5 @@
 import type { HeroLocale } from "../preferences/locale";
+import type { AxiomsStatus } from "./status";
 
 export type AxiomsPaperSize = {
   /** Fraction of the available paper area, greater than zero and at most one. */
@@ -6,7 +7,10 @@ export type AxiomsPaperSize = {
   readonly height: number;
 };
 
-export type AxiomsPaperOptions = { readonly paper?: AxiomsPaperSize };
+export type AxiomsPaperOptions = {
+  readonly paper?: AxiomsPaperSize;
+  readonly status?: AxiomsStatus | null;
+};
 
 export type AxiomsArticleCopy = {
   readonly label: string;
@@ -29,4 +33,5 @@ export type AxiomsReaderContent = {
   readonly title: string;
   readonly intro: string;
   readonly sections: readonly AxiomsArticleContent[];
+  readonly closing?: string;
 };

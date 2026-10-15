@@ -1,3 +1,4 @@
+import { axmorfBrand } from "../shared/brand";
 import { heroAxiomsContent } from "../axioms/content";
 import {
   formatHeroChapterHeading,
@@ -29,14 +30,15 @@ export const heroPublicLinks = {
 
 export const heroSiteContent = {
   zh: {
-    ariaLabel: "noobli 的四章节 Agent-first 个人站",
+    ariaLabel: "AXMORF 的四章节 Agent-first 个人站",
     localeControlLabel: "选择语言",
     themeControlLabel: "反转配色",
     intro: {
-      eyebrow: "NOOBLI / 独立构建者",
+      eyebrow: "AXMORF / 易狸",
       title: "为智能体重新思考软件",
-      summary:
-        "与 Agent 一起开发应用、连接工具，让想法成为可以运行和验证的作品。",
+      summary: axmorfBrand.introductionZh,
+      tagline: axmorfBrand.tagline,
+      translation: axmorfBrand.taglineZh,
       hint: "滚动进入四个章节 · 长按四面体切换主题",
       readingHint: "滚动进入四个章节 · 右上角按钮切换主题",
     },
@@ -44,14 +46,15 @@ export const heroSiteContent = {
     profileModelLabel: "抽象个人形象",
   },
   en: {
-    ariaLabel: "noobli's four-chapter agent-first personal site",
+    ariaLabel: "AXMORF's four-chapter agent-first personal site",
     localeControlLabel: "Choose language",
     themeControlLabel: "Invert colors",
     intro: {
-      eyebrow: "NOOBLI / INDEPENDENT BUILDER",
+      eyebrow: "AXMORF / INDEPENDENT BUILDER",
       title: "Rethinking software for agents",
-      summary:
-        "Building applications and connecting tools with agents, turning ideas into work that can run and be verified.",
+      summary: axmorfBrand.introductionEn,
+      tagline: axmorfBrand.tagline,
+      translation: "",
       hint: "Scroll through four chapters · Hold the tetrahedron to switch theme",
       readingHint:
         "Scroll through four chapters · Use the theme button at the top right",
@@ -71,6 +74,8 @@ export const heroSiteContent = {
         readonly eyebrow: string;
         readonly title: string;
         readonly summary: string;
+        readonly tagline: string;
+        readonly translation: string;
         readonly hint: string;
         readonly readingHint: string;
       };
@@ -94,10 +99,9 @@ export const heroChapterContent = {
         },
       },
       body: {
-        eyebrow: "SELF / NOOBLI",
-        title: "把想法做成作品，也把方法留下来。",
-        intro:
-          "我是 noobli，一名面向 AI 应用的独立构建者。我围绕自己的需求，与 Agent 一起开发软件、连接工具、验证结果。从视频生产到全栈应用，我关心一个想法怎样真正运行起来，以及下一次能否做得更好。",
+        eyebrow: "SELF / AXMORF",
+        title: "AXMORF · 易狸",
+        intro: axmorfBrand.introductionZh,
         sections: [
           {
             label: "作品 / 从零到可用",
@@ -120,8 +124,7 @@ export const heroChapterContent = {
             body: "6 月，我已在 Mac → Ubuntu 工作场景中设计并实践统一入口与分层执行：先与本地 Agent 讨论，再由它协调远端团队。后来 Dots 的产品方向与这一判断相呼应。我关心执行系统不断演进时，人的入口仍能保持清晰；目标、边界和最终验收由人掌握。",
           },
         ],
-        closing:
-          "对我来说，AI 时代的能力，体现在提出的问题、做出的作品，以及不断修正方法的过程里。",
+        closing: `${axmorfBrand.meaningZh} ${axmorfBrand.tagline} ${axmorfBrand.taglineZh}`,
       },
     },
     en: {
@@ -143,10 +146,9 @@ export const heroChapterContent = {
         },
       },
       body: {
-        eyebrow: "SELF / NOOBLI",
-        title: "Build something real. Keep what it teaches you.",
-        intro:
-          "I’m noobli, an independent builder focused on AI applications. I work with agents to develop software, connect tools, and verify results for problems I encounter. From video production to full-stack applications, I care about getting an idea to work—and learning how to build the next one better.",
+        eyebrow: "SELF / AXMORF",
+        title: axmorfBrand.name,
+        intro: axmorfBrand.introductionEn,
         sections: [
           {
             label: "PROJECTS / IDEA TO USE",
@@ -169,8 +171,7 @@ export const heroChapterContent = {
             body: "In June, I designed and tried a single entry agent coordinating a remote team in my Mac-to-Ubuntu workflow: discuss the goal locally, then let that agent coordinate execution. Dots later echoed this direction. I want a clear human entry point as the execution system evolves, with people retaining control over goals, boundaries, and final acceptance.",
           },
         ],
-        closing:
-          "For me, capability in the AI era shows in the questions we ask, the work we deliver, and the methods we keep improving.",
+        closing: `${axmorfBrand.meaningEnReview}: ${axmorfBrand.meaningEn} ${axmorfBrand.tagline}`,
       },
     },
   },
@@ -405,29 +406,29 @@ export const heroChapterContent = {
           {
             label: "文字 / WRITING",
             title: "博客",
-            directory: { name: "长期思考", detail: "blog.zzzxc.com" },
-            body: "记录长期思考、实践轨迹与尚未结束的问题。",
+            directory: { name: "AXMORF · 长期思考", detail: "blog.zzzxc.com" },
+            body: `AXMORF · 长期思考。${axmorfBrand.tagline}`,
             link: { href: heroPublicLinks.blog, label: "阅读博客" },
           },
           {
             label: "代码 / OPEN SOURCE",
             title: "GitHub",
-            directory: { name: "开源实践", detail: "@agenticnoob" },
-            body: "可运行的实验、工具与开放项目。每一次提交，都是想法落地的痕迹。",
+            directory: { name: "AXMORF", detail: "@agenticnoob" },
+            body: `AXMORF 的可运行实验、工具与开放项目。${axmorfBrand.tagline}`,
             link: { href: heroPublicLinks.githubProfile, label: "查看 GitHub" },
           },
           {
             label: "算法 / LEETCODE",
             title: "力扣",
-            directory: { name: "算法练习", detail: "@skedush" },
-            body: "skedush 的力扣主页，在一道道问题里练习拆解、推理与实现。",
+            directory: { name: "AXMORF", detail: "@skedush" },
+            body: "AXMORF（@skedush）的算法练习，在一道道问题里练习拆解、推理与实现。",
             link: { href: heroPublicLinks.leetcode, label: "查看力扣主页" },
           },
           {
             label: "简历 / RESUME",
             title: "简历",
-            directory: { name: "个人履历", detail: "resume.zzzxc.com" },
-            body: "个人简历主页，集中了解我的经历、技能与项目实践。",
+            directory: { name: "AXMORF", detail: "resume.zzzxc.com" },
+            body: `AXMORF 的经历、技能与项目实践。${axmorfBrand.tagline}`,
             link: { href: heroPublicLinks.resume, label: "查看简历主页" },
           },
         ],
@@ -512,15 +513,15 @@ export const heroChapterContent = {
           {
             label: "WRITING",
             title: "Blog",
-            directory: { name: "Notes", detail: "blog.zzzxc.com" },
-            body: "Long-form notes on practice, changing beliefs and questions that remain open.",
+            directory: { name: "AXMORF · 长期思考", detail: "blog.zzzxc.com" },
+            body: `Long-form notes by AXMORF. ${axmorfBrand.tagline}`,
             link: { href: heroPublicLinks.blog, label: "Read the blog" },
           },
           {
             label: "OPEN SOURCE",
             title: "GitHub",
-            directory: { name: "Open source", detail: "@agenticnoob" },
-            body: "Runnable experiments, tools and open projects. Ideas made tangible, one commit at a time.",
+            directory: { name: "AXMORF", detail: "@agenticnoob" },
+            body: `Runnable experiments, tools and open projects by AXMORF. ${axmorfBrand.tagline}`,
             link: {
               href: heroPublicLinks.githubProfile,
               label: "Explore GitHub",
@@ -529,8 +530,8 @@ export const heroChapterContent = {
           {
             label: "ALGORITHMS / LEETCODE",
             title: "LeetCode",
-            directory: { name: "Practice", detail: "@skedush" },
-            body: "skedush on LeetCode. Practice reasoning and turning ideas into code.",
+            directory: { name: "AXMORF", detail: "@skedush" },
+            body: "AXMORF (@skedush) on LeetCode. Practice reasoning and turning ideas into code.",
             link: {
               href: heroPublicLinks.leetcode,
               label: "Visit LeetCode profile",
@@ -539,8 +540,8 @@ export const heroChapterContent = {
           {
             label: "RESUME",
             title: "Resume",
-            directory: { name: "Background", detail: "resume.zzzxc.com" },
-            body: "My resume homepage, bringing together experience, skills and project work.",
+            directory: { name: "AXMORF", detail: "resume.zzzxc.com" },
+            body: `My resume homepage by AXMORF, bringing together experience, skills and project work. ${axmorfBrand.tagline}`,
             link: { href: heroPublicLinks.resume, label: "View resume" },
           },
         ],

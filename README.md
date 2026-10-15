@@ -7,6 +7,11 @@ Both `@viselora/dom-webgl` and `@viselora/scroll-adapters` are pinned to
 
 Production: [zzzxc.com](https://zzzxc.com).
 
+Public identity: AXMORF · 易狸. Change until the axioms morph.
+持续改变，直到公理随之重塑。
+Shared copy: `src/shared/brand.ts`. Brand drafts and manual follow-up:
+`docs/archive/2026-10-15-axmorf-brand/`.
+
 All four projects have complete bilingual case studies: `/projects/axmorf-studio`,
 `/projects/viselora`, `/projects/syringe-meter` and `/projects/vibe-journal-pipeline`.
 Each includes seven sections, a workflow, engineering decisions and current

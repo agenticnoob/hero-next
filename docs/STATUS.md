@@ -887,3 +887,23 @@ ESLint 9.39.5 matches the pinned Next.js peers but remains an existing EOL limit
 
 Previous production setup, verification and privacy-release evidence are preserved in
 [the preceding status](./archive/2026-09-13-pre-mobile-status.md).
+
+## AXMORF brand candidate (2026-10-15, not merged)
+
+The isolated brand branch updates the public identity, bilingual introduction,
+Tagline, metadata, Agent exports, channel directory and an unassigned status
+placeholder for every axiom. Proposition two remains unchanged in both languages.
+The favicon is a tetrahedron candidate awaiting subjective approval. Public
+journal projection normalizes identity text without editing source records.
+
+Local build, lint, test typecheck, application typecheck, project-data validation
+and standalone boundary checks pass. Tests: 459 pass, 4 fail across 3 files;
+the remaining fixtures assert the retired heading, model path and directory
+copy. Verification scripts and dependency versions are unchanged. Screenshot
+capture is blocked by the browser runtime; DOM, language and responsive checks
+are recorded separately. No claim of complete visual acceptance is made.
+
+This branch is a review candidate. Production URLs still serve the existing
+production revisions until the user approves merging and publication. Drafts,
+settings suggestions and pending decisions are in
+`docs/archive/2026-10-15-axmorf-brand/`.

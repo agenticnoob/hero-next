@@ -278,7 +278,9 @@ function resolvePortalCopy(
       },
       right: {
         primary: site.intro.summary,
-        secondary: site.intro.hint,
+        secondary: [site.intro.tagline, site.intro.translation, site.intro.hint]
+          .filter(Boolean)
+          .join("\n\n"),
       },
     };
   }
