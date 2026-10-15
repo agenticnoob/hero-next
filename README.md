@@ -112,8 +112,11 @@ The sync command reads Timeline events and daily tool lists and must run before 
 session or build. Run it again and rebuild to publish updated data. Generated
 snapshots are gitignored. See [journal publishing](./docs/journal-publishing.md)
 for the cross-repository setup. GitHub Actions validates and builds the website,
-deploys the prebuilt output to Vercel, then checks the public snapshot against its
-source commit. Direct Vercel Git deployments are disabled. Cloud activation and
+deploys the prebuilt output to Vercel, checks the exact deployment identity and
+alias binding, then verifies the public website revision and snapshot against
+their selected commits with a bounded readback budget. During verification,
+only the metadata helper receives a credential; the public readback receives
+none. Direct Vercel Git deployments are disabled. Cloud activation and
 verified production runs are recorded in [current status](./docs/STATUS.md).
 
 Use the Network URL printed by Next.js to open the app from another device. The
@@ -225,7 +228,7 @@ creates separate stores per mounted site.
 | Chapter-three project room, exhibitions, and semantic controls                     | `src/projects/`                                                                                                                                                                                                                                 |
 | Chapter-four public directory, previews, and endpoint artwork                      | `src/signals/`                                                                                                                                                                                                                                  |
 | Final journal data, paginated reading list, native text targets and scroll mapping | `src/journal/`                                                                                                                                                                                                                                  |
-| Journal export, Actions deployment and public verification                         | `scripts/sync-journal.mjs`, `scripts/verify-journal-deployment.mjs`, `.github/workflows/journal-build.yml`, `vercel.json`                                                                                                                       |
+| Journal export, Actions deployment and public verification                         | `scripts/sync-journal.mjs`, `scripts/wait-vercel-deployment.mjs`, `scripts/verify-journal-deployment.mjs`, `.github/workflows/journal-build.yml`, `vercel.json`                                                                                 |
 | Reversible scroll, geometry, layout, and atlas                                     | `src/chapters/scrollState.ts`, `src/chapters/geometry.ts`, `src/chapters/layout.ts`, `src/chapters/atlas.ts`, `src/chapters/artwork.ts`, `src/chapters/readingArtwork.ts`, `src/chapters/readingLayout.ts`                                      |
 | Theme and locale persistence                                                       | `src/preferences/`                                                                                                                                                                                                                              |
 | Hold/radial/portal state, palette/config, and progress encoding                    | `src/transition/`                                                                                                                                                                                                                               |

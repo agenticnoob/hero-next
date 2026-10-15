@@ -1,17 +1,45 @@
 # Current Status
 
-Last verified locally: 2026-10-15 (AXMORF release preparation; 56 files / 465 tests).
-Last production readback before the brand merge: 2026-10-15 (website `298194b`, exact source `c082eeb`, 147 entries through 2026-10-15).
-Owner authorization now covers normal merging and production publication of the
-three existing brand PRs. This document records the pre-merge verification;
-the resulting Actions run, deployment state and independent public readback
-record the exact released revision.
+Last local verification: 2026-10-15 (production-readback hardening candidate; not deployed).
+Last production readback: 2026-10-15 (website `ff19422`, exact source `c082eeb`, 147 entries through 2026-10-15).
+The three brand PRs were normally merged and published. The new readback
+hardening candidate remains separate and has not been merged or deployed.
+Its tests and build do not establish a successful production run of the new flow.
 
 Hero Next is a standalone public Next.js site consuming the public Viselora
 `0.2.0-alpha.0` packages in production. Repository: [agenticnoob/hero-next](https://github.com/agenticnoob/hero-next).
 Production source is `main`; reviewed feature branches publish through the existing
 production workflow after integration with the current remote head.
 Production: [zzzxc.com](https://zzzxc.com).
+
+## Production readback hardening (2026-10-15, candidate)
+
+Both successful publications failed at the old HTML-reference assertion; their
+historical response headers and bodies were not retained. The investigation
+[records the exact evidence and its limits](./archive/2026-10-15-production-readback.md).
+The confirmed defect is a one-shot check of a mutable alias without deployment
+or website-response identity and without sufficient failure diagnostics. The
+retained evidence does not establish a specific historical CDN/alias cause.
+
+The candidate checks the exact deployment project, production target, website
+commit, READY state and alias binding before a separate credential-free public
+readback. A validated build-time website header and the exact journal manifest
+identify the served versions. Metadata and public verification share a 120-second
+deadline; only identified previous responses and explicit transient failures
+receive backoff. Unknown versions, permanent errors, bad references, hash/schema
+mismatches and a previous response that never converges still fail. A captured
+login page cannot become an application baseline. Journal-only updates retain
+the same website commit and are recognized by the exact prior HTML digest.
+
+Local verification passed `npm run check` (57 files / 512 tests), including
+controlled recovery, timeout, permanent-failure and credential-isolation cases,
+zero-warning ESLint, formatting, both typechecks and the standalone boundary.
+`npm run build` passed. The built routing artifact and a temporary local
+production server both returned the synthetic expected website header; the
+server returned HTTP 200 with the exact manifest reference and was then stopped.
+No dependency, credential, permission or deployment-protection changes were made.
+The new flow has not run in production; merge and production integration remain
+pending review.
 
 ## Viselora 0.2 migration (2026-10-14, published)
 
