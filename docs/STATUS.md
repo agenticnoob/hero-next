@@ -892,13 +892,13 @@ Previous production setup, verification and privacy-release evidence are preserv
 
 The isolated brand branch updates the public identity, bilingual introduction,
 Tagline, metadata, Agent exports, channel directory and an unassigned status
-placeholder for every axiom. Proposition two remains unchanged in both languages.
+placeholder for every axiom. Proposition two and its related profile paragraph now state the core collaboration method without dates, priority claims or product comparisons.
 The favicon is a tetrahedron candidate awaiting subjective approval. Public
 journal projection normalizes identity text without editing source records.
 
 The candidate includes main `298194b5be5501d4dc5c641c4e96fec1360e9f1e` and
 preserves its generated project data exactly. `npm run check`, `npm run build`
-and `git diff --check` pass: 56 test files / 463 tests. The four stale assertions
+and `git diff --check` pass: 56 test files / 465 tests. The four stale assertions
 now use the AXMORF llms heading, renamed profile GLB and current directory copy;
 asset limits, geometry checks and all other gates remain unchanged. Dependency
 versions and verification commands are unchanged.

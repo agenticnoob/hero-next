@@ -86,6 +86,42 @@ describe("agent public content exports", () => {
     }
   });
 
+  test.each(["zh", "en"] as const)(
+    "%s collaboration copy keeps the method without chronology or product comparisons",
+    (locale) => {
+      const article = heroAxiomsArticles.find(
+        ({ id }) => id === "agent-first",
+      )!;
+      const body = article.translations[locale].body;
+      const profile = getHeroChapterContent("self", locale).body.sections.at(
+        -1,
+      )!;
+      const markdown = renderAgentDocument(
+        locale,
+        ["axioms", "agent-first.md"],
+        snapshot,
+      )!;
+      for (const copy of [body, profile.body, markdown]) {
+        expect(copy).not.toMatch(
+          /Dots|2026|June|September|早于|先于|6\s*月|9\s*月/i,
+        );
+        for (const concept of locale === "zh"
+          ? ["目标", "约束", "验收", "证据", "决定权"]
+          : [
+              "goals",
+              "constraints",
+              "acceptance criteria",
+              "evidence",
+              "decision authority",
+            ])
+          expect(copy).toContain(concept);
+      }
+      expect(renderAgentDocument(locale, ["index.md"], snapshot)).toContain(
+        profile.body,
+      );
+    },
+  );
+
   test("monthly archives include older dates, complete events and all tools", () => {
     const markdown = renderAgentDocument(
       "en",

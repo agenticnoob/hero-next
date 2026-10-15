@@ -121,7 +121,7 @@ export const heroChapterContent = {
           {
             label: "协作 / 独立判断",
             title: "让人表达意图，让 Agent 组织执行。",
-            body: "6 月，我已在 Mac → Ubuntu 工作场景中设计并实践统一入口与分层执行：先与本地 Agent 讨论，再由它协调远端团队。后来 Dots 的产品方向与这一判断相呼应。我关心执行系统不断演进时，人的入口仍能保持清晰；目标、边界和最终验收由人掌握。",
+            body: "我在自己的工作中实践统一入口与分层执行：先与入口 Agent 讨论目标与约束，再由它协调合适的 Agent 或团队。执行系统可以不断演进，人的入口仍应清晰；任务边界、验收条件与执行证据明确，最终判断和决定权由人保留。",
           },
         ],
         closing: `${axmorfBrand.meaningZh} ${axmorfBrand.tagline} ${axmorfBrand.taglineZh}`,
@@ -168,7 +168,7 @@ export const heroChapterContent = {
           {
             label: "COLLABORATION / INDEPENDENT JUDGMENT",
             title: "People express intent. Agents organize the work.",
-            body: "In June, I designed and tried a single entry agent coordinating a remote team in my Mac-to-Ubuntu workflow: discuss the goal locally, then let that agent coordinate execution. Dots later echoed this direction. I want a clear human entry point as the execution system evolves, with people retaining control over goals, boundaries, and final acceptance.",
+            body: "I use a single entry point with layered execution in my work: discuss goals and constraints with an entry agent, then let it coordinate suitable agents or teams. The execution system can evolve while the human entry point stays clear, with explicit task boundaries, acceptance criteria, and execution evidence. People retain final judgment and decision authority.",
           },
         ],
         closing: `${axmorfBrand.meaningEnReview}: ${axmorfBrand.meaningEn} ${axmorfBrand.tagline}`,

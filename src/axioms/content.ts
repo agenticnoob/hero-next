@@ -32,12 +32,12 @@ export const heroAxiomsArticles: readonly AxiomsArticle[] = [
       zh: {
         label: "命题二",
         title: "一个理解人的入口，协调可演进的执行",
-        body: "2026 年 6 月，我从自己的 Mac → Ubuntu 协作需求出发，独立设计并实践统一入口与分层执行：先与本地 m-hermes 讨论目标，由它整理任务，再协调远端团队按自己的 Kanban 流程执行。6 月 2 日的原始对话中，我已明确区分入口 Agent 与远端协调者，要求由 Agent 承接交接，减少人工复制上下文和调度。OpenAI 于同年 9 月 29 日推出 Dots，官方说明它能够承接目标、协调后台 Agent、分派 Work / Codex 任务并带回结果；在这些协作设计上，与我此前的判断相呼应。我希望模型、工具和执行团队可以演进，而人仍能通过清晰的入口表达意图、保留边界和决定权。任务范围、验收条件与执行证据，是这套协作保持可靠的依据。",
+        body: "我希望人能通过一个清晰的入口表达目标与约束，由入口 Agent 整理任务、保留必要上下文，再协调合适的 Agent 或团队执行。这样可以减少人工复制信息和反复调度。模型、工具与执行团队可以持续演进，但任务边界、验收条件和执行证据必须清楚，判断、授权与最终决定权仍由人保留。",
       },
       en: {
         label: "PROPOSITION TWO",
         title: "One human entry point, an evolving execution system",
-        body: "In June 2026, I independently designed and tried a layered workflow for my Mac-to-Ubuntu work: discuss goals with the local m-hermes, let it prepare the task, then have it coordinate a remote team through that team's Kanban process. My June 2 conversations already distinguished the entry agent from the remote coordinator and asked agents to handle handoffs, reducing manual context copying and dispatch. OpenAI introduced Dots on September 29 that year. Its documentation describes taking on goals, coordinating background agents, delegating Work or Codex tasks, and returning results. Those collaboration choices echo my earlier judgment. I want models, tools, and execution teams to evolve while people retain a clear entry point, their intent, and decision authority. Task boundaries, acceptance criteria, and execution evidence make this collaboration accountable.",
+        body: "I want people to express goals and constraints through one clear entry point. An entry agent organizes the work, preserves the necessary context, and coordinates suitable agents or teams to carry it out, reducing manual context copying and repeated dispatch. Models, tools, and execution teams can evolve, while task boundaries, acceptance criteria, and execution evidence stay clear. People retain judgment, authorization, and final decision authority.",
       },
     },
   },
