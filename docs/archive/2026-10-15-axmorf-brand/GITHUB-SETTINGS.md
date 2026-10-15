@@ -30,13 +30,13 @@ Change until the axioms morph.
 
 已检查账号 8 个公开仓库、组织 1 个公开仓库及博客仓库的元数据。账号和组织这 9 个仓库的 topics 当前为空。已读取其 README 以核实项目归属；这些 README 中没有命中已知中文身份字符串。公开简历应用的 About/description 命中身份字符串，仓库与托管标识也关联身份；不复述值。没有批量修改仓库源码，没有检查或改写 Git 历史。
 
-下列值均为建议；项目原有正式名字保留。公开简历应用以数字仓库 ID 定位，D4 未决定前不修改其 About 或名称。
+下列 About、website、topics 值仍仅为建议，本轮不修改账号或仓库资料。D4 已完成：公开简历应用更名为 `agenticnoob/axmorf-resume`，数字仓库 ID、fork、PR 与 Vercel 项目保持一致；私有自动化及日志仓库均未改名。
 
 | 仓库 | 建议 description（精确文本） | 建议 website | 建议 topics |
 | --- | --- | --- | --- |
 | agenticnoob/hero-next | AXMORF — Change until the axioms morph. A bilingual personal site built with Next.js and Viselora. | https://zzzxc.com/ | axmorf, personal-website, nextjs, react-three-fiber, webgl, agent-first |
 | Skedush/skedush.github.io | AXMORF · 长期思考 — Change until the axioms morph. | https://blog.zzzxc.com/ | axmorf, quartz, digital-garden, markdown, notes |
-| 公开简历应用；repository id 1377481502；D4 待确认 | AXMORF — Change until the axioms morph. AI applications, agent collaboration and verifiable project work. | https://resume.zzzxc.com/ | axmorf, resume, portfolio, react, typescript, ai-applications |
+| 公开简历应用；repository id 1377481502；D4 已完成 | AXMORF — Change until the axioms morph. AI applications, agent collaboration and verifiable project work. | https://resume.zzzxc.com/ | axmorf, resume, portfolio, react, typescript, ai-applications |
 | AXMORF/axmorf-studio | AXMORF Studio — an agent-assisted video production workspace with validation and rendering. | 留空（未核实独立产品域名） | axmorf, video-production, remotion, agents, typescript |
 | agenticnoob/dom-webgl-workspace | Viselora — a DOM and WebGL coordination runtime for React, built by AXMORF. | 留空（README 安装与文档入口优先） | viselora, webgl, react, react-three-fiber, typescript |
 | agenticnoob/syringe-meter | SyringeMeter — real-time vision-based syringe measurement desktop application by AXMORF. | https://zzzxc.com/projects/syringe-meter | computer-vision, desktop-application, measurement, python |

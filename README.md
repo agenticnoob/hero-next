@@ -9,8 +9,15 @@ Production: [zzzxc.com](https://zzzxc.com).
 
 Public identity: AXMORF · 易狸. Change until the axioms morph.
 持续改变，直到公理随之重塑。
-Shared copy: `src/shared/brand.ts`. Brand drafts and manual follow-up:
+Shared copy: `src/shared/brand.ts`. Brand decisions and optional follow-up:
 `docs/archive/2026-10-15-axmorf-brand/`.
+The public resume repository is now `agenticnoob/axmorf-resume`; its repository
+identity, fork relationship and existing automation permissions are preserved.
+Proposition two and the related profile paragraph share the same bilingual
+collaboration method across the website and Agent exports, without chronology
+or product comparisons. The three brand PRs have owner authorization to merge
+and publish through their existing production workflows. Exact publication
+results belong to the resulting Actions runs and production readbacks.
 
 All four projects have complete bilingual case studies: `/projects/axmorf-studio`,
 `/projects/viselora`, `/projects/syringe-meter` and `/projects/vibe-journal-pipeline`.
