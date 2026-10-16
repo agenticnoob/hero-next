@@ -134,6 +134,7 @@ jobs:
         if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          HERO_WEBSITE_SHA: ${{ steps.website.outputs.sha }}
         run: vercel build --prod
 
       - name: Recheck the data head before publication
@@ -166,6 +167,10 @@ jobs:
             core.setOutput('stale', String(stale));
             if (stale) core.notice('Website advanced during the build; publication skipped.');
 
+      - name: Capture the previous public response
+        if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true' && steps.source_current.outputs.stale != 'true' && steps.website_current.outputs.stale != 'true'
+        run: node scripts/verify-journal-deployment.mjs "$VERCEL_PRODUCTION_URL" --capture-baseline "$RUNNER_TEMP/production-before-publish.json"
+
       - name: Publish the verified production output
         if: steps.website.outputs.stale != 'true' && steps.source.outputs.stale != 'true' && steps.source_current.outputs.stale != 'true' && steps.website_current.outputs.stale != 'true'
         id: publish
@@ -173,10 +178,26 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: vercel deploy --prebuilt --prod --yes > "$RUNNER_TEMP/vercel-deployment-url.txt"
 
+      - name: Verify the published deployment identity and alias
+        if: steps.publish.outcome == 'success'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          WEBSITE_SHA: ${{ steps.website.outputs.sha }}
+        run: |
+          node scripts/wait-vercel-deployment.mjs \
+            --deployment-url-file "$RUNNER_TEMP/vercel-deployment-url.txt" \
+            --production-url "$VERCEL_PRODUCTION_URL" \
+            --project-id "$VERCEL_PROJECT_ID" \
+            --team-id "$VERCEL_ORG_ID" \
+            --website-sha "$WEBSITE_SHA" > "$RUNNER_TEMP/deployment-readiness.json"
+
       - name: Verify the public production snapshot
         if: steps.publish.outcome == 'success'
         id: readback
-        run: node scripts/verify-journal-deployment.mjs "$VERCEL_PRODUCTION_URL" > "$RUNNER_TEMP/journal-deployment-verification.json"
+        run: |
+          node scripts/verify-journal-deployment.mjs "$VERCEL_PRODUCTION_URL" \
+            --readiness "$RUNNER_TEMP/deployment-readiness.json" \
+            --baseline "$RUNNER_TEMP/production-before-publish.json" > "$RUNNER_TEMP/journal-deployment-verification.json"
 
       - name: Record the verified deployment
         if: steps.readback.outcome == 'success'
@@ -193,10 +214,14 @@ jobs:
             if (result.sourceRevision !== process.env.SOURCE_SHA) {
               throw new Error('Verified data revision differs from the selected source commit');
             }
+            if (result.websiteSha !== process.env.WEBSITE_SHA) {
+              throw new Error('Verified website revision differs from the selected website commit');
+            }
             await core.summary.addHeading('Verified production deployment').addTable([
               [{ data: 'Field', header: true }, { data: 'Value', header: true }],
               ['Production URL', result.productionUrl],
               ['Deployment URL', deploymentUrl],
+              ['Deployment ID', result.deploymentId],
               ['Website commit', process.env.WEBSITE_SHA],
               ['Source commit', result.sourceRevision],
               ['Entries', String(result.entryCount)],

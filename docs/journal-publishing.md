@@ -53,15 +53,49 @@ update all representations; the Agent routes never read private source journals.
    website repository's default branch. It checks the source identity and SHA,
    reads only the source journal directory and `TIMELINE.json`, runs the exporter
    and the complete website quality gate, then builds for production with Vercel CLI.
-4. The same GitHub Actions run deploys the prebuilt output to Vercel and reads
-   the public production page and snapshot back. Deployment succeeds only when
-   the snapshot hash, source revision, count and latest date match the local manifest.
+4. Immediately before publishing, capture the previous public HTML's SHA-256
+   and optional website revision header. An unavailable baseline is recorded;
+   it cannot authorize retrying an unidentified response. A page with neither a
+   valid website marker nor a journal reference is not an application baseline.
+5. Deploy the prebuilt output. A credentialed control-plane helper checks the
+   exact deployment URL's project, production target, website commit and READY
+   state, then confirms the public alias selects that deployment ID. It issues
+   requests only to `api.vercel.com` and writes a credential-free readiness receipt.
+6. A separate public process checks `X-Hero-Website-Sha` against the expected
+   website commit, the HTML reference, exact snapshot bytes, source revision,
+   count and latest date. The build sets `HERO_WEBSITE_SHA` from the selected
+   website commit; Next's headers configuration embeds this public marker in
+   the deployed routing artifact. Ordinary local builds may omit it.
 
 GitHub Actions owns production building and deployment. `vercel.json` disables
 Vercel's separate Git-triggered deployment path, so a Git push cannot bypass the
 quality gate or build a site without its matching journal snapshot. The Vercel CLI
 version is pinned in the workflow. Tokens stay in Actions secrets and are never
 passed to the public readback script.
+
+The metadata wait and public readback share one 120-second deadline. Backoff is
+1, 2, 4, 8, then at most 10 seconds; `Retry-After` is respected without extending
+the deadline. Each request, including its body, has at most 15 seconds and cannot
+start after the shared deadline. Public retries are limited to known transient
+network failures, HTTP 408/425/429/500/502/503/504, or a response positively
+identified as the captured previous revision/identical previous HTML. Exact HTML
+identity also handles journal-only updates that keep the same website commit.
+An old version that never converges still fails. Unknown revisions, protection
+or login responses, redirects, public 401/403/404, wrong HTML references that do
+not match the captured previous response, hash mismatches and schema/metadata
+mismatches remain hard failures.
+
+Failure diagnostics record URL, HTTP status, selected cache/date/request-ID
+headers, HTML digest, snapshot references and expected/observed public revision.
+They exclude response bodies, cookies, authorization headers and credentials.
+The original one-URL verifier remains available for strict, non-retrying journal
+debugging. Production uses the readiness receipt and website identity check.
+Do not replace the public alias with the immutable deployment hostname: a
+production deployment URL may still require Vercel SSO. A login redirect is not
+proof of application readiness, and this workflow does not bypass protection.
+
+The October 15 investigation and its evidence limits are recorded in
+[the readback investigation](./archive/2026-10-15-production-readback.md).
 
 Notifications go to GitHub's cloud repository, not this local checkout. Local
 updates remain explicit `sync:journal` runs. Website pushes to `main`, a daily
