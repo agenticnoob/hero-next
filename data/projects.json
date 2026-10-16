@@ -302,81 +302,85 @@
       "slug": "gh-1366880001",
       "repository": "agenticnoob/hero-next",
       "url": "https://github.com/agenticnoob/hero-next",
-      "readmeSha": "4d96ce8c9f2a4f8b649d7cd824c412837cab511a",
-      "sourceCommit": "170c2a9de660e683dee2c8aa3e28d4bd968de6a9",
-      "sourceDigest": "31117325f373664c8d0489e12e2e94a9b316b81e57996719511d2f6e35968159",
-      "updatedAt": "2026-10-13T19:42:41Z",
+      "readmeSha": "11e0a25959e6f77064ce69884daccb0e9c066b77",
+      "sourceCommit": "05b63243014a9bf091d0e0c7bd61ecee3f9b5561",
+      "sourceDigest": "ab2e46357366414e8790efcd6a621faf771b7a171816dca9b943bf28b0853685",
+      "updatedAt": "2026-10-16T05:13:44Z",
       "topics": [],
       "language": "TypeScript",
       "content": {
         "zh": {
           "title": "Hero Next 双语个人网站",
-          "summary": "一个基于 Next.js App Router 的独立双语个人网站，整合个人介绍、思想文章、项目案例、公共频道与日记，并以响应式阅读界面和 WebGL 场景呈现内容。",
+          "summary": "一个基于 Next.js App Router、React Three Fiber 与 Three.js 的独立双语个人网站，整合个人简介、理念文章、项目案例、公开渠道和日志，并针对桌面沉浸式浏览与移动端阅读提供不同布局。",
           "sections": [
             {
-              "id": "overview",
-              "title": "项目概述",
-              "paragraphs": [
-                "项目旨在通过统一的个人网站组织中文和英文内容，包括个人介绍、AI 与哲学观点、项目案例、公共频道和日记。它还提供面向代理与无 JavaScript 环境的服务端渲染目录及 Markdown 文档。"
-              ]
-            },
-            {
               "id": "experience",
-              "title": "交互与内容体验",
+              "title": "内容与浏览体验",
               "paragraphs": [
-                "移动端、触控设备和较矮的横屏窗口使用以阅读为主的布局；宽屏精细指针设备则保留圆形文章索引、项目展厅、悬浮预览和透视日记等交互。主题、语言和展厅选择由共享状态管理，并可跨刷新保留。",
-                "项目案例既可在保留展厅背景的原生对话框中打开，也可作为独立页面访问。日记按日期分批加载，同时保持每天的工具与事件信息完整。"
+                "网站以四个章节呈现个人简介、AI 与哲学理念、公开项目及公开渠道，随后展示按日期组织的日志。中英文内容由类型化数据共享，并保存语言、主题和项目房间选择。",
+                "宽屏精细指针设备使用圆形文章索引、动态纸张、四面项目展厅和透视日志；移动端、触控设备及较矮的横屏窗口则采用完整文本、紧凑列表和原生折叠控件组成的阅读布局。"
               ]
             },
             {
-              "id": "implementation",
-              "title": "实现方式",
+              "id": "architecture",
+              "title": "交互与技术架构",
               "paragraphs": [
-                "网站使用 TypeScript、Next.js App Router、React Three Fiber 和 Three.js，并通过公开入口消费 Viselora 包。单一运行时、Canvas 和滚动源共同驱动语义化 DOM 与 WebGL 内容，包括四面体、面投影、三角形转场、GLB 模型和灯光。",
-                "内容、项目目录、偏好设置、滚动几何和场景状态按职责拆分。构建过程可从外部日记数据生成快照，并由持续集成流程执行检查、构建、发布和来源提交校验。"
+                "项目维持单一运行时、Canvas 和滚动源，以 React Three Fiber 管理渲染与帧循环，并结合 WebGL 四面体、面投影、三角形过渡、GLB 模型和光照。语义化 DOM 布局、无障碍颜色、层叠与指针路由由 CSS 负责。",
+                "主题与语言使用独立的持久化状态。页面支持减少动态效果，并为普通文本保持至少 4.5:1 的对比度；移动阅读布局提供持续可用的主题按钮。"
+              ]
+            },
+            {
+              "id": "publishing",
+              "title": "项目目录与机器可读内容",
+              "paragraphs": [
+                "项目包含四篇完整的双语精选案例，也可将经过校验的公开仓库数据加入项目目录。案例既能在展厅中以原生阅读对话框打开，也能通过独立页面呈现。",
+                "服务器渲染的 Agent 目录与 Markdown 文档覆盖个人资料、理念、项目和日志，内容由现有类型化数据及已验证的日志快照在构建期间生成，无需维护另一套文案。日志必须在首次开发或构建前同步。"
               ]
             },
             {
               "id": "boundaries",
-              "title": "当前边界",
+              "title": "边界与限制",
               "paragraphs": [
-                "项目注明 Canvas 与 DOM 的字形栅格化仍可能存在细微差异，现有内容也是等待后续编辑调整的基础版本。开发环境对局域网主机名和 IPv4 来源采用宽松允许规则，因此仅适合受信任网络，不应将开发端口暴露到公网。"
+                "实现仅使用 Viselora 的公开入口，并固定相关依赖版本。开发环境的宽松主机允许列表只适用于受信任网络，不应将开发端口暴露到公网。",
+                "README 指出 Canvas 与 DOM 的字形栅格化仍可能略有差异，现有内容也是可继续编辑的基础版本。自动化覆盖、交互证据和剩余诊断记录在项目状态文档中。"
               ]
             }
           ]
         },
         "en": {
           "title": "Hero Next Bilingual Personal Site",
-          "summary": "A standalone personal site built with the Next.js App Router, combining a profile, essays, project case studies, public channels, and a journal through responsive reading layouts and WebGL scenes.",
+          "summary": "A standalone bilingual personal site built with the Next.js App Router, React Three Fiber, and Three.js. It combines a profile, essays, project cases, public channels, and a journal, with distinct experiences for immersive desktop browsing and mobile reading.",
           "sections": [
             {
-              "id": "overview",
-              "title": "Project Overview",
-              "paragraphs": [
-                "The project organizes Chinese and English content in one personal site, covering a profile, AI and philosophy essays, project case studies, public channels, and a journal. It also provides server-rendered directories and Markdown documents for agents and environments without JavaScript."
-              ]
-            },
-            {
               "id": "experience",
-              "title": "Interaction and Content Experience",
+              "title": "Content and browsing experience",
               "paragraphs": [
-                "Mobile, touch, and short landscape windows use a reading-focused layout, while wide screens with fine pointers retain a circular essay index, project room, hover previews, and perspective journal. Shared state manages theme, locale, and room selection, with preferences persisted across refreshes.",
-                "Project cases can open in a native dialog while preserving the exhibition room behind them, or render as standalone pages. The journal loads dates in batches while keeping each day's tools and events together."
+                "The site presents a profile, AI and philosophy axioms, public projects, and public channels across four chapters, followed by a date-based journal. Chinese and English share typed content, while locale, theme, and project-room selection are persisted.",
+                "Wide screens with a fine pointer use a circular article index, moving sheets, a four-wall project room, and a perspective journal. Mobile, touch, and short landscape windows switch to a reading layout with complete text, compact lists, and native disclosures."
               ]
             },
             {
-              "id": "implementation",
-              "title": "Implementation",
+              "id": "architecture",
+              "title": "Interaction and architecture",
               "paragraphs": [
-                "The site uses TypeScript, the Next.js App Router, React Three Fiber, and Three.js, while consuming Viselora packages through public entrypoints. One runtime, Canvas, and scroll source coordinate semantic DOM content with WebGL features such as a tetrahedron, face projection, triangular transitions, a GLB model, and lighting.",
-                "Content, the project catalog, preferences, scroll geometry, and scene state are separated by responsibility. The build can generate a snapshot from external journal data, while the continuous integration workflow performs checks, builds, publishing, and source-commit verification."
+                "The project keeps one runtime, canvas, and scroll source. React Three Fiber manages rendering and the frame loop for a WebGL tetrahedron, face projection, triangular transitions, a GLB model, and lighting, while CSS handles semantic DOM layout, accessible colors, stacking, and pointer routing.",
+                "Theme and locale use separate persistent stores. The experience supports reduced motion and targets at least 4.5:1 contrast for normal text; the mobile reading layout keeps a theme control available throughout the page."
+              ]
+            },
+            {
+              "id": "publishing",
+              "title": "Project catalog and machine-readable content",
+              "paragraphs": [
+                "The project includes four complete bilingual featured case studies and can add validated public repository data to its project directory. Cases can open in a native reading dialog over the exhibition room or render as standalone pages.",
+                "A server-rendered Agent directory and Markdown documents cover the profile, axioms, projects, and journal. They are generated during the build from existing typed content and a validated journal snapshot rather than maintained as separate copy. Journal data must be synchronized before the first development session or build."
               ]
             },
             {
               "id": "boundaries",
-              "title": "Current Boundaries",
+              "title": "Boundaries and limitations",
               "paragraphs": [
-                "The project notes that Canvas and DOM glyph rasterization may still differ slightly, and that the current content is a base version intended for later editorial refinement. Development accepts a broad set of local-network hostnames and IPv4 origins, so it is intended only for trusted networks and the development port should not be exposed publicly."
+                "The implementation consumes only public Viselora entrypoints and pins the relevant package versions. Its permissive development hostname allowlist is intended only for trusted networks, and the development port should not be exposed publicly.",
+                "The README notes that Canvas and DOM glyph rasterization may still differ slightly, and the current content is a base version intended for further editing. Automated coverage, interaction evidence, and remaining diagnostics are maintained in the project's status documentation."
               ]
             }
           ]
