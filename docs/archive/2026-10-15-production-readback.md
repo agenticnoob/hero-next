@@ -81,5 +81,7 @@ Controlled tests cover recovery, journal-only updates with an unchanged website
 commit, captured login/unknown-version rejection, a previous version that never converges,
 permanent errors, wrong deployment/commit/alias, credential isolation and total
 timeout. The Next routing artifact is checked locally with a synthetic public
-revision. This branch has not been merged or deployed; actual production
-integration of the new flow remains unverified until separately authorized.
+revision. At the initial investigation's completion, the candidate had not
+been merged or deployed. Production integration is a separate acceptance step;
+[current status](../STATUS.md) and [PR #11](https://github.com/agenticnoob/hero-next/pull/11)
+track the resulting release evidence.
