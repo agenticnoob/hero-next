@@ -392,63 +392,49 @@
       "slug": "gh-1424475627",
       "repository": "agenticnoob/viselora-skills",
       "url": "https://github.com/agenticnoob/viselora-skills",
-      "readmeSha": "577ababc04ef8711e77507f284645247623af36d",
-      "sourceCommit": "50b7d5ecf1091999636d09d5ed9c0acba9d2ef85",
-      "sourceDigest": "07fabe50797c396066e6d88151410024a56c8ae1053e7de80a4443f314a5f95a",
-      "updatedAt": "2026-10-18T14:48:10Z",
+      "readmeSha": "6a0d342c288165b7a0ffe8075f2dae0fa8093f5e",
+      "sourceCommit": "b54b13474ddc2d23f28391b75d48fc65e4a0a100",
+      "sourceDigest": "96911770f42c4d0e74c5fc0f0759f531173b219951e3b6132dc9870087121d39",
+      "updatedAt": "2026-10-23T14:07:24Z",
       "topics": [],
-      "language": "JavaScript",
+      "language": "TypeScript",
       "content": {
         "zh": {
           "title": "Viselora 智能体技能",
-          "summary": "面向 Viselora DOM/WebGL 运行时的智能体技能，用于构建、迁移和调试由语义化 DOM 与 React Three Fiber / Three.js 场景协同驱动的页面。",
+          "summary": "面向 Viselora 的智能体技能包，用于构建、迁移和调试由语义化 DOM 与 React Three Fiber/Three.js WebGL 场景同步驱动的页面。",
           "sections": [
             {
               "id": "overview",
               "title": "项目概述",
               "paragraphs": [
-                "该项目提供 Viselora 相关的智能体技能，服务于 React 19 和 Next.js 中语义化 DOM 与单一 React Three Fiber / Three.js WebGL 场景同步的开发场景。"
-              ]
-            },
-            {
-              "id": "capabilities",
-              "title": "适用场景",
-              "paragraphs": [
-                "所含技能可用于让 WebGL 或 3D 视觉跟随 DOM 元素、将 DOM 文本转换为纹理，以及构建由滚动交互驱动的 3D 场景；其目标技术包括 @viselora/dom-webgl 和 @viselora/scroll-adapters。"
+                "该项目为 Viselora 提供智能体技能，适用于 WebGL/3D 视觉跟随 DOM 元素、将 DOM 文本转换为纹理，以及由滚动交互驱动 3D 场景等任务。其目标运行环境基于 React 19.2、Next.js、React Three Fiber 和 Three.js。"
               ]
             },
             {
               "id": "maintenance",
-              "title": "生成与维护",
+              "title": "来源与维护",
               "paragraphs": [
-                "此仓库由上游工作区的 skills 目录生成，并非独立源代码来源；直接在此处所做的更改可能会在重新生成时被覆盖。"
+                "此仓库由上游工作区的 skills 目录生成，并非独立源码来源；直接在此处进行的更改会被覆盖。项目采用 MIT 许可证。"
               ]
             }
           ]
         },
         "en": {
           "title": "Viselora Agent Skills",
-          "summary": "Agent skills for the Viselora DOM/WebGL runtime, supporting pages where semantic DOM and a React Three Fiber / Three.js scene work together.",
+          "summary": "An agent skill package for building, migrating, and debugging Viselora pages that synchronize semantic DOM content with a React Three Fiber and Three.js WebGL scene.",
           "sections": [
             {
               "id": "overview",
-              "title": "Overview",
+              "title": "Project Overview",
               "paragraphs": [
-                "This project packages agent skills for Viselora workflows that synchronize semantic DOM with a single React Three Fiber / Three.js WebGL scene in React 19 and Next.js."
-              ]
-            },
-            {
-              "id": "capabilities",
-              "title": "Use Cases",
-              "paragraphs": [
-                "The included skill covers building, migrating, and debugging pages where WebGL or 3D visuals follow DOM elements, DOM text becomes textures, or scrolling drives a 3D scene. It targets @viselora/dom-webgl and @viselora/scroll-adapters."
+                "The project provides an agent skill for tasks where WebGL or 3D visuals follow DOM elements, DOM text becomes textures, or scrolling drives a 3D scene. Its stated environment uses React 19.2, Next.js, React Three Fiber, and Three.js."
               ]
             },
             {
               "id": "maintenance",
-              "title": "Generation and Maintenance",
+              "title": "Source and Maintenance",
               "paragraphs": [
-                "This is a generated repository sourced from the upstream workspace's skills directory rather than an independent source of changes. Direct modifications may be overwritten when it is regenerated."
+                "This repository is generated from the skills directory in an upstream workspace rather than maintained as an independent source. Direct changes here are expected to be overwritten. The project is licensed under MIT."
               ]
             }
           ]
